@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What This Talk Covers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build_deck.py lifts this block off slide 1,
+     so edit it here and it propagates to the deck on the next build. */
+  :root{
+    --paper:#F8F9FA;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --rule:#C9D0D7;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9, header / body / footer ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:grid; grid-template-rows:auto 1fr auto;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding:36px 64px 18px; border-bottom:1px solid var(--line);
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--navy);
+    margin-bottom:12px;
+  }
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1;
+  }
+  .meta{
+    font-family:var(--mono); font-size:10.5px; font-weight:400;
+    letter-spacing:.06em; color:var(--mute);
+    text-align:right; line-height:1.75; padding-bottom:4px;
+  }
+
+  /* ---------- BODY ---------- */
+  .body{padding:0 64px; position:relative; z-index:2;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:15px 64px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--slate);
+    position:relative; z-index:2;
+  }
+  footer b{color:var(--ink); font-weight:600;}
+  footer .sep{color:var(--navy); padding:0 8px;}
+
+  /* ---- the deck's signature: a run of page ticks, a few carrying evidence ---- */
+  .ticks{display:flex; align-items:flex-end; justify-content:space-between;}
+  .ticks i{display:block; width:2px; height:38px; background:var(--rule);}
+  .ticks i.on{width:3px; height:56px; background:var(--navy);}
+
+  /* ================= SLIDE 2: outline ================= */
+  .s2 .body{
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:34px 64px 30px;
+  }
+
+  /* ---- the four parts, equal columns ---- */
+  .s2 .parts{display:grid; grid-template-columns:repeat(4,1fr); gap:30px;}
+  .s2 .parts > section{border-top:2px solid var(--navy); padding-top:15px;}
+
+  .s2 .pn{
+    display:flex; align-items:baseline; gap:11px;
+    font-family:var(--mono); font-size:10.5px; font-weight:500;
+    letter-spacing:.17em; text-transform:uppercase;
+  }
+  .s2 .pn b{color:var(--navy); font-weight:600;}
+  .s2 .pn span{color:var(--mute); font-weight:400;}
+
+  .s2 h2{
+    margin-top:13px; min-height:60px;
+    font-family:var(--disp); font-weight:600; font-size:22px;
+    letter-spacing:-.018em; line-height:1.18;
+  }
+  .s2 .lede{
+    font-size:14px; font-weight:300; line-height:1.55; color:var(--slate);
+    min-height:90px;
+  }
+  .s2 ul{list-style:none; border-top:1px solid var(--line); padding-top:13px;}
+  .s2 ul li{
+    position:relative; padding-left:16px; margin-bottom:12px;
+    font-size:13px; font-weight:400; line-height:1.4; color:var(--ink);
+  }
+  .s2 ul li::before{
+    content:""; position:absolute; left:0; top:8px;
+    width:7px; height:1.5px; background:var(--navy);
+  }
+  .s2 ul li:last-child{margin-bottom:0;}
+
+  /* ---- the time rail: one tick per minute, grouped by part ---- */
+  .s2 .rail{border-top:1px solid var(--line); padding-top:26px;}
+  .s2 .railhead{
+    display:flex; justify-content:space-between; margin-bottom:12px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.17em;
+    text-transform:uppercase; color:var(--mute);
+  }
+  .s2 .bar{display:flex; align-items:flex-end; gap:46px;}
+  .s2 .grp{display:flex; gap:7px;}
+  .s2 .grp i{display:block; height:46px; background:var(--wash); border-top:2px solid var(--navy); flex:1;}
+  .s2 .g3{flex:3;} .s2 .g5{flex:5;} .s2 .g10{flex:10;} .s2 .g2{flex:2;}
+  .s2 .labels{display:flex; gap:46px; margin-top:11px;}
+  .s2 .labels > div{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    color:var(--slate);
+  }
+  .s2 .labels > div b{color:var(--navy); font-weight:600; padding-right:9px;}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s2">
+
+  <header>
+    <div>
+      <div class="eyebrow">Outline</div>
+      <h1>What this talk covers</h1>
+    </div>
+    <div class="meta">20 minutes<br>Four parts</div>
+  </header>
+
+  <div class="body">
+
+    <div class="parts">
+      <section>
+        <div class="pn"><b>01</b><span>Background</span></div>
+        <h2>Why multi-page is a different problem</h2>
+        <p class="lede">What a visually rich document is, and why the single-page setting does not simply scale up to many pages.</p>
+        <ul>
+          <li>Text, layout and pixels together</li>
+          <li>Evidence sparse and scattered</li>
+          <li>The system must choose what to read</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="pn"><b>02</b><span>Literature</span></div>
+        <h2>Organising the field</h2>
+        <p class="lede">The review reads MP-VRDU as an evidence-management problem, sorted by where that evidence is handled.</p>
+        <ul>
+          <li>Four architectural families</li>
+          <li>Text, visual, cross-page structure</li>
+          <li>Every family relocates the bottleneck</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="pn"><b>03</b><span>Empirical study</span></div>
+        <h2>Locating the failure</h2>
+        <p class="lede">The bulk of the talk. One pipeline, one stage moved at a time, so failure can be pinned to a stage.</p>
+        <ul>
+          <li>Representation, selection, reasoning</li>
+          <li>Two benchmarks, one pipeline</li>
+          <li>What fails, and what does not</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="pn"><b>04</b><span>Conclusion</span></div>
+        <h2>Where this leads</h2>
+        <p class="lede">A pipeline built straight out of the findings, and then the challenges that remain open.</p>
+        <ul>
+          <li>A simple adaptive-trajectory method</li>
+          <li>What the thesis settles</li>
+          <li>What it does not</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="rail">
+      <div class="railhead">
+        <span>Time budget</span>
+        <span>One tick &equals; one minute</span>
+      </div>
+      <div class="bar">
+        <div class="grp g3"><i></i><i></i><i></i></div>
+        <div class="grp g5"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="grp g10"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="grp g2"><i></i><i></i></div>
+      </div>
+      <div class="labels">
+        <div class="g3"><b>01</b>3 min</div>
+        <div class="g5"><b>02</b>5 min</div>
+        <div class="g10"><b>03</b>10 min</div>
+        <div class="g2"><b>04</b>2 min</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span><b>02</b> / 02 <span class="sep">&middot;</span> What this talk covers</span>
+    <span>MP-VRDU <span class="sep">&middot;</span> Lewei Xu</span>
+  </footer>
+
+</div>
+</body>
+</html>
