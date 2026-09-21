@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thesis by Compilation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 7 ================= */
+  .s7 .body{display:flex; flex-direction:column;}
+  .s7 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1000px;}
+  .s7 .papers{flex:1; display:flex; flex-direction:column; justify-content:space-evenly;}
+  .s7 .paper{display:flex; gap:26px; align-items:baseline;}
+  .s7 .paper > b{
+    font-family:var(--mono); font-size:14px; font-weight:500; color:var(--navy);
+    flex:none; width:22px;
+  }
+  .s7 .paper h2{
+    font-family:var(--disp); font-size:22px; font-weight:600;
+    letter-spacing:-.018em; line-height:1.25;
+  }
+  .s7 .authors{margin-top:10px; font-size:14.5px; font-weight:300; color:var(--slate);}
+  .s7 .authors strong{font-weight:600; color:var(--ink);}
+  .s7 .venue{
+    margin-top:9px; font-family:var(--mono); font-size:12.5px;
+    letter-spacing:.03em; color:var(--navy);
+  }
+  .s7 .venue span{color:var(--mute); padding:0 8px;}
+  .s7 .aim{display:flex; gap:16px; margin-top:18px; align-items:baseline;}
+  .s7 .aim b{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--mute);
+    flex:none; width:52px;
+  }
+  .s7 .aim p{font-size:14.5px; font-weight:300; line-height:1.45; color:var(--slate);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s7">
+
+  <h1>Thesis by Compilation</h1>
+
+  <div class="body">
+    <p class="lead">This thesis is structured as a compilation of two papers written during this Honours year, each addressing one of its two aims.</p>
+
+    <div class="papers">
+      <div class="paper">
+        <b>1</b>
+        <div>
+          <h2>Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding</h2>
+          <div class="authors"><strong>Lewei Xu</strong>, Yihao Ding, Zihan Xu, Siwen Luo, Daochang Liu, Wei Liu</div>
+          <div class="venue">Main Conference of EMNLP 2026 <span>&middot;</span> Chapter 2</div>
+          <div class="aim"><b>Aim 1</b><p>Comprehensively survey techniques and architectures for multi-page document understanding, treating it as a problem distinct from the single-page setting.</p></div>
+        </div>
+      </div>
+      <div class="paper">
+        <b>2</b>
+        <div>
+          <h2>Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution</h2>
+          <div class="authors"><strong>Lewei Xu</strong>, Yihao Ding, Zihan Xu, Daniel Yitian Su, Daochang Liu, Siwen Luo, Yifan Peng, Wei Liu</div>
+          <div class="venue">Submitted to EACL, under review <span>&middot;</span> Chapter 3</div>
+          <div class="aim"><b>Aim 2</b><p>Attribute MP-VRDU failure to its underlying causes, and resolve the field's competing and largely untested claims about how these systems should be built.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="corner"><b>07</b> / 25 <span>&middot;</span> Background</div>
+
+</div>
+</body>
+</html>

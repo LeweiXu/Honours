@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Seminar Overview</title>
+<title>Challenges of the Multi-Page Setting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -60,18 +60,18 @@
   .corner b{color:var(--navy); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 2 ================= */
-  .s2 .agenda{display:flex; flex-direction:column; justify-content:space-between; height:100%;}
-  .s2 .row{display:flex; gap:26px; align-items:baseline;}
-  .s2 .row > b{
-    font-family:var(--mono); font-size:15px; font-weight:600; color:var(--navy);
-    flex:none; width:34px;
+  /* ================= SLIDE 6 ================= */
+  .s6 .list{display:flex; flex-direction:column; justify-content:space-between; height:100%;}
+  .s6 .item{display:flex; gap:26px; align-items:baseline;}
+  .s6 .item > b{
+    font-family:var(--mono); font-size:14px; font-weight:500; color:var(--navy);
+    flex:none; width:22px;
   }
-  .s2 .row h2{
-    font-family:var(--disp); font-weight:600; font-size:25px;
-    letter-spacing:-.018em; flex:none; width:420px;
+  .s6 .item h2{
+    font-family:var(--disp); font-size:23px; font-weight:600;
+    letter-spacing:-.018em; flex:none; width:410px; line-height:1.2;
   }
-  .s2 .row p{font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s6 .item p{font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -84,36 +84,36 @@
 </head>
 <body>
 
-<div class="slide s2">
+<div class="slide s6">
 
-  <h1>Seminar Overview</h1>
+  <h1>Challenges of the Multi-Page Setting</h1>
 
   <div class="body">
-    <div class="agenda">
-      <div class="row">
-        <b>01</b>
-        <h2>Background</h2>
-        <p>Visually rich documents, the single-page setting, and what changes once a document runs to many pages.</p>
+    <div class="list">
+      <div class="item">
+        <b>1</b>
+        <h2>The document exceeds the context window</h2>
+        <p>Long multi-page documents routinely outrun what a backbone can hold, so the system must select which parts of the document reach the MLLM at all.</p>
       </div>
-      <div class="row">
-        <b>02</b>
-        <h2>Survey of Architectures<br>and Techniques</h2>
-        <p>MP-VRDU organised through evidence management: a taxonomy of four architectural families, multimodal representation, and inference-time and training strategies.</p>
+      <div class="item">
+        <b>2</b>
+        <h2>Scaling the context does not resolve it</h2>
+        <p>Long-context models attend poorly to evidence buried mid-input, and memory and compute grow with sequence length, so the achievable context is bounded by hardware.</p>
       </div>
-      <div class="row">
-        <b>03</b>
-        <h2>Empirical Attribution<br>of Failure Modes</h2>
-        <p>Failure attributed to three loci, representation, selection, and reasoning, through controlled interventions on a single pipeline.</p>
+      <div class="item">
+        <b>3</b>
+        <h2>Every required evidence unit must be located</h2>
+        <p>Answering often means integrating evidence from several parts of the document at once, and missing any one of them is enough to answer incorrectly or not at all.</p>
       </div>
-      <div class="row">
-        <b>04</b>
-        <h2>Conclusion</h2>
-        <p>A simple adaptive-trajectory pipeline built from those findings, and the open challenges that define the frontier.</p>
+      <div class="item">
+        <b>4</b>
+        <h2>Cross-page structure is not recoverable in isolation</h2>
+        <p>Section hierarchy and cross-references cannot be read off any single part of the document, yet questions often need them to gather the evidence in the first place.</p>
       </div>
     </div>
   </div>
 
-  <div class="corner"><b>02</b> / 25 <span>&middot;</span> Overview</div>
+  <div class="corner"><b>06</b> / 25 <span>&middot;</span> Background</div>
 
 </div>
 </body>
