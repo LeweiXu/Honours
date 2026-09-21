@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reasoning Strategies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 11 ================= */
+  .s11 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s11 .lead b{font-weight:600; color:var(--ink);}
+  .s11 .cols{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
+  .s11 .cols h3{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--navy);
+    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:20px;
+  }
+  .s11 .cols p{
+    position:relative; padding-left:24px; margin-bottom:17px;
+    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
+  }
+  .s11 .cols p::before{
+    content:""; position:absolute; left:0; top:10px;
+    width:9px; height:2px; background:var(--navy);
+  }
+  .s11 .cols p:last-child{margin-bottom:0;}
+  .s11 .cols p b{font-weight:600; color:var(--ink);}
+  .s11 .cols code{font-family:var(--mono); font-size:13px; color:var(--ink);}
+  .s11 .close{margin-top:32px; font-size:15px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s11 .close b{font-weight:600; color:var(--ink);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s11">
+
+  <h1>Reasoning Strategies</h1>
+
+  <div class="body">
+    <p class="lead">Reasoning acts over a <b>single fixed evidence buffer</b> assembled before the call. The step itself acquires nothing new, so its contribution lies in how faithfully the delivered evidence is used, not in recovering evidence the buffer omits.</p>
+
+    <div class="cols">
+      <div>
+        <h3>Inference-time</h3>
+        <p><b>Sequential.</b> Chain-of-thought elicits intermediate reasoning before the answer, which binds evidence from different pages step by step, decomposes multi-hop questions into single-hop ones, and externalises the trace for verification. Self-reflection extends the same thread with iterative revision against the buffer, optionally under a verifier.</p>
+        <p><b>Parallel.</b> Self-consistency samples several chains and takes the majority, or has an LLM adjudicate between reasoning paths. Tree-of-thoughts explores branches with backtracking, but has seen limited uptake, since in MP-VRDU evidence sparsity rather than search branching is the dominant difficulty.</p>
+      </div>
+      <div>
+        <h3>Trained</h3>
+        <p><b>Trace imitation.</b> Supervise the backbone on demonstration chains wrapped in fixed schema tags such as <code>&lt;think&gt;</code>, <code>&lt;evidence&gt;</code>, and <code>&lt;answer&gt;</code>, refined with DPO to prefer faithful chains over hallucinated shortcuts.</p>
+        <p><b>Reward-driven.</b> Optimise the reasoning policy with GRPO against a composite reward of answer accuracy, evidence-page recall, and format compliance. Usually warm-started from imitation rather than learned from scratch, so the two are sequential rather than alternative.</p>
+        <p><b>Uncertainty calibration.</b> Train an aggregation head that selects across candidate outputs by calibrated uncertainty, giving a learned self-consistency signal without sampling several chains at test time.</p>
+      </div>
+    </div>
+
+    <p class="close">All of it is independent of architectural family, and all of it is bounded the same way: <b>missing evidence cannot be reasoned back into existence</b>.</p>
+  </div>
+
+  <div class="corner"><b>11</b> / 25 <span>&middot;</span> Literature</div>
+
+</div>
+</body>
+</html>

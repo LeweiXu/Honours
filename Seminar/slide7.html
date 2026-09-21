@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Evidence Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 7 ================= */
+  .s7 .body{display:flex; flex-direction:column;}
+  .s7 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1120px;}
+  .s7 .lead b{font-weight:600; color:var(--ink);}
+  .s7 .stages{flex:1; display:grid; grid-template-columns:repeat(4,1fr); gap:38px; margin-top:44px;}
+  .s7 .stages h3{
+    font-family:var(--disp); font-size:20px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:8px;
+  }
+  .s7 .stages .q{
+    font-size:14px; font-weight:300; line-height:1.5; color:var(--slate);
+    min-height:64px;
+  }
+  .s7 .stages ul{list-style:none; border-top:1px solid var(--line); padding-top:14px;}
+  .s7 .stages li{
+    margin-bottom:14px; font-family:var(--mono); font-size:13px;
+    line-height:1.45; color:var(--ink);
+  }
+  .s7 .stages li:last-child{margin-bottom:0;}
+  .s7 .close{margin-top:0; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s7 .close b{font-weight:600; color:var(--ink);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s7">
+
+  <h1>Evidence Management</h1>
+
+  <div class="body">
+    <p class="lead">The defining problem in MP-VRDU is <b>evidence management</b>. Performance depends not only on the capability of the backbone, but on how evidence is acquired, preserved, prioritised, and used across the whole pipeline.</p>
+
+    <div class="stages">
+      <div>
+        <h3>Acquired</h3>
+        <p class="q">Turning the document into something the later stages can read at all.</p>
+        <ul>
+          <li>page rendering</li>
+          <li>OCR and PDF parsers</li>
+          <li>element cropping</li>
+          <li>render resolution</li>
+          <li>text-layer extraction</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Preserved</h3>
+        <p class="q">Deciding what survives a fixed token budget once the document will not fit.</p>
+        <ul>
+          <li>per-page summary tokens</li>
+          <li>visual-token compression</li>
+          <li>recurrent memory state</li>
+          <li>sparse cross-page attention</li>
+          <li>structure-aware chunking</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Prioritised</h3>
+        <p class="q">Choosing which of what survives is actually placed before the reasoner.</p>
+        <ul>
+          <li>similarity retrieval</li>
+          <li>structural navigation</li>
+          <li>reranking</li>
+          <li>adjacent-page expansion</li>
+          <li>graph traversal</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Used</h3>
+        <p class="q">Reasoning over what arrives, and going back for more when it is not enough.</p>
+        <ul>
+          <li>prompted reasoning</li>
+          <li>iterative re-retrieval</li>
+          <li>tool calls</li>
+          <li>self-refinement</li>
+          <li>agentic decomposition</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="close">Every architecture in this section is a different answer to the same four questions. <b>What a system can do is fixed by where it makes these decisions.</b></p>
+  </div>
+
+  <div class="corner"><b>07</b> / 25 <span>&middot;</span> Literature</div>
+
+</div>
+</body>
+</html>

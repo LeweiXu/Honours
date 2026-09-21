@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Multi-Page Multimodal Representation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 9 ================= */
+  .s9 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s9 .lead b{font-weight:600; color:var(--ink);}
+  .s9 .mods{display:grid; grid-template-columns:repeat(3,1fr); gap:52px; margin-top:36px;}
+  .s9 .mods h3{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:20px;
+  }
+  .s9 .mods p{
+    position:relative; padding-left:24px; margin-bottom:18px;
+    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
+  }
+  .s9 .mods p::before{
+    content:""; position:absolute; left:0; top:10px;
+    width:9px; height:2px; background:var(--navy);
+  }
+  .s9 .mods p:last-child{margin-bottom:0;}
+  .s9 .mods p b{font-weight:600; color:var(--ink);}
+  .s9 .close{margin-top:34px; font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s9 .close b{font-weight:600; color:var(--ink);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s9">
+
+  <h1>Multi-Page Multimodal Representation</h1>
+
+  <div class="body">
+    <p class="lead">Every evidence decision is enacted over a modality, and its cost depends on how that modality is represented. Each one trades <b>page coverage</b> against <b>reading fidelity</b>.</p>
+
+    <div class="mods">
+      <div>
+        <h3>Text</h3>
+        <p><b>Volume.</b> Text across pages routinely exceeds what the backbone can process, so it is either compressed into a fixed budget before the question is seen, or indexed and retrieved.</p>
+        <p><b>Continuity.</b> Paragraphs, tables, and section context break at page boundaries, and every repair pulls in neighbours by proximity rather than by question.</p>
+      </div>
+      <div>
+        <h3>Visual</h3>
+        <p><b>Resolution.</b> Token cost scales with page count times per-page resolution, forcing a choice between compressing every page and reading a retrieved subset at full fidelity.</p>
+        <p><b>Signal competition.</b> One visual budget must carry text-bearing pixels, figures and charts, and layout cues within the same page.</p>
+      </div>
+      <div>
+        <h3>Cross-page structure</h3>
+        <p><b>Hierarchy and reading order.</b> Sections, lists, and captions span page boundaries, and parser errors propagate into every downstream retrieval step.</p>
+        <p><b>Cross-page references.</b> &ldquo;See Figure 3&rdquo; has to be resolved to its referent on another page, which similarity scoring cannot do.</p>
+      </div>
+    </div>
+
+    <p class="close">Heterogeneity cuts across all three and receives the least attention: <b>text density and visual complexity vary sharply from page to page</b>, yet almost every system applies one fixed budget to the whole document.</p>
+  </div>
+
+  <div class="corner"><b>09</b> / 25 <span>&middot;</span> Literature</div>
+
+</div>
+</body>
+</html>
