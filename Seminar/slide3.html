@@ -61,32 +61,35 @@
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 3 ================= */
-  .s3 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1090px;}
-  .s3 .cols{display:grid; grid-template-columns:1.12fr .88fr; gap:56px; margin-top:32px;}
+  .s3 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1100px;}
+  .s3 .lead b{font-weight:600; color:var(--ink);}
 
-  .s3 .quote{border-left:2px solid var(--navy); padding-left:22px;}
-  .s3 .route{margin-bottom:17px;}
-  .s3 .route:last-of-type{margin-bottom:0;}
-  .s3 .route b{
-    display:block; margin-bottom:5px;
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
+  .s3 .sides{display:grid; grid-template-columns:1fr 1fr; gap:64px; margin-top:38px;}
+  .s3 .sides h3{
+    font-family:var(--disp); font-size:20px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:9px;
   }
-  .s3 .route p{font-size:13.5px; font-weight:300; line-height:1.45; color:var(--ink);}
-  .s3 .attrib{
-    margin-top:20px; font-family:var(--mono); font-size:10.5px;
-    letter-spacing:.04em; color:var(--mute); line-height:1.6;
-  }
+  .s3 .sides .sub{font-size:14px; font-weight:300; line-height:1.45; color:var(--slate); min-height:42px;}
 
-  .s3 .pts > div{margin-bottom:26px;}
-  .s3 .pts h3{
-    font-family:var(--disp); font-size:16px; font-weight:600;
-    letter-spacing:-.01em; margin-bottom:7px;
+  .s3 ul{list-style:none; margin-top:20px;}
+  .s3 ul li{
+    position:relative; padding-left:24px; margin-bottom:15px;
+    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
   }
-  .s3 .pts p{font-size:14px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s3 ul li::before{
+    content:""; position:absolute; left:0; top:10px;
+    width:9px; height:2px; background:var(--navy);
+  }
+  .s3 ul li b{font-weight:600; color:var(--ink);}
 
-  .s3 .close{margin-top:30px; font-size:16.5px; font-weight:300; line-height:1.5;}
-  .s3 .close strong{font-weight:600;}
+  .s3 .egs{
+    margin-top:20px; font-family:var(--mono); font-size:12px;
+    letter-spacing:.04em; color:var(--navy);
+  }
+  .s3 .egs span{color:var(--mute); padding:0 7px;}
+
+  .s3 .close{margin-top:38px; font-size:16.5px; font-weight:300; line-height:1.5; max-width:1120px;}
+  .s3 .close b{font-weight:600;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -104,38 +107,33 @@
   <h1>General-Domain MLLMs and VRDU</h1>
 
   <div class="body">
-    <p class="lead">Frontier general-domain MLLMs read a rendered page directly from pixels and handle single-page and short multi-page inputs reliably when resolution is sufficient. Even so, the products built on them rarely rely on page images alone.</p>
+    <p class="lead">VRDU long predates general-domain MLLMs; what has changed is that those models now sit at the centre of it. Closed-source assistants have steadily absorbed VRDU techniques into their products, while open-weight models carry the same techniques to documents that cannot leave the premises.</p>
 
-    <div class="cols">
-      <div class="quote">
-        <div class="route">
-          <b>Directly in context</b>
-          <p>&ldquo;The full extracted text, plus page images for PDFs within the visual limits, is loaded into my context. I see all of it, with no retrieval step.&rdquo;</p>
-        </div>
-        <div class="route">
-          <b>On disk, via file tools</b>
-          <p>&ldquo;The content isn't in my context yet. I read it on demand, either the whole thing [&hellip;] or selectively [&hellip;]. That's my choice per task.&rdquo;</p>
-        </div>
-        <div class="route">
-          <b>Retrieval</b>
-          <p>&ldquo;This only applies to Projects, where knowledge that exceeds the context window is indexed and I search it rather than ingest it.&rdquo;</p>
-        </div>
-        <div class="attrib">Claude, asked how it handles an uploaded PDF.<br>Lightly elided; emphasis in the labels is mine.</div>
+    <div class="sides">
+      <div>
+        <h3>Closed-source products</h3>
+        <p class="sub">Three routes cover most of what a consumer assistant does with an uploaded document.</p>
+        <ul>
+          <li><b>Read it whole.</b> Parse the PDF for text, render it to per-page images, and place both in the context window.</li>
+          <li><b>Read it on demand.</b> The file stays on disk, and tool calls extract or search particular pages.</li>
+          <li><b>Retrieve over it.</b> Content beyond the context window is indexed and searched rather than ingested.</li>
+        </ul>
+        <div class="egs">ChatGPT <span>&middot;</span> Claude <span>&middot;</span> Gemini <span>&middot;</span> NotebookLM</div>
       </div>
 
-      <div class="pts">
-        <div>
-          <h3>Already a document pipeline</h3>
-          <p>In their web interfaces and coding agents, both Anthropic and OpenAI parse an uploaded PDF for text and render it to per-page images, placing both in the model's context. That is a document-specialised pipeline, albeit a very simple one.</p>
-        </div>
-        <div>
-          <h3>Its limits arrive quickly</h3>
-          <p>Uploading a large document or several smaller ones soon fills the context window, and more complex document types often fail to be read at all.</p>
-        </div>
+      <div>
+        <h3>Open-weight models, on premises</h3>
+        <p class="sub">Much document work involves material that cannot be sent to a third party at all.</p>
+        <ul>
+          <li><b>Documents that cannot leave.</b> Medical records, legal and financial filings, and mining and resources data.</li>
+          <li><b>The same pipelines, local weights.</b> Open-weight backbones rebuilt behind the firewall rather than called over an API.</li>
+          <li><b>Hardware is the binding constraint.</b> Quantisation, retrieval, and page selection do the work the context window cannot.</li>
+        </ul>
+        <div class="egs">Qwen3-VL <span>&middot;</span> Gemma <span>&middot;</span> InternVL</div>
       </div>
     </div>
 
-    <p class="close">The frontier is how general-domain MLLMs can be leveraged, together with the machinery built around them, to answer questions over documents the backbone <strong>cannot process directly</strong>. That machinery is the subject of MP-VRDU.</p>
+    <p class="close">Both are document-understanding pipelines. The frontier is how these backbones can be leveraged, together with the machinery built around them, to answer questions over documents they <b>cannot process directly</b>.</p>
   </div>
 
   <div class="corner"><b>03</b> / 24 <span>&middot;</span> Background</div>
