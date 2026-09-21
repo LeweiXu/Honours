@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP-VRDU — Other Challenges</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFCFD;
+    --ink:#16222E;
+    --slate:#5A6B7B;
+    --line:#DCE4EC;
+    --amber:#C97B3C;
+
+    /* blue ramp, core -> outer */
+    --b1:#1E3A5F;
+    --b2:#2E5C8A;
+    --b3:#5A8BB8;
+    --b4:#9FC1DD;
+    --core:#16222E;
+
+    --disp:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#c9d1da;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:grid; grid-template-rows:auto 1fr auto;
+    box-shadow:0 24px 60px rgba(22,34,46,.22);
+  }
+
+  /* faint blueprint grid in the background */
+  .slide::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(30,58,95,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30,58,95,.035) 1px, transparent 1px);
+    background-size:40px 40px;
+    mask-image:linear-gradient(to bottom, transparent, #000 20%, #000 85%, transparent);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding:38px 56px 20px; border-bottom:1px solid var(--line);
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--amber); font-weight:500;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:40px;
+    letter-spacing:-.02em; line-height:1;
+  }
+
+  /* ---------- BODY ---------- */
+  .body{
+    display:grid; grid-template-columns:1.15fr .85fr;
+    align-items:center; padding:6px 56px 0;
+    position:relative; z-index:2;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    display:flex; align-items:center; justify-content:flex-end;
+    padding:16px 56px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--slate);
+    letter-spacing:.04em; position:relative; z-index:2;
+  }
+  footer .dot{color:var(--amber); margin:0 10px;}
+  footer b{color:var(--ink); font-weight:600;}
+
+  /* ================= SLIDE 5 — open challenges ================= */
+  .bodyCh{
+    display:flex; flex-direction:column; justify-content:center; gap:14px;
+    padding:6px 56px 0; position:relative; z-index:2;
+  }
+  .chsec{display:flex; align-items:center; gap:14px;}
+  .chsec span{
+    font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--slate); white-space:nowrap;
+  }
+  .chsec i{flex:1; height:1px; background:var(--line);}
+  .chsec b{
+    font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+    color:var(--amber); font-weight:500;
+  }
+
+  .chrow{display:grid; gap:22px; margin-bottom:8px;}
+  .chrow.three{grid-template-columns:repeat(3,1fr);}
+  .chrow.two{grid-template-columns:repeat(2,1fr);}
+
+  .chcard{
+    border:1px solid var(--line); background:#fff; padding:17px 18px;
+    display:flex; gap:16px; align-items:flex-start;
+  }
+  .chcard .tx b{
+    display:block; font-family:var(--disp); font-size:16px; font-weight:600;
+    letter-spacing:-.01em; margin-bottom:6px;
+  }
+  .chcard .tx span{
+    display:block; font-size:13px; line-height:1.42; color:var(--slate);
+  }
+  .chcard .tx em{font-style:normal; color:var(--ink); font-weight:600;}
+
+  /* small figure marks, all built from rectangles */
+  .gl{width:46px; height:46px; flex:none; position:relative;}
+  .gl u{display:block; text-decoration:none; position:absolute;}
+
+  /* 1 · everything must squeeze through one budget */
+  .g1 u{height:6px; left:50%; transform:translateX(-50%);}
+  .g1 .a{top:6px;  width:46px; background:var(--b4);}
+  .g1 .b{top:18px; width:28px; background:var(--b3);}
+  .g1 .c{top:30px; width:12px; background:var(--amber);}
+
+  /* 2 · the answer is produced even when the evidence is missing */
+  .g2 .p{left:3px; top:2px; width:30px; height:42px; border:1px solid var(--b3);}
+  .g2 .r{left:8px; width:20px; height:2px; background:var(--b4);}
+  .g2 .r1{top:8px;} .g2 .r2{top:14px;}
+  .g2 .m{left:8px; top:22px; width:20px; height:14px; border:1px dashed var(--amber);}
+  .g2 .k{left:36px; top:18px; width:8px; height:8px; background:var(--b1);}
+
+  /* 3 · cost climbs with every extra call */
+  .g3 u{bottom:6px; width:6px; background:var(--b3);}
+  .g3 .b1{left:2px;  height:10px;}
+  .g3 .b2{left:12px; height:18px;}
+  .g3 .b3{left:22px; height:26px;}
+  .g3 .b4{left:32px; height:34px; background:var(--amber);}
+
+  /* 4 · the fine-tuning pool and the benchmark pool overlap */
+  .g4 .s1{left:1px;  top:8px; width:28px; height:28px; background:var(--b4);}
+  .g4 .s2{left:17px; top:8px; width:28px; height:28px; border:1px solid var(--amber); background:rgba(201,123,60,.10);}
+
+  /* 5 · the final answer is scored, the path to it is not */
+  .g5 .o{left:2px;  top:10px; width:20px; height:24px; background:var(--b1);}
+  .g5 .h{left:26px; top:10px; width:18px; height:24px; border:1px dashed var(--slate);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{ box-shadow:none; width:1280px; height:720px; page-break-after:always; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <header>
+    <div>
+      <div class="eyebrow">§8 · What is still open</div>
+      <h1>Other Challenges</h1>
+    </div>
+  </header>
+
+  <div class="bodyCh">
+
+    <div class="chsec"><span>System capability</span><i></i><b>three of five</b></div>
+    <div class="chrow three">
+
+      <div class="chcard">
+        <div class="gl g1"><u class="a"></u><u class="b"></u><u class="c"></u></div>
+        <div class="tx">
+          <b>Evidence pipeline</b>
+          <span>High-resolution page reading and document-scale aggregation <em>exceed any one budget</em>. Every family buys the trade with a different loss.</span>
+        </div>
+      </div>
+
+      <div class="chcard">
+        <div class="gl g2"><u class="p"></u><u class="r r1"></u><u class="r r2"></u><u class="m"></u><u class="k"></u></div>
+        <div class="tx">
+          <b>Faithfulness &amp; abstention</b>
+          <span>When retrieval misses, systems still <em>answer confidently</em>. Few abstain, report calibrated uncertainty, or cite the page.</span>
+        </div>
+      </div>
+
+      <div class="chcard">
+        <div class="gl g3"><u class="b1"></u><u class="b2"></u><u class="b3"></u><u class="b4"></u></div>
+        <div class="tx">
+          <b>Efficiency &amp; deployability</b>
+          <span>Agentic pipelines issue tens of LLM calls per question, yet <em>latency and cost curves are almost never reported</em>.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chsec"><span>Data &amp; evaluation</span><i></i><b>two of five</b></div>
+    <div class="chrow two">
+
+      <div class="chcard">
+        <div class="gl g4"><u class="s1"></u><u class="s2"></u></div>
+        <div class="tx">
+          <b>Supervision scarcity &amp; contamination</b>
+          <span>Per-page annotation does not scale, so supervision is LVLM-synthesised, and benchmarks are built from <em>the same small pool of PDFs</em> that fine-tuning draws on.</span>
+        </div>
+      </div>
+
+      <div class="chcard">
+        <div class="gl g5"><u class="o"></u><u class="h"></u></div>
+        <div class="tx">
+          <b>Evaluation methodology &amp; scope</b>
+          <span>Answer-only accuracy <em>hides retrieval failure</em> and rewards right answers reached by wrong reasoning. Task, language and domain scope stay narrow.</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer>
+    <div><b>05</b> / 06<span class="dot">·</span>Other Challenges</div>
+  </footer>
+
+</div>
+</body>
+</html>

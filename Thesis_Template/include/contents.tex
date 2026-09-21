@@ -1,0 +1,51 @@
+% ============================================================================
+%  Table of contents, list of figures, list of tables.
+%
+%  LoF and LoT get their own TOC entries; the Abstract entry is added over in
+%  main.tex (it is written without a page number, which is why it isn't a
+%  plain \addcontentsline).
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+%  Short entries in the List of Figures / List of Tables.
+%
+%  Captions are often two or three sentences, which makes for unreadable LoF
+%  and LoT entries. This hook makes \caption{...} list only its FIRST sentence,
+%  while the full caption still prints under the float. So
+%
+%      \caption{A short caption. Single-line captions are centred.}
+%
+%  prints in full below the figure but lists as "A short caption."
+%
+%  Write \caption[a hand-written short form]{the long one} whenever you want to
+%  override this; an explicit optional argument is always left alone.
+%
+%  Sentences are split on "full stop followed by a space", so decimals such as
+%  0.5 are safe. A caption with no full stop at all is listed whole.
+% ----------------------------------------------------------------------------
+\makeatletter
+\def\Thesis@firstsentence#1. #2\@nil{#1\unskip.}
+\newcommand{\ThesisFirstSentence}[1]{\Thesis@firstsentence#1 . \@nil}
+\makeatother
+
+\let\ThesisFullCaption\caption
+\RenewDocumentCommand{\caption}{s o m}{%
+  \IfBooleanTF{#1}%
+    {\ThesisFullCaption*{#3}}%
+    {\IfNoValueTF{#2}%
+       {\ThesisFullCaption[\ThesisFirstSentence{#3}]{#3}}%
+       {\ThesisFullCaption[#2]{#3}}}%
+}
+
+\tableofcontents
+\clearpage
+
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\clearpage
+
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\clearpage

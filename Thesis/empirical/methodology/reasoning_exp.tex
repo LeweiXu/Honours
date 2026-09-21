@@ -1,0 +1,24 @@
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}
+  >{\raggedright\arraybackslash}p{2.7cm}
+  >{\raggedright\arraybackslash}p{3.0cm}
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Mechanism} & \textbf{Question pool} & \textbf{Experimental condition} \\
+\midrule
+\textbf{Evidence integration}
+& Answerable questions
+& Compare questions whose annotated evidence is contained on a single page with questions requiring evidence across multiple pages; all annotated evidence pages are supplied. \\
+\midrule
+\textbf{Response calibration}
+& Answerable and unanswerable questions
+& Compare responses when sufficient evidence is available with responses when the supplied context does not support an answer, measuring both unsupported answers and false abstentions. \\
+\bottomrule
+\end{tabularx}
+\caption{Reasoning attribution experiments. Representation and selection failures are controlled by supplying the relevant evidence directly to the reasoner.}
+\label{tab:reasoning_experiments}
+\end{table}

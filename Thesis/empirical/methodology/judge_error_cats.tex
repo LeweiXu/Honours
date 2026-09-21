@@ -1,0 +1,24 @@
+\begin{table}[h]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Category} & \textbf{Assigned when} \\
+\midrule
+\texttt{insufficient\_evidence} & The response declines: the evidence does not support an answer. \\
+\texttt{no\_answer\_reached} & It reasons but never commits, trailing off or stopping mid-calculation. \\
+\texttt{answered\_unanswerable} & The question is unanswerable and a substantive answer is given. \\
+\texttt{equivocal} & The gold answer is present but not committed to. \\
+\texttt{wrong\_count} & A "how many" question is answered with a different count. \\
+\texttt{wrong\_value} & A non-count numeric answer differs from the gold value. \\
+\texttt{wrong\_entity} & A non-numeric answer names a different thing. \\
+\texttt{incomplete\_list} & The gold answer is a set and the response gives a subset. \\
+\texttt{over\_inclusive\_list} & The response includes items the gold answer does not. \\
+\texttt{unit\_or\_format\_mismatch} & The same quantity in a non-matching unit, scale or granularity. \\
+\texttt{other} & None of the above. \\
+\bottomrule
+\end{tabular}
+\caption{The error taxonomy in judge priority order. The first category that fits an incorrect response is the one it receives, so the categories partition the incorrect responses in each condition.}
+\label{tab:error_taxonomy}
+\end{table}

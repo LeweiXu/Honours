@@ -1,0 +1,32 @@
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Method} & \textbf{Reasoner} & \textbf{MMLongBench-Doc} & \textbf{LongDocURL} \\
+\midrule
+M3DocRAG~\cite{cho2024m3docrag}
+    & Qwen2-VL-7B & 31.4 & -- \\
+
+MoLoRAG+~\cite{wu2025molorag}
+    & Qwen2.5-VL-7B & 41.01 & 57.57 \\
+
+MM-Doc-R1~\cite{lin2026mm}
+    & Qwen3-8B & 49.7 & -- \\
+
+SLEUTH~\cite{liu2025resolving}
+    & Qwen3-VL-8B & 52.77 & 59.49 \\
+
+\midrule
+SimpleDoc~\cite{jain2025simpledoc}
+    & 30--32B class & 60.58 & 72.30 \\
+
+\midrule
+\textbf{Ours}
+    & Qwen3-VL-32B, 4-bit & \textbf{PENDING} & \textbf{PENDING} \\
+\bottomrule
+\end{tabular}
+\caption[Accuracy of representative methods compared to ours]{Accuracy (\%) of representative retrieval-augmented and adaptive-trajectory methods on MMLongBench-Doc and LongDocURL. Most comparison methods use approximately 7--8B reasoners; SimpleDoc is included as a stronger-capacity reference.}
+\label{tab:adaptive_trajectory_comparison}
+\end{table}

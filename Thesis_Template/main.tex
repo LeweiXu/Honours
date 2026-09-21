@@ -1,0 +1,237 @@
+% ============================================================================
+%  UWA CS honours dissertation -- template
+%
+%  Engine: pdflatex + bibtex. NOT biber. Build order is
+%      pdflatex -> bibtex -> pdflatex -> pdflatex
+%  (Overleaf's latexmk does this for you.)
+%
+%  Paths are root-relative (\input{Thesis_Template/...}), which is how the rest
+%  of this repo works: everything compiles from the project root, and on
+%  Overleaf this folder sits at the top level with main.tex set as the main
+%  document. Locally, from the repo root:
+%
+%      export TEXINPUTS=".:./Thesis_Template:"
+%      export BSTINPUTS=".:./Thesis_Template:"
+%      pdflatex -interaction=nonstopmode Thesis_Template/main.tex
+%      bibtex main
+%      pdflatex -interaction=nonstopmode Thesis_Template/main.tex
+%      pdflatex -interaction=nonstopmode Thesis_Template/main.tex
+%
+%  All the styling lives in include/packages.tex. The prose lives here;
+%  figures, tables and the cover are pulled in from their own files.
+%
+%  twoside gives alternating running heads; openany stops chapters being
+%  forced onto odd pages (no blank filler pages).
+% ============================================================================
+\documentclass[11pt,twoside,openany]{report}
+
+\input{Thesis_Template/include/packages.tex}
+
+%  Helper for unnumbered chapters (References and friends): starts a page,
+%  sets the heading, puts it in the TOC, and fixes the running head, which
+%  \chapter* would otherwise leave showing the previous chapter.
+\newcommand{\unnumberedchapter}[1]{%
+  \chapter*{#1}%
+  \phantomsection\addcontentsline{toc}{chapter}{#1}%
+  \markboth{\MakeUppercase{#1}}{}%
+}
+
+\begin{document}
+
+% ============================================================================
+%  Cover
+% ============================================================================
+\input{Thesis_Template/include/title.tex}
+
+% ============================================================================
+%  Front matter
+%  Abstract is unnumbered, then roman numerals start at the acknowledgments.
+% ============================================================================
+\pagestyle{plain}
+
+\section*{Abstract}
+\thispagestyle{empty}
+%  Listed in the contents without a page number, which is why this is a raw
+%  \contentsline rather than \addcontentsline.
+\addtocontents{toc}{\protect\contentsline{chapter}{Abstract}{}{}}
+
+Say what the problem is, why it matters, and what you did about it, in three
+paragraphs or so. This one is filler.
+
+\lipsum[1]
+
+\lipsum[2]
+
+\clearpage
+\pagenumbering{roman}
+
+\section*{Acknowledgments}
+
+Thank your supervisors, your unit coordinator, and anyone else who helped.
+
+\lipsum[3]
+
+\clearpage
+
+% ---- contents, list of figures, list of tables -----------------------------
+\input{Thesis_Template/include/contents.tex}
+
+% ============================================================================
+%  Body
+% ============================================================================
+\pagenumbering{arabic}
+\pagestyle{fancy}
+
+\chapter{Introduction and Background}
+
+Open with the problem. This chapter exists mainly to exercise every heading
+level, so it has a section, a subsection and a subsubsection under it, and it
+cites things~\citep{smith2024example} so you can see the citation colour.
+
+\lipsum[4]
+
+\section{Research Questions}
+
+Sections are set at 16pt bold. Everything below is filler so you can see how a
+justified paragraph at 1.1 line spacing sits inside a 16cm text
+block~\citep{lee2023conference,garcia2022book}.
+
+\lipsum[5]
+
+The questions this project addresses are:
+
+\begin{enumerate}[itemsep=0.5ex]
+  \item Does the first thing work the way the literature claims it does?
+  \item Does the second thing generalise beyond the setting it was built for?
+  \item What happens when you combine them?
+\end{enumerate}
+
+\subsection{Scope}
+
+Subsections are 14pt bold.
+
+\lipsum[6]
+
+\subsubsection{Out of Scope}
+
+Subsubsections are 12pt bold, and are still numbered.
+
+\lipsum[7]
+
+\section{Thesis Outline}
+
+\lipsum[8]
+
+% ============================================================================
+\chapter{Literature Review}
+
+This chapter carries the figures and tables so you can check float placement,
+caption style and the two lists at the front.
+
+\lipsum[9]
+
+\input{Thesis_Template/figures/example_figure.tex}
+
+\section{Prior Work}
+
+Figure~\ref{fig:example} is referenced here, which is what colours the
+cross-reference blue. Citations~\citep{chen2025preprint} are teal instead.
+
+\lipsum[10]
+
+\input{Thesis_Template/tables/example_table.tex}
+
+Table~\ref{tab:example} shows the usual booktabs treatment: no vertical rules,
+and nothing but the three booktabs rules.
+
+\lipsum[11]
+
+\section{Method Families}
+
+\input{Thesis_Template/figures/example_diagram.tex}
+
+\lipsum[12]
+
+% ============================================================================
+\chapter{Methodology}
+
+Maths is deliberately left in Computer Modern while the text is Times, so an
+inline $f(x) = \sigma(Wx + b)$ and a display
+
+\begin{equation}
+  \mathcal{L}(\theta) = -\frac{1}{N} \sum_{i=1}^{N}
+    \left[ y_i \log \hat{y}_i + (1 - y_i) \log (1 - \hat{y}_i) \right]
+  \label{eq:bce}
+\end{equation}
+
+both look like this. Equation~\eqref{eq:bce} is the usual binary cross-entropy.
+
+\lipsum[13]
+
+\section{Data}
+
+\lipsum[14]
+
+\section{Experimental Setup}
+
+\lipsum[15]
+
+% ============================================================================
+\chapter{Results and Discussion}
+
+\lipsum[16]
+
+\section{Main Results}
+
+\lipsum[17]
+
+\section{Ablations}
+
+\lipsum[18]
+
+% ============================================================================
+\chapter{Conclusions and Future Work}
+
+\lipsum[19]
+
+\section{Future Work}
+
+\lipsum[20]
+
+% ============================================================================
+%  References
+% ============================================================================
+\unnumberedchapter{References}
+\bibliography{Thesis_Template/references}
+
+% ============================================================================
+%  Appendices
+% ============================================================================
+\appendix
+%  \appendix switches \chaptertitlename to "Appendix" and the numbering to
+%  letters, so these render as "Appendix A / Title" in the same style as the
+%  chapters.
+\chapter{Additional Results}
+
+\lipsum[21]
+
+\begin{table}[htbp]
+  \centering
+  \caption{An appendix table.}
+  \label{tab:appendix-example}
+  \begin{tabular}{lrr}
+    \toprule
+    Run & Seed & Accuracy \\
+    \midrule
+    1 & 11 & 0.831 \\
+    2 & 22 & 0.839 \\
+    3 & 33 & 0.837 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\chapter{Implementation Details}
+
+\lipsum[22]
+
+\end{document}

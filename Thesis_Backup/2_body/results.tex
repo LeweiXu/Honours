@@ -1,0 +1,99 @@
+To evaluate the outcomes of each training configuration, two categories of metrics were used: stability metrics and performance metrics.
+
+Training stability was assessed using several indicators derived from the reinforcement learning process. Entropy measured the randomness of the policy’s actions, where a stable trajectory begins with higher entropy and gradually decreases as the policy converges. Policy loss reflected how much the policy changed during updates. Value loss quantified the accuracy of the critic’s return estimates, where consistent downward trends indicate reliable value prediction. KL divergence measured the deviation between the policy and the reference model, maintaining a small and relatively constant KL value is critical to prevent abrupt policy shifts. Finally, average reward tracked the learning progress over time, with smooth, upward trends representing steady optimization.
+
+Retrieval performance was evaluated using Recall@50, which measures the proportion of ground-truth relevant documents retrieved within the top 50 results. This metric captured how effectively each trained policy improved query formulation and retrieval coverage. It also ensured that improvements in stability and training dynamics translated into measurable gains in retrieval quality.
+
+The initial training run revealed severe instability in the PPO optimization process using Qwen2-0.5B-Instruct as the policy model. Although the model quickly learned to produce shorter queries as intended, nearly every indicator of training stability deteriorated over time. Shown in Figure~\ref{fig:fig7}, the KL divergence fluctuated erratically, with repeated negative values and extreme spikes exceeding 200. These oscillations showed that the policy was deviating drastically from its reference distribution, suggesting that the adaptive KL control mechanism was failing to constrain updates. Simultaneously, both policy and value losses exhibited violent spikes, with the value loss reaching magnitudes above 3000 midway through training. This indicated that the critic was unable to track the fast changing reward dynamics, producing unreliable advantage estimates that further destabilized policy optimization. Entropy, which measures exploration, also collapsed rapidly, causing the model to become overly deterministic and lose the ability to explore alternative strategies. The clip fraction remained high throughout training, between 0.2 and 0.4, implying that a large portion of policy updates were being truncated by PPO’s clipping mechanism. Together, these patterns painted a consistent picture: the learning rate and reward gradient were too aggressive, leading to unstable optimization, erratic policy shifts, and loss of exploration.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/first_training.png}
+    \caption{Initial PPO training}
+    \label{fig:fig7}
+\end{figure}
+
+Given that the clip fraction was consistently high, we hypothesized that the magnitude of the reward signal itself might be contributing to these unstable updates. Large rewards can increase gradient magnitude and cause excessive policy movement away from the reference model, even when clipping is applied. To test this, we ran an experiment identical to the first in every respect except that the reward was scaled down by a factor of ten. The idea was that smaller rewards would produce gentler gradients, reducing the effective policy update size and potentially yielding more stable behavior. However, the results showed that this adjustment had virtually no effect on stability. All instability patterns, including KL spikes, negative KL values, value loss explosions, and entropy collapse reappeared in almost identical form, shown in Figure~\ref{fig:fig8}. Even with the smaller reward scale, KL divergence still surged above 250 and entropy again fell to near zero within a few hundred steps. The policy continued to behave erratically, and the total loss remained dominated by large oscillations throughout training.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/reward_scale.png}
+    \caption{Reward scale down to 0.1}
+    \label{fig:fig8}
+\end{figure}
+
+After confirming that scaling the reward was ineffective, the next experiment adjusted the learning rate to evaluate its influence on training dynamics. The learning rate was reduced by an order of magnitude, from $10^{-5}$ to $10^{-6}$, while all other parameters remained constant. This change produced a clear improvement in stability. The Figure~\ref{fig:fig9} shows that the KL divergence values stayed within a narrow range, and the large loss spikes observed previously were eliminated. The value loss decreased substantially and followed a smooth, consistent trajectory, while entropy declined more gradually, indicating sustained exploration. The overall training process became steady and reproducible, with all key metrics showing much more controlled behavior. However, the average reward plateaued early in training and showed minimal improvement over time, suggesting that learning progress was slower. In summary, lowering the learning rate stabilized the optimization process and removed major instabilities but also reduced the rate of policy improvement.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/learing_rate.png}
+    \caption{Learning rate: $10^{-5}$ vs $5*10^{-6}$ vs $10^{-6}$}
+    \label{fig:fig9}
+\end{figure}
+
+The next stage of experimentation focused on improving learning efficiency while preserving the stability achieved with the lower learning rate. Two modifications were tested: decreasing the KL penalty coefficient and increasing the number of PPO epochs. In the first case, reducing the KL coefficient from 1.0 to 0.1 allowed the policy to deviate further from the reference model, resulting in slightly higher entropy values and greater exploration. However, the average reward remained mostly unchanged. The KL divergence range widened, reaching lower negative values, but training remained stable overall.
+
+Increasing the number of PPO epochs from one to two produced smoother optimization behavior. The KL divergence became more stable, the value loss remained low, and the policy loss decreased to -0.02 but followed a consistent pattern throughout training. Despite these improvements in stability, the reward curve remained largely flat, indicating limited learning progress. Overall, both reducing the KL penalty and increasing PPO epochs modified the training dynamics and exploration behavior but did not lead to a noticeable improvement in task performance.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/epochs_kl.png}
+    \caption{ppo epochs: 2 vs kl coef: 0.1 vs ppo epoch: 1 and kl coef: 1}
+    \label{fig:fig10}
+\end{figure}
+
+When the policy model was switched from Qwen2-0.5B to LLaMA 3.2-3B, the overall training dynamics changed noticeably. As shown in Figure~\ref{fig:fig11}, the larger model achieved consistently higher average rewards throughout training, indicating stronger baseline performance under the same hyperparameter settings. The reward curve, however, remained relatively flat, showing that learning progress over time was still limited. The KL divergence stabilized around zero and exhibited minimal variation, suggesting that policy updates were small and controlled. Value loss stayed consistently low, following a smooth trajectory, while entropy values remained steady after an initial drop. Overall, the training process with LLaMA 3.2-3B was considerably more stable than with Qwen2-0.5B, with reduced oscillations and smoother metric trends across all monitored indicators.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/model_size.png}
+    \caption{Qwen2-0.5B vs Llama-3.2-3B}
+    \label{fig:fig11}
+\end{figure}
+
+From a stability perspective, the training process became markedly steadier. Unlike the strong KL fluctuations observed with Qwen2-0.5B, LLaMA 3.2-3B maintained a stable KL value close to zero throughout training. The value loss remained low and stable across all updates, indicating reliable critic performance. Entropy stayed nearly constant after early decay, reflecting a deterministic but consistent policy. Overall, the larger model exhibited smoother optimization behavior, reduced oscillations, and more stable training metrics, suggesting that increased model capacity contributed to improved stability under the same training configuration.
+
+When switching from PPO to GRPO with the LLaMA 3.2 3B policy model and using the combined format + recall reward, the training dynamics improved substantially in both stability and learning efficiency. As shown in Figure~\ref{fig:fig12}, GRPO maintained a consistently smooth optimization process, with all major indicators: entropy, loss, reward, and KL divergence evolving in a controlled manner throughout the run. The entropy decreased gradually from about 0.5 to 0.1, indicating that the model progressively learned to generate more consistent Boolean-style queries. This reflects effective optimization of the format reward, which stabilized early in training. The KL divergence rose moderately during the initial updates before settling around 1.0 to 1.2, suggesting balanced exploration without the large fluctuations previously observed in PPO.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/grpo.png}
+    \caption{GRPO training}
+    \label{fig:fig12}
+\end{figure}
+
+The recall component of the reward improved more slowly and showed smaller gains, but the overall average reward increased steadily and stabilized after initial fluctuations. This indicates that GRPO encouraged more reliable learning dynamics while maintaining steady policy updates. Compared with PPO, GRPO achieved faster convergence, reduced oscillations, and smoother metric trajectories, demonstrating better learning efficiency and training stability under the same conditions.
+
+In addition to stability analysis, training performance was evaluated using Recall@50. Performance varied notably across reward formulations, models, and algorithms. Under PPO, shown by Table~\ref{tab:tab1}, both Qwen2-0.5B and LLaMA 3.2-3B achieved no measurable improvement when trained with the simple query length or format rewards, indicating that structural optimization alone does not translate to better retrieval outcomes. However, when trained with the combined format + recall reward, performance increased substantially, with LLaMA 3.2-3B achieving a Recall@50 of 3.17 compared to 1.89 for Qwen2-0.5B. Further gains were observed when switching to GRPO. Table~\ref{tab:tab2} shows that both models achieved higher recall, and LLaMA 3.2-3B under GRPO reached the best overall score of 5.29, more than double that of PPO with the same model. These results demonstrate that both larger model capacity and algorithm choice significantly influence retrieval performance, with GRPO providing the most effective optimization across all configurations.
+
+\begin{table}[ht]
+    \centering
+    \caption{Performance of PPO Training using different reward and different models}
+    \label{tab:tab1}
+    \begin{tabular}{|l|c|c|}
+        \hline
+        & Qwen2-0.5B-Instruct & Llama-3.2-3B-Instruct \\
+        \hline
+        Query Length & 0.00 & 0.00 \\
+        \hline
+        Format & 0.00 & 0.18 \\
+        \hline
+        Format + Recall & 1.89 & 3.17 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \caption{Comparison of PPO and GRPO Performance}
+    \label{tab:tab2}
+    \begin{tabular}{|l|c|c|}
+        \hline
+        & PPO & GRPO \\
+        \hline
+        Qwen2-0.5B-Instruct & 1.89 & 3.46 \\
+        \hline
+        Llama-3.2-3B-Instruct & 3.17 & 5.29 \\
+        \hline
+    \end{tabular}
+\end{table}

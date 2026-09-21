@@ -1,0 +1,265 @@
+% ─────────────────────────────────────────────────────────────────────────────
+% MP-VRDU Survey Taxonomy Figure
+%
+% Required packages (add to your preamble if not already present):
+%   \usepackage{tikz}
+%   \usepackage{forest}
+%   \usepackage{xcolor}
+%   \usepackage{adjustbox}
+%   \usetikzlibrary{arrows.meta}
+% ─────────────────────────────────────────────────────────────────────────────
+
+% ── Column widths — edit these to resize boxes per column. ───────────────────
+% If the text exceeds the width, it will wrap onto a second (or third) line.
+\newcommand{\TaxRootWidth}{34mm}
+\newcommand{\TaxSectionWidth}{22mm}
+\newcommand{\TaxSubsectionWidth}{42mm}
+\newcommand{\TaxIdeaWidth}{32mm}
+\newcommand{\TaxLeafWidth}{42mm}
+
+
+% ── Spacing parameters. ──────────────────────────────────────────────────────
+% \TaxEdgeStub: length of the horizontal stub leaving each parent box before
+% the edge turns vertical. Increase if the perpendicular gap looks too small.
+\newcommand{\TaxLevelSep}{14pt}
+\newcommand{\TaxSiblingSep}{1.2pt}
+\newcommand{\TaxEdgeStub}{6pt}
+
+% ── Colours — edit to recolour the figure. ───────────────────────────────────
+\definecolor{nodebg}{HTML}{E8E8E8}
+\definecolor{leafbg}{HTML}{D6E6F4}
+
+\begin{figure*}[p]
+\centering
+\begin{adjustbox}{max totalsize={\textwidth}{0.92\textheight},center}
+\begin{forest}
+  for tree={
+    grow'=east,
+    parent anchor=east,
+    child anchor=west,
+    anchor=west,
+    align=left,
+    edge={-{Stealth[length=3pt]}, thin, gray!55},
+    edge path={
+      \noexpand\path[\forestoption{edge}]
+        (!u.parent anchor) -- +(\TaxEdgeStub,0) |- (.child anchor)\forestoption{edge label};
+    },
+    l sep=\TaxLevelSep,
+    s sep=\TaxSiblingSep,
+    font=\scriptsize,
+    rounded corners=2pt,
+    draw=gray!50,
+    inner sep=2.5pt,
+    inner xsep=4pt,
+    fill=nodebg,
+  },
+  % Root: rotated 90° banner. parent anchor=south puts the outgoing edge on
+  % the visible east of the rotated box, so the line does not overlap the box.
+  where level=0{
+    font=\small\bfseries,
+    align=center,
+    rotate=90,
+    anchor=center,
+    parent anchor=south,
+    text width=\TaxRootWidth,
+  }{},
+  % Section column.
+  where level=1{font=\scriptsize\bfseries, text width=\TaxSectionWidth, align=left}{},
+  % Subsection column.
+  where level=2{text width=\TaxSubsectionWidth, align=left}{},
+  % Idea column (level 3 non-leaf; level-3 leaves in §7/§8 fall through to leaf rule below).
+  where level=3{text width=\TaxIdeaWidth, align=left}{},
+  % Leaf rule comes LAST so it overrides any level-specific width above.
+  % Applies to every node with no children (level 4 in §3–§6, level 3 in §7/§8).
+  where n children=0{
+    tier=leafrow,
+    fill=leafbg,
+    font=\tiny,
+    text width=\TaxLeafWidth,
+    align=left,
+  }{},
+  [MP-VRDU Taxonomy
+    %% ── §3 Architecture ───────────────────────────────────────────────────
+    [§\ref{sec:architecture}~Architecture
+      [§\ref{sec:arch-p2d}~Page-to-Document
+        [Summary tokens
+          [{Hi-VT5~\cite{tito2023hierarchical}}]
+        ]
+        [Cross-page attention
+          [{Arctic-TILT~\cite{borchmann2025arctic}, GRAM~\cite{blau2024gram}}]
+        ]
+        [Recurrent state
+          [{RM-T5~\cite{dong2024multi}}]
+        ]
+      ]
+      [§\ref{sec:arch-mllm}~MLLM-Centric
+        [Lightweight projector
+          [{InstructDoc~\cite{tanaka2024instructdoc}, LayTokenLLM~\cite{zhu2025simple}}]
+        ]
+        [Token compression
+          [{mPLUG-DocOwl2~\cite{hu2025mplug}, Texthawk2~\cite{yu2024texthawk2}}]
+        ]
+        [Backbone fine-tuning
+          [{Docopilot~\cite{duan2025docopilot}, DocR1~\cite{xiong2026docr1}}]
+        ]
+      ]
+      [§\ref{sec:arch-ra}~Retrieval-Augmented
+        [Single retriever-reader
+          [{M3DocRAG~\cite{cho2024m3docrag}, VDocRAG~\cite{tanaka2025vdocrag}}]
+        ]
+        [Multi-component pipeline
+          [{MDocAgent~\cite{han2025mdocagent}, VisDoM~\cite{suri2025visdom}}]
+        ]
+      ]
+      [§\ref{sec:arch-agent}~Adaptive-Trajectory
+        [External tool calls
+          [{ViDoRAG~\cite{wang2025vidorag}, MACT~\cite{yu2025visual}}]
+        ]
+        [Structured navigation
+          [{SimpleDoc~\cite{jain2025simpledoc}, DMap~\cite{fu2026dmap}}]
+        ]
+      ]
+    ]
+    %% ── §4 Modalities ────────────────────────────────────────────────────
+    [§\ref{sec:modality}~Modalities
+      [§\ref{sec:modality-text}~Text
+        [Volume
+          [{Arctic-TILT~\cite{borchmann2025arctic}, PDF-WuKong~\cite{xie2026pdf}}]
+        ]
+        [Continuity
+          [{RM-T5~\cite{dong2024multi}, MultiDocFusion~\cite{shin2026multidocfusion}}]
+        ]
+        [Heterogeneity
+          [{AVIR~\cite{li2026avir}}]
+        ]
+      ]
+      [§\ref{sec:modality-visual}~Visual
+        [Resolution (compression)
+          [{Texthawk2~\cite{yu2024texthawk2}, Leopard~\cite{jia2025leopard}}]
+        ]
+        [Selective high-res
+          [{DocSeeker~\cite{yan2026docseeker}, DocLens~\cite{zhu2026doclens}}]
+        ]
+        [Multi-signal competition
+          [{M3DocRAG~\cite{cho2024m3docrag}, VDocRAG~\cite{tanaka2025vdocrag}}]
+        ]
+      ]
+      [§\ref{sec:modality-structure}~Structure
+        [Hierarchy \& reading order
+          [{DocAgent~\cite{sun2025docagent}, DMap~\cite{fu2026dmap}}]
+        ]
+        [Cross-page references
+          [{KGP~\cite{wang2024knowledge}, MoLoRAG~\cite{wu2025molorag}}]
+        ]
+        [Spanning elements
+          [{MHier-RAG~\cite{gong2026mhier}, DFVC~\cite{qian2026accurate}}]
+        ]
+      ]
+    ]
+    %% ── §5 Inference-Time Adaptation ─────────────────────────────────────
+    [§\ref{sec:inference-time}~Inference
+      [§\ref{sec:tf-retrieval}~Retrieval \& Navigation
+        [Similarity-based
+          [{ColPali~\cite{faysse2025colpali}, SimpleDoc~\cite{jain2025simpledoc}}]
+        ]
+        [Relation-aware
+          [{MultiDocFusion~\cite{shin2026multidocfusion}, MLDocRAG~\cite{zhang2026mldocrag}}]
+        ]
+      ]
+      [§\ref{sec:tf-reasoning}~Prompted Reasoning
+        [Sequential Reasoning
+          [{Leopard~\cite{jia2025leopard}, MM-R5~\cite{xu2025mm}}]
+        ]
+        [Parallel Exploration
+          [{DocLens~\cite{zhu2026doclens}, ToT~\cite{yao2023tree}}]
+        ]
+      ]
+      [§\ref{sec:tf-agentic}~Agentic Methods
+        [ReAct \& tool-augmented
+          [{Doc-V*~\cite{zheng2026doc}, Doc-React~\cite{wu2025doc}}]
+        ]
+        [Modality-specialised
+          [{MDocAgent~\cite{han2025mdocagent}, M$^2$RAG~\cite{duan2025m2rag}}]
+        ]
+        [Role-specialised
+          [{MACT~\cite{yu2025visual}, DocAgent~\cite{sun2025docagent}}]
+        ]
+      ]
+    ]
+    %% ── §6 Training Strategies ───────────────────────────────────────────
+    [§\ref{sec:training}~Training
+      [§\ref{sec:train-retrieval}~Retrieval
+        [Modality alignment
+          [{VDocRAG~\cite{tanaka2025vdocrag}}]
+        ]
+        [Cross-page fusion
+          [{DFVC~\cite{qian2026accurate}}]
+        ]
+        [Logical relevance
+          [{MoLoRAG~\cite{wu2025molorag}}]
+        ]
+      ]
+      [§\ref{sec:train-reasoning}~Reasoning
+        [Trace imitation
+          [{DocSeeker~\cite{yan2026docseeker}, CoR~\cite{guo2026end}}]
+        ]
+        [Reward-driven RL
+          [{DocR1~\cite{xiong2026docr1}, MM-R5~\cite{xu2025mm}}]
+        ]
+        [Uncertainty calibration
+          [{DocSLM~\cite{hannan2026docslm}}]
+        ]
+      ]
+      [§\ref{sec:train-agentic}~Agentic
+        [Trajectory distillation
+          [{Doc-V*~\cite{zheng2026doc}, DocDancer~\cite{zhang2026docdancer}}]
+        ]
+        [Reinforcement-learned
+          [{MM-Doc-R1~\cite{lin2026mm}, VRAG-RL~\cite{wang2025vrag}}]
+        ]
+      ]
+      [§\ref{sec:train-crosscutting}~Cross-Cutting
+        [PEFT
+          [{LayTokenLLM~\cite{zhu2025simple}, CREAM~\cite{zhang2024cream}}]
+        ]
+        [Multi-stage curriculum
+          [{mPLUG-DocOwl2~\cite{hu2025mplug}, DocSLM~\cite{hannan2026docslm}}]
+        ]
+      ]
+    ]
+    %% ── §7 Datasets (flattened: subsection → leaf) ───────────────────────
+    [§\ref{sec:datasets}~Datasets
+      [§\ref{sec:dataset-pt}~Pretraining
+        [{DocStruct4M~\cite{hu2024mplug}, MP-DocStruct1M~\cite{hu2025mplug}}]
+      ]
+      [§\ref{sec:dataset-sft}~Supervised Fine-tuning
+        [{InstructDoc~\cite{tanaka2024instructdoc}, DocDancer~\cite{zhang2026docdancer}}]
+      ]
+      [§\ref{sec:dataset-bm}~Benchmarking
+        [{MMLongBench-Doc~\cite{ma2024mmlongbench}, LongDocURL~\cite{deng2025longdocurl}}]
+      ]
+    ]
+    %% ── §8 Challenges (flattened: subsection → leaf) ─────────────────────
+    [§\ref{sec:conc_challenges}~Challenges
+      [§\ref{sec:conc_efficiency}~Efficiency \& Deployability
+        [{DocSLM~\cite{hannan2026docslm}, URaG~\cite{shi2026urag}}]
+      ]
+      [§\ref{sec:conc_faithfulness}~Faithfulness \& Abstention
+        [{DocR1~\cite{xiong2026docr1}, DocLens~\cite{zhu2026doclens}}]
+      ]
+      [§\ref{sec:conc_pipeline}~Evidence Pipeline
+        [{MHier-RAG~\cite{gong2026mhier}, KGP~\cite{wang2024knowledge}}]
+      ]
+      [§\ref{sec:conc_supervision}~Supervision \& Contamination
+        [{InstructDoc~\cite{tanaka2024instructdoc}, DocBench~\cite{zou2024docbench}}]
+      ]
+      [§\ref{sec:conc_evaluation}~Evaluation Scope
+        [{UDA~\cite{hui2024uda}, BRIDGE~\cite{xiang2026bridge}}]
+      ]
+    ]
+  ]
+\end{forest}
+\end{adjustbox}
+\caption{MP-VRDU Taxonomy}
+\label{fig:taxonomy}
+\end{figure*}

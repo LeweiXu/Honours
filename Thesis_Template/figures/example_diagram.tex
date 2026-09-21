@@ -1,0 +1,22 @@
+% A drawn figure, to show that tikz is set up. Also carries a long caption so
+% you can see the multi-line behaviour: long captions justify to the full text
+% width instead of centring.
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      node distance=14mm and 16mm,
+      box/.style={draw,rounded corners=2pt,minimum width=22mm,minimum height=9mm,font=\small},
+      >={Stealth[width=5pt,length=5pt]}]
+    \node[box] (in)  {Input};
+    \node[box,right=of in]  (enc) {Encoder};
+    \node[box,right=of enc] (dec) {Decoder};
+    \node[box,right=of dec] (out) {Output};
+    \draw[->] (in)  -- (enc);
+    \draw[->] (enc) -- (dec);
+    \draw[->] (dec) -- (out);
+  \end{tikzpicture}
+  \caption{A deliberately long caption, so that it wraps. Captions that run to
+  more than one line are set justified across the full text width, and they are
+  single spaced even though the body text is set at 1.1 line spacing.}
+  \label{fig:example-diagram}
+\end{figure}

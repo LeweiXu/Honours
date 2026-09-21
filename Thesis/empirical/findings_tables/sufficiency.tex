@@ -1,0 +1,44 @@
+% Withholding gold pages, both datasets. ColQwen3 ranking, multi-page questions.
+% Teal = accuracy (per-dataset scale), bold = winning rung; warm = breaks, teal = repairs.
+% Transitions are paired against the oracle page set at TLV. n = 352 on
+% MMLongBench-Doc and n = 1,093 on LongDocURL.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\mshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-8)/(70-8)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\mcell}[1]{\mshade{#1}#1}
+\newcommand{\mbest}[1]{\mshade{#1}\textbf{#1}}
+\newcommand{\lshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-20)/(80-20)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\lcell}[1]{\lshade{#1}#1}
+\newcommand{\lbest}[1]{\lshade{#1}\textbf{#1}}
+\newcommand{\dmg}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1)/48*55))}%
+  \edef\tmpcol{recwarm!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}#1}
+\newcommand{\rep}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1)/48*55))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}#1}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l rrrr rr @{\hskip 6pt\vrule\hskip 6pt} rrrr rr}
+\toprule
+ & \multicolumn{6}{c@{\hskip 6pt}}{\textbf{MMLongBench-Doc}} & \multicolumn{6}{c}{\textbf{LongDocURL}} \\
+\cmidrule(r){2-7}\cmidrule(l){8-13}
+Condition & T & TL & TLV & V & R$\rightarrow$W & W$\rightarrow$R & T & TL & TLV & V & R$\rightarrow$W & W$\rightarrow$R \\
+\midrule
+Oracle (all gold) & \mcell{25.4} & \mcell{30.7} & \mbest{38.0} & \mcell{33.5} & --- & --- & \lcell{62.2} & \lcell{62.4} & \lbest{69.3} & \lcell{62.0} & --- & --- \\
+Drop lowest gold  & \mcell{11.4} & \mcell{13.4} & \mbest{18.5} & \mcell{15.1} & \dmg{24.7} & \rep{4.5} & \lcell{47.2} & \lcell{50.4} & \lbest{52.5} & \lcell{48.9} & \dmg{19.6} & \rep{3.6} \\
+Drop highest gold & \mcell{10.8} & \mcell{11.1} & \mbest{15.9} & \mcell{13.9} & \dmg{27.0} & \rep{4.3} & \lbest{28.0} & \lcell{26.7} & \lcell{27.8} & \lcell{24.9} & \dmg{43.2} & \rep{2.0} \\
+Keep highest only & \mcell{9.1}  & \mcell{10.2} & \mbest{12.8} & \mcell{11.1} & \dmg{28.4} & \rep{2.6} & \lcell{44.8} & \lcell{47.4} & \lbest{49.1} & \lcell{45.4} & \dmg{22.2} & \rep{3.5} \\
+Keep lowest only  & \mcell{9.4}  & \mcell{9.7}  & \mbest{10.5} & \mcell{9.9}  & \dmg{30.4} & \rep{2.3} & \lbest{24.5} & \lcell{23.1} & \lcell{24.3} & \lcell{21.1} & \dmg{46.5} & \rep{1.8} \\
+\bottomrule
+\end{tabular}
+\caption{Withholding gold evidence pages from multi-page questions. Pages ranked by ColQwen3. Dropping the lowest-ranked gold page alone more than halves accuracy at every rung on MMLongBench-Doc, and the paired columns say why: the change turns 20 to 47\% of paired questions from right to wrong and repairs under 5\%.}
+\label{tab:coverage}
+\end{table}

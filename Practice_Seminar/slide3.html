@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP-VRDU — What Makes Multi-Page Hard?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFCFD;
+    --ink:#16222E;
+    --slate:#5A6B7B;
+    --line:#DCE4EC;
+    --amber:#C97B3C;
+
+    /* blue ramp, core -> outer */
+    --b1:#1E3A5F;
+    --b2:#2E5C8A;
+    --b3:#5A8BB8;
+    --b4:#9FC1DD;
+    --core:#16222E;
+
+    --disp:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#c9d1da;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:grid; grid-template-rows:auto 1fr auto;
+    box-shadow:0 24px 60px rgba(22,34,46,.22);
+  }
+
+  /* faint blueprint grid in the background */
+  .slide::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(30,58,95,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30,58,95,.035) 1px, transparent 1px);
+    background-size:40px 40px;
+    mask-image:linear-gradient(to bottom, transparent, #000 20%, #000 85%, transparent);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding:38px 56px 20px; border-bottom:1px solid var(--line);
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--amber); font-weight:500;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:40px;
+    letter-spacing:-.02em; line-height:1;
+  }
+
+  /* ---------- BODY ---------- */
+  .body{
+    display:grid; grid-template-columns:1.15fr .85fr;
+    align-items:center; padding:6px 56px 0;
+    position:relative; z-index:2;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    display:flex; align-items:center; justify-content:flex-end;
+    padding:16px 56px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--slate);
+    letter-spacing:.04em; position:relative; z-index:2;
+  }
+  footer .dot{color:var(--amber); margin:0 10px;}
+  footer b{color:var(--ink); font-weight:600;}
+
+  /* ================= SLIDE 3 — modality columns ================= */
+  .bodyMod{
+    display:flex; flex-direction:column; justify-content:center; gap:26px;
+    padding:6px 56px 0; position:relative; z-index:2;
+  }
+  .modlede{
+    font-family:var(--disp); font-weight:500; font-size:21px; letter-spacing:-.01em;
+  }
+  .modlede em{font-style:normal; color:var(--amber);}
+
+  .modgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .mod{border:1px solid var(--line); background:#fff; display:flex; flex-direction:column;}
+  .modhead{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:13px 16px; color:#fff;
+  }
+  .modhead b{
+    font-family:var(--mono); font-size:14px; font-weight:600;
+    letter-spacing:.2em; text-transform:uppercase;
+  }
+  .modhead span{
+    font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+    color:rgba(255,255,255,.62);
+  }
+  .m1 .modhead{background:var(--b1);}
+  .m2 .modhead{background:var(--b2);}
+  .m3 .modhead{background:var(--b3);}
+
+  .modsub{
+    padding:14px 16px 13px; font-size:13.5px; line-height:1.4; color:var(--ink);
+    border-bottom:1px solid var(--line); min-height:65px;
+  }
+  .modlist{padding:13px 16px 15px; display:flex; flex-direction:column; gap:11px;}
+  .modlist > div{display:flex; gap:9px; align-items:baseline;}
+  .modlist i{width:7px; height:7px; flex:none; transform:translateY(-1px);}
+  .m1 .modlist i{background:var(--b1);}
+  .m2 .modlist i{background:var(--b2);}
+  .m3 .modlist i{background:var(--b3);}
+  .modlist b{
+    font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--b1); white-space:nowrap;
+  }
+  .modlist small{font-family:var(--body); font-size:12.5px; color:var(--slate); line-height:1.3;}
+
+  /* cross-cutting band under all three columns */
+  .cross{
+    display:flex; align-items:center; gap:20px;
+    border:1px solid var(--line); border-left:2px solid var(--amber);
+    background:#fff; padding:14px 20px;
+  }
+  .cross .tag{
+    font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--amber); white-space:nowrap;
+  }
+  .cross .vr{width:1px; height:26px; background:var(--line); flex:none;}
+  .cross p{font-size:14.5px; line-height:1.35;}
+  .cross p b{font-weight:600;}
+  .cross .hops{display:flex; align-items:center; gap:6px; margin-left:auto; flex:none;}
+  .cross .hops u{
+    display:block; text-decoration:none; font-family:var(--mono); font-size:10px;
+    color:var(--b2); border:1px solid var(--b4); padding:3px 6px; letter-spacing:.05em;
+  }
+  .cross .hops s{
+    display:block; text-decoration:none; width:16px; height:1px; background:var(--amber);
+    position:relative;
+  }
+  .cross .hops s::after{
+    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
+    border-top:3px solid transparent; border-bottom:3px solid transparent;
+    border-left:6px solid var(--amber);
+  }
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{ box-shadow:none; width:1280px; height:720px; page-break-after:always; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <header>
+    <div>
+      <div class="eyebrow">Multi-page multimodal representation</div>
+      <h1>What Makes Multi-Page Hard?</h1>
+    </div>
+  </header>
+
+  <div class="bodyMod">
+
+    <div class="modlede">Every evidence decision is enacted over a <em>modality</em>. Three axes, three sets of pressures.</div>
+
+    <div class="modgrid">
+
+      <div class="mod m1">
+        <div class="modhead"><b>Text</b><span>§4.1</span></div>
+        <div class="modsub">Reading everything is impossible; every fix is lossy somewhere.</div>
+        <div class="modlist">
+          <div><i></i><div><b>Volume</b><br><small>length outruns the context</small></div></div>
+          <div><i></i><div><b>Continuity</b><br><small>paragraphs and tables break at page edges</small></div></div>
+          <div><i></i><div><b>Noise</b><br><small>OCR error accumulates across pages</small></div></div>
+          <div><i></i><div><b>Heterogeneity</b><br><small>text density varies page to page</small></div></div>
+        </div>
+      </div>
+
+      <div class="mod m2">
+        <div class="modhead"><b>Visual</b><span>§4.2</span></div>
+        <div class="modsub">Pixels keep what text extraction loses, but they cost tokens.</div>
+        <div class="modlist">
+          <div><i></i><div><b>Resolution</b><br><small>cannot hold full fidelity at document length</small></div></div>
+          <div><i></i><div><b>Signal competition</b><br><small>text, figures and layout share one budget</small></div></div>
+          <div><i></i><div><b>Heterogeneity</b><br><small>visual complexity varies page to page</small></div></div>
+        </div>
+      </div>
+
+      <div class="mod m3">
+        <div class="modhead"><b>Structure</b><span>§4.3</span></div>
+        <div class="modsub">What turns isolated pages into one document.</div>
+        <div class="modlist">
+          <div><i></i><div><b>Hierarchy</b><br><small>sections and reading order span the whole file</small></div></div>
+          <div><i></i><div><b>Cross-page references</b><br><small>“see Figure 3” points somewhere else</small></div></div>
+          <div><i></i><div><b>Spanning elements</b><br><small>tables and paragraphs continue across pages</small></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cross">
+      <div class="tag">Cross-cutting</div>
+      <div class="vr"></div>
+      <p><b>Multi-hop reasoning:</b> the answer is assembled from pages that are far apart, so no single page scores well on its own.</p>
+      <div class="hops">
+        <u>p3</u><s></s><u>p7</u><s></s><u>p12</u>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div><b>03</b> / 07<span class="dot">·</span>What Makes Multi-Page Hard?</div>
+  </footer>
+
+</div>
+</body>
+</html>

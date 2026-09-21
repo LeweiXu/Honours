@@ -1,0 +1,14 @@
+\begin{figure}[h]
+\centering
+\begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily,left=6pt,right=6pt]
+You are answering a question about a document.\\[0.4em]
+\{instruction\}\\[0.4em]
+Question:\\
+\{question\}\\[0.4em]
+Document evidence:\\
+\{context\}\\[0.4em]
+Answer:
+\end{tcolorbox}
+\caption{Reasoner prompt template. \texttt{\{instruction\}} is the prompt preamble of Table~\ref{tab:prompt_modes}, empty under \texttt{none}. \texttt{\{context\}} is the selected pages in document order, as parser markdown, page images, or both according to the rung.}
+\label{fig:prompt_template}
+\end{figure}

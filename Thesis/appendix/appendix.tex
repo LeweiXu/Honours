@@ -1,0 +1,106 @@
+\appendix
+%  \appendix switches \chaptertitlename to "Appendix" and the numbering to
+%  letters, so these render as "Appendix A / Title" in the same style as the
+%  chapters.
+
+% \chapter{Additional Thesis Details}
+% \clearpage
+
+\chapter{Additional Survey Details}
+
+\section{Comparison with Prior Surveys}
+\label{app:survey-comparison}
+\input{appendix/survey/survey_comparison}
+
+Table~\ref{tab:survey-comparison} contrasts this survey with the five prior VRDU surveys closest to our scope. The comparison is along three axes. \textbf{Scope} records the era and problem each survey targets, from pre-MLLM OCR pipelines to the recent MLLM and retrieval-augmented literature. \textbf{Multi-page treatment} records whether multi-page understanding is treated as a distinct problem with its own design axes, addressed only in passing within a broader scope, or left out. \textbf{Organising framing} records the lens each survey uses to structure the field. Prior surveys either predate the multi-page literature or treat it as one topic within a single-page or extraction-focused scope. This survey is the first to define MP-VRDU as a distinct problem, to organise it around evidence management, and to cover the four architectural families, modality pressures, inference-time and training strategies, and datasets specific to the multi-page setting.
+
+\section{Full Survey Methodology}
+\label{app:sv_methodology}
+
+\subsection{Search keywords.}
+Queries combined a multi-page cluster with a task or method cluster. Multi-page terms included ``multi-page document'', ``long document'', ``long-context document'', ``cross-page reasoning'', ``page-level retrieval'', ``document-scale evidence'', and ``hundred-page''. Task and method terms included ``document visual question answering'', ``visually rich document understanding'', ``document VQA'', ``document agent'', ``visual document retrieval'', ``document RAG'', ``hierarchical document transformer'', and ``long-context vision-language model''. Benchmark-name probes (``MP-DocVQA'', ``MMLongBench-Doc'', ``LongDocURL'', ``DUDE'', ``SlideVQA'', ``M3DocVQA'', ``DocBench'', ``M-LongDoc'') were used as anchors for forward-citation sweeps to capture systems that report against multi-page evaluation suites.
+
+\subsection{Inclusion and exclusion criteria.}
+A paper was retained if it (i) proposed a multi-page model, framework, system, or pipeline rather than a benchmark or dataset alone, and (ii) reported quantitative results on at least one multi-page benchmark, with cross-page evidence handling as an explicit design contribution. Excluded categories were single-page-only systems benchmarked solely on DocVQA, InfographicVQA, ChartQA, FUNSD, or CORD; survey, position, and opinion papers; generic OCR or table-extraction tools without VQA or reasoning evaluation; long-context LLM benchmarks where documents are one input type among many; and dataset-only contributions, which are catalogued separately in \S\ref{sec:datasets}. Peer-reviewed venue publications and arXiv preprints were assessed against the same substantive criteria, since recent MP-VRDU progress has appeared predominantly in preprint form; venue status is recorded per entry in Table~\ref{tab:model_survey_arch}. Table~\ref{tab:survey_corpus} lists the surveyed systems grouped by architectural family, with the multi-page contribution on which each was included.
+
+\subsection{Knowledge extraction and verification.}
+Each retained paper was converted to markdown and processed through LLM-assisted key-information extraction with evidence-span location, populating per-model fields covering architectural family, OCR dependency, vision encoder, LLM backbone, adaptors and projectors, page-rendering resolution, training stages, datasets used per stage, and reported scores on each benchmark. Every extracted field was manually verified against the source paper before being added.
+
+\subsection{Dataset catalogue.}
+The dataset catalogue in \S\ref{sec:datasets} was built primarily from the pretraining, fine-tuning, and benchmarking datasets named by every paper in the surveyed corpus, supplemented with a small set of datasets the corpus does not yet adopt but that cover MP-VRDU-relevant settings such as long scientific documents, multi-page tables, and cross-page reasoning suites, included to surface datasets whose adoption may strengthen future cross-system comparison.
+
+\input{appendix/survey/corpus}
+
+\section{Additional Resources}
+
+\subsection{Reported Performance by Architecture}
+\label{app:performance}
+
+\input{appendix/survey/table-performance-arch}
+
+Table~\ref{tab:model_performance_arch} summarises reported scores on the five most-adopted multi-page benchmarks, grouped by architectural family. It is included for coverage rather than ranking. The matrix is sparse and metric conventions diverge across MP-DocVQA, DUDE, LongDocURL, MMLongBench-Doc, and SlideVQA, so scores are not comparable across columns; for the same benchmark, differences in backbone scale, proprietary-LLM dependency, evidence budget, and the training-versus-zero-shot distinction mean that a higher score does not by itself indicate a better architecture. Several of the strongest systems orchestrate closed-source frontier backbones of undisclosed scale, so their scores cannot be attributed to architecture alone. Read with these caveats, the table supports one robust cross-family observation: coverage tracks cost structure, with page-to-document and MLLM-centric systems confined to mid-length benchmarks and selective-evidence families dominating the long-document frontier.
+
+\subsection{General Domain MLLM for MP-VRDU}
+\label{app:general-MLLM}
+Frontier general-domain MLLMs handle short multi-page inputs well when the document fits in context, but the multi-page setting introduces three pressures absent in single-page VRDU: context-window overrun, attention dilution over sparsely distributed evidence~\cite{liu2024lost}, and a per-page reading fidelity versus whole-document coverage trade-off under a fixed token budget. Table~\ref{tab:model_performance_arch} shows that even the strongest frontier MLLMs trail specialised MP-VRDU systems by a wide margin on MMLongBench-Doc and LongDocURL, motivating the specialised architectures examined in \S\ref{sec:architecture}.
+
+\subsection{Model Components Details}
+\label{app:components}
+Table~\ref{tab:model_components} lists the concrete components of each surveyed system, organised by architectural family. The four families assemble these parts in characteristically different ways. Page-to-document transformers pair smaller LLM backbones (T5 variants, DocFormerv2) with custom layout-aware projectors. MLLM-centric adaptation models reuse standard vision-language stacks such as Qwen2.5-VL, mPLUG-Owl2, and SigLIP variants, and update only light projection or compression modules. Retriever-augmented pipelines decouple a frozen retriever (ColPali, ColQwen, VisRAG) from a frozen LVLM and train only the scorer, fuser, or reranker. Adaptive-trajectory pipelines mostly orchestrate frozen frontier VLMs, with parameter updates restricted to a few systems that fine-tune the controller via SFT or GRPO.
+
+\input{appendix/survey/table-components-detailed}
+
+\clearpage
+\chapter{Additional Attribution Details}
+
+\section{Extended Result Tables}
+\label{app:extended_findings}
+
+\subsection{Representation Ladder by Document Domain}
+\label{app:ladder_domain}
+Table~\ref{tab:ladder_domain_resolution} breaks the representation ladder of Table~\ref{tab:ladder_source} down by document domain, and sweeps the two image-carrying rungs across render resolution. Domain rows partition the pool, so each question is counted exactly once. The ordering of rungs is stable within a row, with TLV winning in six of the seven domains, but variation across domains is considerably wider than variation across rungs: at TLV accuracy ranges from 42.9\% on academic papers to 73.2\% on tutorial and workshop material. Resolution matters most where the image is the only channel, with pooled accuracy at V rising 12.4 points from low to high against 5.5 points at TLV, and the largest gains falling on the domains dominated by dense tables and figures.
+\input{appendix/empirical/ladder_domain_resolution}
+
+\subsection{Parser Fidelity by Evidence Source}
+\label{app:parser_fidelity}
+Table~\ref{tab:parser_source_scan} splits each parser's text and text-plus-image accuracy across the five evidence sources, and adds the paired within-question verdict changes across that step. Adding the page image raises accuracy on almost every parser and source combination, the one consistent exception being table evidence on born-digital pages, where three of the four parsers lose ground: a well-parsed table is already a faithful representation, and the image mainly adds an opportunity to misread it. The image also compresses the differences between parsers, with pooled born-digital accuracy spanning 26.6 to 42.3 across parsers on the text channel alone and only 46.0 to 50.2 once the image is added. Regression is otherwise rare, so the image seldom overturns an answer the text channel had already reached.
+\input{appendix/empirical/parser_source_scan}
+
+\subsection{Retrieval Across Depth}
+\label{app:retrieval_depth}
+Table~\ref{tab:retrieval_depth} reports page-level precision, recall, and F1 for all six retrievers at five depths on both corpora, which is the complete sweep behind the operating-point comparison in the main text. Vision retrieval leads text retrieval at every depth on both datasets, and ColQwen3 is the strongest arm on each. F1 peaks at $k{=}1$ for every retriever, since precision falls faster than recall climbs, so a system optimising a single retrieval score should read shallowly while one optimising evidence coverage should read deeply. The gap between the modalities is not an artefact of a weak text arm, since Qwen3-Embedding leads the text arm at every depth beyond the first and still trails ColQwen3 by 22.9 recall points at $k{=}10$ on MMLongBench-Doc. The two corpora are separate pools, so the table is read for the ordering of retrievers within a corpus and for the direction of the depth trend across both.
+\input{appendix/empirical/retrieval_depth}
+
+\subsection{Prompting by Evidence Source}
+\label{app:prompting_source}
+Table~\ref{tab:prompting_source} opens the prompting sweep up by evidence source, reporting answerable accuracy, abstention on the answerable pool, and abstention on the unanswerable pool for six prompt modes at four rungs. The abstention instruction is the only prompt that materially raises correct refusal, lifting unanswerable abstention from roughly 13\% uninstructed to between 75 and 82\% across the four rungs, but it does so indiscriminately: abstention on the answerable pool rises with it at every rung, and the per-source rows show that the coupling is not confined to the harder evidence types. The two chain-of-thought modes leave both abstention rates near the uninstructed baseline, and \texttt{cot} is the only mode that matches \texttt{none} on answerable accuracy at TLV. Evidence-source ordering is stable across prompt modes, with pure-text and table questions strongest and chart and figure questions weakest, and adding the page image closes most of that spread. The unanswerable block carries no per-source rows, an unanswerable question having no gold evidence pages from which a source could be read, and it is scored under the original judge rather than the error-taxonomy judge used for the two answerable blocks, so levels are compared within a block rather than across the table.
+\input{appendix/empirical/prompting_source}
+
+\subsection{Reasoner Scale by Evidence-Page Count}
+\label{app:reasoner_hop}
+Table~\ref{tab:reasoner_hop} reports accuracy by the number of gold evidence pages a question cites, for four Qwen3-VL sizes at the two rungs that carry the page image. Scale buys multi-page accuracy steadily, and buys most where the image carries the evidence, with the 32B gaining 7.8 points over the 8B at TLV and 12.5 at V. What scale does not buy is integration, since single-page accuracy rises just as fast and the deficit between multi-page and single-page questions is essentially unchanged across the size ladder. Read alongside Table~\ref{tab:reasoner}, this supports treating cross-page integration as a distinct failure mode rather than a capability that additional parameters resolve. The 3+ bucket is thin at every size and is read for trend rather than for level.
+\input{appendix/empirical/reasoner_hop}
+
+
+% \clearpage
+% \section{Extended Error Analysis Tables}
+% \label{app:extended_analysis}
+
+% \subsection{Failure Modes by Prompt Mode}
+% \label{app:error_profile}
+% Table~\ref{tab:error_profile} is the tabular form of Figure~\ref{fig:error_profile}. The figure pools five of the ten categories, equivocal, the two list errors, unit or format mismatch, and other, into a single residual band, while the table prints each of them separately alongside the \emph{All incorrect} row they sum to. The two blocks are not comparable in level, since the answerable pool runs on oracle pages and the unanswerable pool on the BM25 $k{=}3$ page set, an unanswerable question having no gold page to select.
+% \input{appendix/empirical/error_profile}
+
+% \subsection{Failure Modes by Evidence Source}
+% \label{app:error_sources}
+% Table~\ref{tab:error_source} is the tabular form of Figure~\ref{fig:error_sources}, with the same five small categories printed rather than pooled. Evidence-source columns overlap, since a question citing both a chart and a table is counted under each, so they do not partition the pool and \emph{All} pools every question once rather than summing across them. Each column is read against its own \emph{All incorrect} total, which is 100 minus that column's accuracy.
+% \input{appendix/empirical/error_sources}
+
+% \subsection{Failure Modes by Evidence-Page Count}
+% \label{app:error_integration}
+% Table~\ref{tab:error_integration} is the tabular form of Figure~\ref{fig:error_integration}, and prints the M$-$1 column that the figure draws as a strip: the difference between the pooled multi-page column and the single-page one, category by category. \emph{Multi} pools the two- and three-or-more-page columns rather than extending them, so the columns overlap and are never summed, and the 3+ column is thin enough to be read for trend rather than for level.
+% \input{appendix/empirical/error_integration}
+
+\clearpage
+\section{Full Method Details}
+\label{app:simple_method_details}

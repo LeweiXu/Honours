@@ -1,0 +1,96 @@
+\begin{table*}[p]
+\centering
+% The document runs at \setstretch{1.1}. A 50-row table does not need that extra
+% leading, and giving it back is most of what makes this fit on one page.
+\setstretch{1}
+\scriptsize
+\captionsetup{font=small}
+% A wider description column is what actually buys the page: at 0.74 most rows
+% wrap to two lines, at 0.78 most do not, which is worth ~140pt of height. The
+% table then overruns \textwidth by 6%, and the adjustbox below scales that back.
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.0}
+% Defined here as well as in survey/models_summary.tex, so this table does not
+% depend on that one having been input first.
+\definecolor{sectionbg}{gray}{0.88}
+% Backstop: only scales if the rows still overrun, and leaves the caption alone.
+\begin{adjustbox}{max totalsize={\textwidth}{0.93\textheight},center}
+\begin{tabular}{@{}l l >{\raggedright\arraybackslash}p{0.78\textwidth}@{}}
+\toprule
+\textbf{Model} & \textbf{Venue} & \textbf{Multi-Page Contribution} \\
+\midrule
+
+\rowcolor{sectionbg}
+\multicolumn{3}{l}{\textbf{Page-to-Document Encoding Models}} \\
+\midrule
+  {Arctic-TILT}~(\citeyear{borchmann2025arctic}) & ACL & Layer-wise tensor-product text-image fusion with chunked sparse attention, serving up to 389k tokens on a single GPU \\
+  {GRAM}~(\citeyear{blau2024gram}) & CVPR & Interleaves page-level and document-level attention sub-layers with learnable global Doc tokens, avoiding quadratic concatenation cost \\
+  {Hi-VT5}~(\citeyear{tito2023hierarchical}) & PR & Learnable [PAGE] tokens summarise each page; decoder consumes the concatenated page tokens, with answer-page prediction for explainability \\
+  {RM-T5}~(\citeyear{dong2024multi}) & DAS & Recurrent memory tokens propagate context page-by-page; per-page memories concatenated for decoding \\
+
+\midrule[0.4pt]
+
+\rowcolor{sectionbg}
+\multicolumn{3}{l}{\textbf{MLLM-Centric Adaptation Models}} \\
+\midrule
+  {CoR}~(\citeyear{guo2026end}) & preprint & Four-stage Chain-of-Reading paradigm with a caption-reconstruction objective for figure and table grounding \\
+  {Docopilot}~(\citeyear{duan2025docopilot}) & CVPR & Native multi-page MLLM trained on Doc-750K cross-page proxy tasks with context-extension engineering \\
+  {DocR1}~(\citeyear{xiong2026docr1}) & AAAI & EviGRPO adds an evidence-page F1 reward over structured think/evidence/answer outputs \\
+  {DocSeeker}~(\citeyear{yan2026docseeker}) & CVPR & Analysis-Localization-Reasoning paradigm with page-identifier grounding and evidence-guided resolution allocation \\
+  {DocSLM}~(\citeyear{hannan2026docslm}) & CVPR & Hierarchical compressor fixes 576 tokens per page; streaming segments with entropy-based abstention for edge deployment \\
+  {InstructDoc}~(\citeyear{tanaka2024instructdoc}) & AAAI & Document-former fuses OCR, layout, and visual features into learnable tokens, with pages encoded in parallel \\
+  {LayTokenLLM}~(\citeyear{zhu2025simple}) & CVPR & Per-segment layout token shares its segment's position ID, adding layout without consuming context \\
+  {Leopard}~(\citeyear{jia2025leopard}) & TMLR & Adaptive high-resolution multi-image encoding under a global token budget with pixel-shuffle compression \\
+  {mPLUG-DocOwl2}~(\citeyear{hu2025mplug}) & ACL & DocCompressor cross-attends global low-resolution queries to sub-image features, compressing each page to 324 tokens \\
+  {Texthawk2}~(\citeyear{yu2024texthawk2}) & preprint & Two-step resampling and rearrangement for 16$\times$ visual-token compression with a coordinate-token detection head \\
+  {URaG}~(\citeyear{shi2026urag}) & AAAI & Cross-modal retrieval module at an early Transformer layer discards non-retained pages before deeper layers \\
+
+\midrule[0.4pt]
+
+\rowcolor{sectionbg}
+\multicolumn{3}{l}{\textbf{Retrieval-Augmented Pipelines}} \\
+\midrule
+  {AVIR}~(\citeyear{li2026avir}) & MMAsia & Adaptive page selector uses score-distribution clustering to set per-query retrieval depth \\
+  {CREAM}~(\citeyear{zhang2024cream}) & ACM & Coarse-to-fine retrieval with iterative reranking, paired with attention-pooled multi-page visual features \\
+  {DFVC}~(\citeyear{qian2026accurate}) & MDPI & Adapter predicts gating weights over neighbouring-page embeddings to fuse cross-page context into page representations \\
+  {DREAM}~(\citeyear{zhang2025dream}) & MM & Learning-to-rank fusion of embedding similarity and keyword-guided MLLM scores, with cross-page mixture-of-experts routing \\
+  {KGP}~(\citeyear{wang2024knowledge}) & AAAI & Knowledge graph over passage and structural nodes traversed by an LLM agent to gather supporting facts \\
+  {M2RAG}~(\citeyear{duan2025m2rag}) & NeurIPS & Dual-tower sparse and dense retrieval with text, visual, and fusion agents performing consistency checking \\
+  {M3DocRAG}~(\citeyear{cho2024m3docrag}) & preprint & ColPali late-interaction page retrieval with approximate indexing, scaling to 40k+ pages \\
+  {MDocAgent}~(\citeyear{han2025mdocagent}) & preprint & Five-stage pipeline with parallel text and image retrieval and specialised modality agents \\
+  {MHier-RAG}~(\citeyear{gong2026mhier}) & preprint & Combines flattened in-page indexing with a recursively summarised cross-page tree for multi-granularity retrieval \\
+  {MLDocRAG}~(\citeyear{zhang2026mldocrag}) & preprint & Chunk-Query Graph of LVLM-generated queries links chunks for retrieval by query-to-query similarity \\
+  {MM-R5}~(\citeyear{xu2025mm}) & AAAI & Two-stage reranker training with structured reasoning chains and rank-discounted GRPO rewards \\
+  {MoLoRAG}~(\citeyear{wu2025molorag}) & EMNLP & Traverses a page graph combining semantic and VLM-judged logical relevance to reach weakly-similar evidence \\
+  {MultiDocFusion}~(\citeyear{shin2026multidocfusion}) & ACL & LLM-constructed document hierarchy tree drives depth-first hierarchical chunking \\
+  {PDF-WuKong}~(\citeyear{xie2026pdf}) & IJCV & End-to-end sparse sampler jointly trained with the LLM selects top-K text and image evidence \\
+  {RAG-DocVQA}~(\citeyear{pez2025enhancing}) & ICDAR & Systematic comparison of textual and visual RAG variants for multi-page DocVQA \\
+  {Self-Attention Scoring}~(\citeyear{kang2024multi}) & ICDAR & Self-attention scoring module ranks independently encoded pages, extending evaluation to 793-page documents \\
+  {SLEUTH}~(\citeyear{liu2025resolving}) & CVPR & Training-free clue discovery and page screening keep effective context fixed as retrieval depth grows \\
+  {SV-RAG}~(\citeyear{chen2025sv}) & ICLR & Dual LoRA adapters over one MLLM backbone serve both late-interaction page retrieval and answering \\
+  {VDocRAG}~(\citeyear{tanaka2025vdocrag}) & CVPR & Compresses each page image to a single dense embedding via self-supervised compression pretraining tasks \\
+  {VisDoMRAG}~(\citeyear{suri2025visdom}) & NAACL & Parallel textual and visual RAG chains reconciled by consistency-constrained modality fusion \\
+
+\midrule[0.4pt]
+
+\rowcolor{sectionbg}
+\multicolumn{3}{l}{\textbf{Adaptive-Trajectory Pipelines}} \\
+\midrule
+  {DMAP}~(\citeyear{fu2026dmap}) & WWW & Hierarchical document map traversed by tri-path retrieval with a reflective loop for insufficient evidence \\
+  {Doc-V*}~(\citeyear{zheng2026doc}) & ACL & Thumbnail overview then alternating retrieval and high-resolution page fetch, trained by SFT then GRPO \\
+  {DocAgent}~(\citeyear{sun2025docagent}) & EMNLP & Hierarchical XML outline navigated by an actor agent with five tools, plus a reviewer and persistent memory bank \\
+  {DocDancer}~(\citeyear{zhang2026docdancer}) & preprint & End-to-end trained agent with only search and read tools, learned from synthesised exploration trajectories \\
+  {DocLens}~(\citeyear{zhu2026doclens}) & ACL & Page navigator and element localiser zoom to fine-grained evidence; sampling-adjudication selects among candidates \\
+  {DocReact}~(\citeyear{wu2025doc}) & ACL & Frames iterative retrieval as information-gain maximisation, halting when residual entropy stops decreasing \\
+  {MACT}~(\citeyear{yu2025visual}) & preprint & Four specialised agents with independent judgment routing and agent-wise adaptive test-time scaling \\
+  {MM-Doc-R1}~(\citeyear{lin2026mm}) & ACL & Planner-seeker-answer workflow trained by similarity-weighted policy optimisation for multi-turn RL \\
+  {SimpleDoc}~(\citeyear{jain2025simpledoc}) & EMNLP & Dual-cue retrieval over embeddings and page summaries, with a memory-carrying reasoner that reissues refined queries \\
+  {ViDoRAG}~(\citeyear{wang2025vidorag}) & EMNLP & Gaussian-mixture adaptive top-K retrieval with seeker, inspector, and answer agents over multi-scale views \\
+  {VRAG-RL}~(\citeyear{wang2025vrag}) & NeurIPS & Visual perception action space lets the agent crop and zoom regions, trained with retrieval-efficiency rewards \\
+
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{The 46 surveyed MP-VRDU systems. Grouped by architectural family, with the multi-page contribution motivating each system's inclusion. Venue indicates the publication venue at time of writing.}
+\label{tab:survey_corpus}
+\end{table*}

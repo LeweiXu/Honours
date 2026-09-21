@@ -1,0 +1,32 @@
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}
+  >{\raggedright\arraybackslash}p{2.3cm}
+  l
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+Locus & Mechanism & Constructed condition & Held fixed \\
+\midrule
+\multirow{3}{2.3cm}{\textbf{Representation}\\(Encoding stage: \S\ref{sec:emp_representation})}
+ & Modality ceiling & Encoding rung compared across T, TL, TLV, V by evidence source & Gold pages, reasoner, prompt \\
+\cmidrule(l){2-4}
+ & Conversion fidelity & Text and image fidelity across three parsers and three render resolutions & Encoding rung, gold pages, reasoner, prompt \\
+\midrule
+\multirow{3}{2.3cm}{\textbf{Selection}\\(Retrieval stage: \S\ref{sec:emp_selection})}
+ & Evidence coverage & Gold pages withheld from multi-page questions & Encoding, reasoner, prompt \\
+\cmidrule(l){2-4}
+ & Distractor exposure & Non-gold pages added at a fixed gold-page count & Gold set, encoding, reasoner, prompt \\
+\midrule
+\multirow{3}{2.3cm}{\textbf{Reasoning}\\(Inference stage: \S\ref{sec:emp_reasoning})}
+ & Evidence integration & Evidence conditions requiring cross-page integration & Documents, gold pages, encoding \\
+\cmidrule(l){2-4}
+ & Response calibration & Answerable and unsupported evidence conditions & Gold pages, encoding, reasoner \\
+\bottomrule
+\end{tabularx}
+\caption{Attribution by construction: conditions used to isolate failures.}
+\label{tab:experiments}
+\end{table}

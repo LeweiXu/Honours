@@ -1,0 +1,18 @@
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lp{0.68\textwidth}}
+\toprule
+Mode & Instruction \\
+\midrule
+\texttt{none} & (empty) \\
+\texttt{grounded} & Use only the provided document evidence and keep the answer concise. \\
+\texttt{abstain} & \texttt{grounded}, plus: If the evidence does not contain the answer, answer exactly: Not answerable. \\
+\texttt{abstain\_balanced} & \texttt{abstain}, plus: If the evidence does contain the answer, give it: do not decline a question the evidence supports. \\
+\texttt{cot} & \texttt{grounded}, plus: Think step by step before answering. Then write your final answer on a new line beginning with `Answer:'. \\
+\texttt{extract\_cot} & \texttt{grounded}, plus a verbatim-evidence extraction step, with visual evidence described in enough detail to answer from the description alone, then reasoning constrained to what was extracted, then the \texttt{Answer:} line. \\
+\bottomrule
+\end{tabular}
+\caption{Reasoning prompt modes. Each is a preamble only, and every mode runs one generation per condition.}
+\label{tab:prompt_modes}
+\end{table}

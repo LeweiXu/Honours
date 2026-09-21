@@ -1,0 +1,57 @@
+% Adding distractor pages to a complete gold set, both datasets, k up to 5.
+% Shading matches the withholding table. Both emit these \providecommand macros,
+% so either table can be \input alone or first, in any order.
+% Transition rows in the two-gold block pool questions with two and three gold
+% pages. Cells beyond three distractors ran at TLV only on MMLongBench-Doc, and
+% accuracy at the deeper counts is read on a shrinking pool under OOM attrition;
+% the paired transition columns are unaffected.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\providecommand{\mshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-8)/(70-8)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\providecommand{\mcell}[1]{\mshade{#1}#1}
+\providecommand{\mbest}[1]{\mshade{#1}\textbf{#1}}
+\providecommand{\lshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-20)/(80-20)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\providecommand{\lcell}[1]{\lshade{#1}#1}
+\providecommand{\lbest}[1]{\lshade{#1}\textbf{#1}}
+\providecommand{\dmg}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1)/48*55))}%
+  \edef\tmpcol{recwarm!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}#1}
+\providecommand{\rep}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1)/48*55))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}#1}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l rrrr rr @{\hskip 6pt\vrule\hskip 6pt} rrrr rr}
+\toprule
+ & \multicolumn{6}{c@{\hskip 6pt}}{\textbf{MMLongBench-Doc}} & \multicolumn{6}{c}{\textbf{LongDocURL}} \\
+\cmidrule(r){2-7}\cmidrule(l){8-13}
+Condition & T & TL & TLV & V & R$\rightarrow$W & W$\rightarrow$R & T & TL & TLV & V & R$\rightarrow$W & W$\rightarrow$R \\
+\midrule
+\multicolumn{13}{@{}l}{\emph{1 gold page}} \\
+Oracle           & \mcell{37.1} & \mcell{44.6} & \mbest{63.7} & \mcell{55.0} & --- & --- & \lcell{65.6} & \lcell{74.0} & \lbest{74.7} & \lcell{64.5} & --- & --- \\
+$+$1 distractor  & \mcell{39.5} & \mcell{48.9} & \mbest{63.7} & \mcell{55.7} & \dmg{7.8} & \rep{7.0} & \lcell{65.4} & \lcell{72.4} & \lbest{74.4} & \lcell{63.0} & \dmg{8.5} & \rep{8.1} \\
+$+$2 distractors & \mcell{38.8} & \mcell{47.9} & \mbest{64.3} & \mcell{56.1} & \dmg{8.2} & \rep{8.0} & \lcell{65.1} & \lcell{68.7} & \lbest{72.0} & \lcell{63.9} & \dmg{9.3} & \rep{7.5} \\
+$+$3 distractors & \mcell{40.9} & \mcell{47.0} & \mbest{63.1} & \mcell{55.1} & \dmg{9.7} & \rep{8.2} & \lcell{64.5} & \lcell{68.0} & \lbest{68.4} & \lcell{62.1} & \dmg{11.7} & \rep{6.9} \\
+$+$4 distractors & \mcell{41.9} & \mcell{45.3} & \mbest{62.5} & \mcell{52.5} & \dmg{9.5} & \rep{6.6} & \lcell{63.5} & \lcell{68.0} & \lbest{72.2} & \lcell{62.5} & \dmg{10.5} & \rep{8.7} \\
+$+$5 distractors & \mcell{39.5} & \mcell{42.6} & \mbest{62.3} & \mcell{54.4} & \dmg{10.0} & \rep{6.9} & \lcell{64.6} & \lcell{69.1} & \lbest{70.2} & \lcell{60.8} & \dmg{11.4} & \rep{7.3} \\
+\addlinespace
+\multicolumn{13}{@{}l}{\emph{2 gold pages}} \\
+Oracle           & \mcell{28.9} & \mcell{33.3} & \mbest{37.8} & \mcell{34.6} & --- & --- & \lcell{62.2} & \lcell{63.4} & \lbest{70.4} & \lcell{61.5} & --- & --- \\
+$+$1 distractor  & \mcell{25.7} & \mcell{34.0} & \mbest{38.6} & \mcell{34.4} & \dmg{7.8} & \rep{7.5} & \lcell{58.7} & \lcell{63.0} & \lbest{66.2} & \lcell{57.9} & \dmg{9.6} & \rep{4.1} \\
+$+$2 distractors & \mcell{25.3} & \mcell{33.6} & \mbest{35.7} & \mcell{32.4} & \dmg{9.6} & \rep{6.0} & \lcell{58.9} & \lcell{62.2} & \lbest{66.4} & \lcell{57.4} & \dmg{10.9} & \rep{4.4} \\
+$+$3 distractors & \mcell{21.6} & \mcell{28.2} & \mbest{33.6} & \mcell{33.2} & \dmg{11.4} & \rep{6.0} & \lcell{58.1} & \lcell{63.3} & \lbest{70.8} & \lcell{57.8} & \dmg{9.7} & \rep{6.0} \\
+$+$4 distractors & \mcell{24.6} & \mcell{30.7} & \mbest{43.7} & \mcell{31.3} & \dmg{11.8} & \rep{11.8} & \lcell{57.8} & \lcell{63.2} & \lbest{68.3} & \lcell{57.1} & \dmg{13.3} & \rep{6.1} \\
+% $+$5 distractors & \mcell{20.5} & \mcell{29.5} & \mbest{44.7} & \mcell{32.1} & \dmg{10.6} & \rep{8.2} & \lcell{56.4} & \lcell{61.5} & \lbest{69.0} & \lcell{54.9} & \dmg{12.6} & \rep{5.9} \\
+\bottomrule
+\end{tabular}
+\caption{Adding distractor pages to a complete gold set. Distractors ranked by ColQwen3 and verdict transitions indicate the proportion of questions that turned incorrect when previously correct or vice versa when distractors were added at the \textbf{TLV} rung.}
+\label{tab:exposure}
+\end{table}

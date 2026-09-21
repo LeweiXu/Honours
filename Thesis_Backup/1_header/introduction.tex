@@ -1,0 +1,120 @@
+\subsection{Query Augmentation}
+Traditional information retrieval (IR) systems, such as those based on keyword matching or statistical ranking models~\cite{roshdi2015information},  often struggle to capture the full intent of user queries. One of the key challenges is the semantic gap~\cite{farivar2025semantic} between how users express their information needs and how relevant documents are written. In many domains, users struggle to translate their intentions into precise search queries that match the terminology or phrasing found in target documents. This mismatch is especially visible in the medical setting~\cite{koopman2012towards} where a clinician might ask about “interventions for melasma” while relevant publications describe “facial hyperpigmentation treatments”. This issue extends far beyond biomedicine: in academic search, legal research, and even general web search, users often lack the exact vocabulary, technical language, or contextual understanding used by authors.
+
+The semantic gap arises for several reasons~\cite{farivar2025semantic}. One cause is the inherent ambiguity of natural language. Different words can express similar meanings, and the same term can refer to multiple concepts depending on context. Another stems from asymmetric knowledge between users and retrieval systems: users may not understand how search engines index or rank documents, while authors typically write for expert audiences, using specialized terminology or implicit assumptions that casual users do not share. As a result, even when relevant information exists in the corpus, it may not be retrieved because the query fails to align with the linguistic or conceptual framing of those documents.
+
+The consequence is a systematic loss in retrieval effectiveness. Systems relying purely on keyword matching tend to return documents that are lexically similar but semantically irrelevant, while missing those that use different phrasing to convey the same ideas. Users, in turn, may need to iteratively reformulate their queries, adding synonyms, rewording phrases, or adjusting scope to converge on relevant results. This iterative process reflects the underlying difficulty of expressing complex information needs in a single query string, and it highlights the need for methods that can automatically interpret and reformulate queries in a more semantically aligned way.
+
+LLMs provide a promising way to bridge this gap~\cite{kim2024augmenting}. Because they encode deep contextual and semantic information, they can augment or reformulate user queries into expressions that better align with the language used in scientific papers. For example, an LLM can expand “Interventions for melasma” into a detailed Boolean query such as ("melasma" OR "facial hyperpigmentation"), enabling the retrieval system to locate more relevant studies. However, current LLM-based query augmentation approaches typically depend on supervised fine-tuning or distillation from larger teacher models. These methods require expensive human-labeled or model-generated datasets, are computationally intensive, and often optimize for reproducing training examples rather than improving real retrieval outcomes. In other words, they teach the model to mimic reference queries, not to search effectively.
+
+This limitation motivates the integration of Reinforcement Learning (RL) into the query augmentation process~\cite{ma2023query}. Reinforcement learning enables a model to learn directly through interaction with the retrieval environment. Instead of optimizing for imitation, the model learns which types of augmented queries yield better retrieval results through trial and error. By framing query generation as a reinforcement learning problem, the model can: 
+\begin{itemize}
+    \item Explore diverse query reformulations beyond human-written examples,
+    \item Adapt dynamically to the behavior of real search engines, and
+    \item Optimize directly for end-task performance rather than surrogate losses.
+\end{itemize}
+
+In summary, this setting highlights both the weaknesses of traditional IR methods and the potential of LLMs. Yet, realizing this potential requires a training paradigm that aligns model behavior with real retrieval objectives. Reinforcement learning provides this paradigm, forming the foundation for frameworks such as DeepRetrieval~\cite{jiang2025deepretrieval}, which will be introduced in the following sections.
+
+\subsection{Introduction to Reinforcement Learning with LLM}
+RL is a sequential decision making framework in which an agent learns optimal behavior by interacting with an environment and receiving feedback in the form of rewards, with the goal of maximizing the cumulative reward over time~\cite{sutton1998reinforcement, kaufmann2023survey}. In the context of information retrieval, a search engine can be modeled as an RL agent that continuously improves its decision-making strategy by learning from user interactions and adapting to evolving information needs. In our setting:
+\begin{itemize}
+    \item The agent is the search engine system, responsible for retrieving, ranking, and presenting documents to the user, or optionally asking clarifying questions to better understand the user's intent.
+    \item The environment includes the user and their evolving information needs, characterized by user utterances (queries), user profiles, and interaction behaviors.
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/RL Environment.png}
+    \caption{The RL agent (search engine) interacting with user-driven environment. Diagram is adopted from~\cite{Spiceworks_RL}}
+    \label{fig:fig1}
+\end{figure}
+The agent interacts with the environment by presenting retrieval results or requesting clarifications, and observes user behaviors as feedback. The goal of the agent is to learn an optimal retrieval strategy that maximizes long-term user satisfaction, as reflected in interaction signals over a session.
+
+\subsubsection{Formal Modeling of RL as Markov Decision Processes}
+This learning environment can be modeled as a \textit{Markov Decision Process} (MDP). An MDP provides a mathematical framework for sequential decision making under uncertainty and is defined by a 5-tuple $(S, A, T, R, \gamma)$, where:
+\begin{itemize}
+    \item $S$ denotes the set of all possible \textit{states}. Each state $s$ encodes the current user utterances, user profile information, and historical interaction data (e.g., previously retrieved documents, user feedback).
+    \item $A$ denotes the set of all possible \textit{actions}. Available actions include retrieving a ranked list of documents to present, or issuing a clarifying question to refine the user's information need.
+    \item $T: S \times A \times S \rightarrow [0,1]$ is the \textit{state transition probability function}, where $T(s, a, s')$ gives the probability of transitioning to state $s'$ after taking action $a$ in state $s$,
+    \item $R: S \times A \rightarrow \mathbb{R}$ is the \textit{reward function}, assigning scalar feedback to each state-action pair. Rewards are derived from implicit user feedback signals. Positive rewards are granted for actions leading to meaningful engagement, while negative rewards are associated with signals of dissatisfaction, such as query reformulations or session abandonment.
+    \item $\gamma \in [0,1]$ is the \textit{discount factor}, controlling the agent's preference between immediate and future rewards.
+\end{itemize}
+
+The agent aims to learn a policy $\pi(a|s)$ that maximizes the expected discounted cumulative reward:
+\[
+\mathbb{E}_\pi \left[ \sum_{t=0}^{\infty} \gamma^t R(s_t, a_t) \right],
+\]
+where $s_t$ and $a_t$ represent the state and action at timestep $t$.
+
+During the training process, the agent observes the current state $s_t$, which encapsulates relevant information. Using its policy $\pi(a \mid s)$, the agent selects an action $a_t$. This action is executed and results in a transition to a new state $s_{t+1}$, which reflects the updated context after the user’s response. Simultaneously, the agent receives a scalar reward $r_t = R(s_t, a_t)$ that quantifies the utility of the action. The agent then updates its policy based on this reward signal. Through iterative updates over multiple interaction sessions, the agent learns an optimal policy that maximizes the expected cumulative reward, enabling the search engine to dynamically adapt its retrieval strategy in response to evolving user behavior and information needs.
+
+In the context of information retrieval, this framework can be interpreted as follows: the state represents the user’s current query or information need, the action corresponds to a query reformulation or ranking decision, and the reward reflects retrieval effectiveness. This formulation allows the retrieval system to adapt dynamically to feedback, improving its performance through interaction rather than relying solely on static supervised data.
+
+\subsubsection{Actor-Critic Framework}
+Among various RL algorithms, actor–critic methods have proven effective for continuous and high-dimensional tasks. In reinforcement learning, actor-critic methods combine the strengths of policy-based and value-based approaches into a unified model. Specifically, the actor is responsible for selecting actions according to a policy, while the critic estimates the value function, typically the expected return or reward associated with the chosen action in a given state. This division of roles enables the agent to learn both what to do (via the actor) and how good its decisions are (via the critic).
+
+The actor-critic framework offers several advantages. Compared to purely value-based methods, actor-critic methods are more scalable to large or continuous action spaces~\cite{chen2019reinforcement, liu2018deep,chen2020knowledge}, since they avoid the need to enumerate all possible actions. Compared to purely policy-based methods, actor-critic models achieve lower variance and greater sample efficiency by using the critic to provide more stable feedback for the actor’s updates~\cite{sepliarskaia2021deep, chen2019reinforcement}. This makes actor-critic frameworks particularly well-suited for tasks such as ranking, recommendation, and dialog, where actions must be adapted in real time to subtle shifts in user intent or session context. They also support online learning, allowing systems to adapt continuously based on evolving user interactions. 
+
+This architecture provides a balance between exploration and stability. However, actor–critic methods remain sensitive to hyperparameters such as learning rate, update frequency, and regularization strength. To mitigate these issues, Proximal Policy Optimization (PPO) introduces a clipped objective function that constrains policy updates, preventing large, destabilizing changes between iterations. This trade-off between learning progress and stability makes PPO particularly suitable for fine-tuning large models, where small update differences can lead to significant behavioral shifts.
+
+\subsubsection{Large Language Models as Policy Makers}
+With the advent of LLMs, reinforcement learning has found new applications in domains where actions are expressed as natural language. In this setting, the policy is represented by the language model itself, which generates text, based actions, such as answers, instructions, or search queries—conditioned on an input context. This formulation allows LLMs to serve as policy makers that decide, through language generation, what action to take next in an environment that provides textual or semantic feedback.
+
+Fine-tuning LLMs with reinforcement learning enables them to align their behavior with downstream objectives beyond imitation. For example, reinforcement learning from human feedback (RLHF) trains models like InstructGPT~\cite{ouyang2022training} to generate responses that align with human preferences. Similarly, in retrieval-oriented tasks, reinforcement learning can optimize query generation policies to maximize retrieval accuracy or coverage. In both cases, the model learns not by reproducing a reference dataset, but by optimizing for actual performance feedback from the environment.
+
+In such systems, the language model acts simultaneously as a generator (producing candidate outputs) and a decision maker (choosing outputs that maximize reward). This dual role makes LLM-based reinforcement learning both powerful and challenging. The vast action space of natural language introduces high variance in gradients and makes training stability a critical issue. Understanding how algorithmic factors, hyperparameters, and model size affect this stability is therefore essential to reliably deploy RL with LLMs in real-world applications.
+
+\subsection{Research Question: Stability in RL}
+RL algorithms are well known for their instability and sensitivity to hyperparameters. Small changes in configuration can lead to substantial variations in performance, sometimes causing the same algorithm to either converge successfully or diverge completely. This sensitivity has been consistently observed across a range of environments and algorithms, including widely used methods such as PPO.
+
+Empirical studies, such as those by \citeauthor{eimer2023hyperparameters}~\cite{eimer2023hyperparameters}, have systematically demonstrated this phenomenon. Their analysis shows that RL performance can fluctuate dramatically across different hyperparameter configurations, even when the model architecture and training data remain fixed. In their experiments, variations as small as a factor of two in the learning rate or KL penalty produced large swings in average return, revealing that the optimization landscape in RL is highly irregular and difficult to tune.
+
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Thesis/img/Eimer.png} 
+        \caption{Hyperparameter landscapes of learning rate, clip range and entropy coefficient for PPO on Brax and MiniGrid. From \citeauthor{eimer2023hyperparameters}}
+        \label{fig:fig2}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Thesis/img/Eimer2.png}
+        \caption{Individual seeds for selected clip range and entropy coefficient values of PPO across various environments. From \citeauthor{eimer2023hyperparameters}}
+        \label{fig:fig3}
+    \end{minipage}
+\end{figure}
+
+This inherent instability presents a major challenge when applying RL to LLMs. Unlike low-dimensional control tasks, training instability in language-based RL can lead to non-recoverable behaviors, such as generating degenerate text, oscillating between policies, or collapsing toward trivial solutions~\cite{jang2024degeneration}. These issues complicate both the reproducibility and interpretability of RL training outcomes.
+
+Given these challenges, this research aims to systematically investigate which factors contribute most to training instability in RL for query augmentation tasks. Specifically, the study seeks to answer the following research questions:
+
+\begin{enumerate}
+    \item Which hyperparameters most strongly affect the stability of PPO training when applied to LLM-based query augmentation?
+    \item How does model architecture such as model size, influence training stability?
+    \item How does the choice of RL algorithm impact training stability and convergence behavior?
+\end{enumerate}
+
+By addressing these questions, the study aims to provide a deeper understanding of PPO’s stability characteristics in language-based environments and to establish practical insights for designing more reliable RL training pipelines for large language models.
+
+\subsection{Research Contribution and Evaluation}
+This research contributes to a deeper understanding of training stability in reinforcement learning for large language models, with a focus on query augmentation tasks. Building on prior work on hyperparameter sensitivity and algorithmic robustness, the study makes the following key contributions:
+\begin{enumerate}
+    \item Systematic analysis of PPO stability under varying hyperparameter configurations, including learning rate, KL penalty coefficient, and number of epochs.
+    \item Comparative evaluation across model architectures, assessing how model size (e.g., Qwen2–0.5B vs. LLaMA-3.2-3B) influences stability and convergence.
+    \item Algorithmic comparison between PPO and GRPO, exploring how different policy optimization methods affect stability and reward consistency.
+    \item Empirical connection between training stability and retrieval performance, highlighting how stable learning dynamics correlate with downstream query effectiveness.
+\end{enumerate}
+
+To assess the outcomes of each training configuration, two categories of metrics were used: stability metrics such as entropy, policy and value loss, and average reward, and performance metrics such as recall@50. 
+
+Together, these metrics provide a comprehensive view of the optimization dynamics, helping identify unstable behaviors such as oscillations, divergence, or mode collapse.
+
+\subsection{Dissertation Outline}
+This dissertation is organized into six chapters.
+Chapter 1 introduces the motivation for investigating reinforcement learning stability in LLMs, outlines the research objectives, and summarizes the key contributions of this work.
+Chapter 2 reviews relevant literature on large language model architectures and reinforcement learning algorithms, including TRPO, PPO, and GRPO, highlighting their theoretical foundations and practical considerations for stability and performance.
+Chapter 3 details the research methodology, describing the DeepRetrieval framework, experimental design, selected models, algorithms, and hyperparameter configurations, along with the reward function and evaluation metrics.
+Chapter 4 presents the experimental results, analyzing how hyperparameters, model scale, and algorithmic differences influence training stability and learning efficiency.
+Chapter 5 provides a critical discussion of the findings, examining their implications for stable RL fine-tuning, identifying current limitations, and suggesting directions for future research.
+Chapter 6 concludes the dissertation by summarizing the key insights, reflecting on their significance for LLM fine-tuning research, and outlining potential applications and extensions of this work.

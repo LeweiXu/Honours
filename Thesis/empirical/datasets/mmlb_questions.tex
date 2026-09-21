@@ -1,0 +1,18 @@
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lr@{\hskip 2em}lr@{\hskip 2em}lr}
+\toprule
+Evidence source & Q & Gold pages & Q & Answer format & Q \\
+\midrule
+Pure-text (plain)   & 298 & 1 page  & 485 & Int   & 290 \\
+Figure              & 293 & 2 pages & 247 & Str   & 250 \\
+Table               & 218 & 3+ pages & 113 & None  & 244 \\
+Chart               & 178 & 0 pages & 246 & Float & 160 \\
+Generalized-text (layout) & 119 & & & List & 147 \\
+(none)              & 254 & & & & \\
+\bottomrule
+\end{tabular}
+\caption{MMLongBench-Doc question labels. Evidence source is multi-label, so its column sums past the question count; the remaining columns are exclusive. Questions with three or more gold pages reach 24 at the tail.}
+\label{tab:mmlb_labels}
+\end{table}

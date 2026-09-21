@@ -1,0 +1,274 @@
+\documentclass[11pt,twoside,openany]{report}
+
+\input{include/packages.tex}
+
+%  Helper for unnumbered chapters (References and friends): starts a page,
+%  sets the heading, puts it in the TOC, and fixes the running head, which
+%  \chapter* would otherwise leave showing the previous chapter.
+\newcommand{\unnumberedchapter}[1]{%
+  \chapter*{#1}%
+  \phantomsection\addcontentsline{toc}{chapter}{#1}%
+  \markboth{\MakeUppercase{#1}}{}%
+}
+
+\begin{document}
+
+% ============================================================================
+%  Cover
+% ============================================================================
+\input{include/title.tex}
+
+% ============================================================================
+%  Front matter
+% ============================================================================
+\pagestyle{plain}
+
+\section*{Abstract}
+
+Documents spanning tens to hundreds of pages are pervasive in real-world workflows, from scientific papers to financial reports and technical manuals. Visually rich document understanding (VRDU) studies how computational systems interpret documents by combining textual, visual, and structural information. Although multi-page VRDU (MP-VRDU) systems have increasingly emerged, much of the broader VRDU literature has centred on single-page understanding, while multi-page methods have developed across several distinct architectural and methodological directions. This thesis by publication focuses specifically on multi-page VRDU through two complementary studies: a systematic survey that organises the field as a distinct problem, and an empirical attribution that investigates where current systems fail.
+
+In the survey, we organise MP-VRDU through the lens of evidence management, focusing on the problem of deciding how document-scale evidence should be selected and reasoned over when it cannot all be held at once. We introduce a taxonomy spanning four architectural families, multimodal representation, inference-time adaptation, and training strategies for cross-page evidence. We further consolidate MP-VRDU datasets and outline open challenges in efficiency, faithfulness, evidence pipelines, supervision integrity, and reproducible evaluation that define the frontier.
+
+Building on the survey, we empirically attribute MP-VRDU failure to three fundamental loci: representation, selection, and reasoning, through controlled interventions. We find that text and vision are complementary, conversion fidelity materially affects representation quality, missing required evidence is far more damaging than moderate distractors, and cross-page integration remains difficult even with oracle evidence. We empirically test how prompting and deployment choices affect MP-VRDU behaviour, finding that language models are highly sensitive to instruction wording. We further analyse retrieval, model scaling, quantisation, and evaluator reliability, and translate these results into practical deployment guidance.
+
+\thispagestyle{empty}
+%  Listed in the contents without a page number, which is why this is a raw
+%  \contentsline rather than \addcontentsline.
+\addtocontents{toc}{\protect\contentsline{chapter}{Abstract}{}{}}
+
+\clearpage
+\pagenumbering{roman}
+
+\section*{Acknowledgments}
+TODO
+
+\clearpage
+
+% ---- contents, list of figures, list of tables -----------------------------
+\input{include/contents.tex}
+
+\pagenumbering{arabic}
+\pagestyle{fancy}
+
+% ============================================================================
+%  Intro
+% ============================================================================
+\chapter{Introduction}
+\label{ch:introduction}
+% Definition of VRDU and Multipage Nature and Challenges
+
+Documents are the principal medium through which organisations, governments, and the scientific community record and exchange information. Contracts, financial reports, scientific papers, technical manuals, and regulatory filings contain the information on which many administrative, financial, scientific, and operational decisions depend. These documents are rarely plain text: they combine prose with tables, figures, diagrams, typography, spatial organisation, and other layout cues that contribute directly to meaning. Extracting information from them manually is slow, expensive, and error-prone, motivating sustained efforts to automate document understanding.
+
+% From Single Page to Multipage
+Visually rich document understanding (VRDU) concerns systems that extract or infer information from documents by jointly interpreting their textual, visual, structural, and layout information. This distinguishes VRDU from conventional natural language processing over plain text, since information in a document may be encoded not only in its words but also in where those words appear, how they are grouped, and how they relate to surrounding tables, figures, and graphical elements. Early approaches were typically designed for particular document types and tasks, making them narrow and difficult to generalise \citep{xu2020layoutlm}. More recent systems increasingly rely on large vision-language models that process document text, layout, and visual content together across heterogeneous document types \citep{ye2023ureader, hu2024mplug}. Document question answering has consequently become a common formulation for evaluating these systems \citep{mathew2021docvqa}, since many document-understanding tasks can be expressed as questions over document content. This thesis focuses specifically on the multi-page setting, where these visually rich documents extend across many pages and form the basis of the MP-VRDU problem studied throughout the thesis.
+
+This thesis examines MP-VRDU from two angles: a survey organising the field by how systems manage document-scale evidence, and an empirical analysis attributing incorrect answers to distinct failure modes. The survey consolidates a fast-moving literature into a single account of how these systems are built. The empirical analysis then tests competing and largely untested claims about how they should be built. Together, they consolidate the current state of the field and help guide future research.
+
+\section{Research Aims}
+
+This thesis addresses two complementary problems in MP-VRDU: how the field should be organised, and where its systems fail. We therefore pursue two broad research aims rather than a larger set of narrower research questions.
+
+\paragraph{Aim 1: comprehensively survey techniques and architectures for multi-page document understanding, treating it as a problem distinct from the single-page setting.} We set out to organise the current landscape of systems for multi-page and long-document understanding around the design decisions that arise specifically at document scale. Prior surveys remain anchored to the single-page setting or organise the field by narrower distinctions such as OCR dependency \citep{ding2026survey, gao2026scaling}; none treats multi-page understanding as a distinct problem or takes evidence management as its organising lens.
+
+\paragraph{Aim 2: attribute MP-VRDU failure to its underlying causes, and resolve the field's competing and largely untested claims about how these systems should be built.} We set out to determine, through controlled empirical attribution, which failure mode is responsible when a system answers incorrectly, isolating representation, selection, and reasoning while holding the remaining stages fixed. Prior diagnostic studies typically isolate a single upstream stage such as OCR or retrieval \citep{zhang2025ocr, zarrinkia2026reasoning}, leaving failure attribution across a complete MP-VRDU pipeline largely unaddressed.
+
+\section{Thesis by Compilation}
+
+This thesis is structured as a compilation of two papers written during this Honours year, each addressing one of the aims above. The remainder of this chapter introduces the background required for both studies. Chapter~\ref{ch:survey} functions as the thesis literature review, surveying the architectures, representations, inference-time techniques, training strategies, and datasets used in MP-VRDU. Chapter~\ref{ch:empirical} presents the empirical attribution study, which investigates where failures arise within MP-VRDU pipelines through controlled analysis of representation, selection, and reasoning. Finally, Chapter~\ref{ch:conclusion} synthesises the findings of both studies, discusses their broader implications, and outlines open challenges and directions for future work. The papers are as follows:
+
+\begin{enumerate}
+  \item \textbf{Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding.} Lewei Xu, Yihao Ding, Zihan Xu, Siwen Luo, Daochang Liu, Wei Liu. \emph{Main Conference of EMNLP 2026.} Available at \url{https://aclanthology.org/2026.emnlp-main.XXX/}.  (Chapter~\ref{ch:survey}).
+  \item \textbf{Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution.} Lewei Xu, Yihao Ding, Zihan Xu, Daniel Yitian Su, Daochang Liu, Siwen Luo, Yifan Peng, Wei Liu. \emph{Submitted to EACL, under review.} Available at \url{https://arxiv.org/abs/2608.07943}. (Chapter~\ref{ch:empirical}).
+\end{enumerate}
+
+Additional explanatory material, figures, and tables have been added to Chapters~\ref{ch:survey} and~\ref{ch:empirical} to improve readability and provide context beyond the conventions and space constraints of the original venues. The empirical attribution paper submitted in early August was an earlier version of the study, limited to a single primary dataset and lacking cross-family model comparisons and judge--human and judge--judge agreement analyses. These have since been added to Chapter~\ref{ch:empirical}, while the core framework and methodology remain unchanged.
+
+% \section{Research Contributions}
+
+% \paragraph{From the survey.} \textbf{(1)} We define MP-VRDU as a problem distinct from single-page visually rich document understanding and organise existing systems through an evidence-management perspective, introducing a taxonomy of four architectural families: page-to-document encoding, MLLM-centric adaptation, retrieval-augmented, and adaptive-trajectory approaches. \textbf{(2)} We analyse how multi-page systems represent and trade off text, visual, and structural modalities under document-length constraints. \textbf{(3)} We review inference- and training-time strategies for scaling MP-VRDU, and consolidate the datasets used to train and evaluate such systems. \textbf{(4)} We identify open challenges in efficiency, faithfulness, evidence pipelines, supervision integrity, and reproducible evaluation that define the current frontier of the field.
+
+% \paragraph{From the empirical study.} \textbf{(1)} We introduce an attribution framework that formalises answer failure in MP-VRDU as three loci: representation, selection, and reasoning. Because the loci are defined at the level of system function rather than model architecture, they offer a common formalisation for analysing and comparing methods. \textbf{(2)} We conduct a controlled empirical study that isolates each locus and resolves several of the field's competing and largely untested claims about modality, retrieval, and reasoning under a unified setup. \textbf{(3)} We translate the resulting analysis into practical guidance for designing and deploying MP-VRDU pipelines under a fixed compute budget.
+
+% ============================================================================
+%  Background
+% ============================================================================
+
+\section{Background}
+\label{sec:background}
+
+% \subsection{Visually Rich Documents}
+% \label{sec:bg-vrd}
+% A visually rich document is one whose meaning is carried jointly by text, layout, and visual content rather than by text alone, which makes it harder to process than either plain text or a natural image (Figure~\ref{fig:doc-variety}). Much of its text is small, typeset or handwritten, and legible only at far higher input resolution than a typical vision-language task requires \citep{liu2024hrvda, dong2024internlm}. Layout contains semantic information, for example, a number means one thing in a table's first column and another in its second, so position must be interpreted rather than merely read. Reading order must be recovered rather than assumed, because a page is a two-dimensional arrangement rather than a linear stream. Documents also carry recoverable text that natural images lack, embedded in born-digital files and available through recognition on scans. Whether to parse that text or read the page directly is the first choice a system makes, and it is choices of this kind, absent in general vision-language tasks, that motivate architectures built for documents specifically.
+
+\begin{figure}[ht]
+\centering
+\newcommand{\pg}[1]{\raisebox{-\height}{\includegraphics[width=\dimexpr\textwidth/4\relax]{#1}}}
+    % the trailing %'s are what remove the horizontal gaps
+    \pg{include/doc_examples/academic_paper.png}%
+    \pg{include/doc_examples/brochure_2.png}%
+    \pg{include/doc_examples/financial_report.png}%
+    \pg{include/doc_examples/slide.png}\\[6pt]
+    \pg{include/doc_examples/guidebook.png}%
+    \pg{include/doc_examples/handwriting.png}%
+    \pg{include/doc_examples/manual.png}%
+    \pg{include/doc_examples/brochure.png}
+\caption{Representative pages from MMLongBench-Doc.}
+\label{fig:doc-variety}
+\end{figure}
+
+
+\subsection{A Brief History of Document Understanding}
+\label{sec:bg-history}
+Automated document understanding predates the era of instruction-tuned language models. These early systems were brittle and narrow in scope, treating it as information extraction over specific document types such as forms and scanned business documents, and pairing OCR with rule-based or shallow machine-learning classifiers to recover fields such as names, dates, and totals \citep{subramani2020survey, jaume2019funsd}. LayoutLM \citep{xu2020layoutlm} established that layout, the two-dimensional position of text on a page, could be pretrained jointly with textual content rather than attached afterwards, moving the field from task-specific classifiers to a general pretrained backbone. DocVQA \citep{mathew2021docvqa} reframed the task the following year as natural-language question answering over a document image rather than fixed-field extraction, so that a single model could answer arbitrary questions instead of extracting a predetermined set of fields. Both, however, remained confined to a single page. Then, MP-DocVQA \citep{tito2023hierarchical} moved the setting to multiple pages, pairing a benchmark of multi-page documents with the Hi-VT5 baseline; its questions were still answerable from one page and its documents relatively short, but it marked the point at which multi-page visually rich document understanding (MP-VRDU) became a distinct problem. Multimodal large language models (MLLMs), emerging over the same period, replaced task-specific encoders with general backbones that consume text, layout, and page images together and answer in natural language \citep{ye2023ureader, hu2024mplug}. A backbone reads only what fits its context window, however, so scaling to longer documents remained an open problem.
+
+\subsection{Single-Page VRDU Overview}
+\label{sec:bg-sp}
+
+The single-page setting is largely solved. Document-specialised systems such as ORCA \citep{lassoued2026orca} approach human performance on DocVQA \citep{mathew2021docvqa}, reaching 0.9729 against a human baseline of 0.9811, with comparable results on infographics \citep{mathew2022infographicvqa}, charts \citep{masry2022chartqa}, and scanned forms. Multi-page systems inherit most of their per-page machinery from the single-page setting. The discussion below follows the organisation of Ding et al.'s survey of MLLM-based VRDU \citep{ding2026survey}, restricted here to the page-level choices that multi-page systems build on. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{include/sp_architectures.png}
+    \caption{OCR-dependent and OCR-free framework architectures for MLLM-based VRDU. Adapted from Ding et al. \citep{ding2026survey}.}
+    \label{fig:sp_architectures}
+\end{figure}
+
+\paragraph{MLLM-based VRDU Architectures.} At the architectural level, single-page systems divide into two families, shown in Figure~\ref{fig:sp_architectures}. OCR-dependent frameworks parse the page first, running off-the-shelf OCR or a PDF parser to recover text alongside its bounding-box coordinates. These parsed signals are then encoded, either injected as text into the language model prompt \citep{wang2024docllm} or passed through a vision or multimodal encoder such as LayoutLMv3 that binds text, layout, and image into joint multimodal representations \citep{huang2022layoutlmv3, luo2024layoutllm}, which an adaptor and tokeniser convert into the token sequence the language model consumes. Relying on the parser lets these systems capture structural information without heavy visual pretraining, but ties their accuracy to the parser's, most visibly on handwritten or low-quality scans where recognition degrades. OCR-free frameworks discard the parser and let a vision encoder read the rendered page directly from pixels, producing visual representations that the language model is trained to interpret through objectives such as text recognition and grounding \citep{hu2024mplug, wang2023towards}. Because fine-grained text is legible only at high resolution, these frameworks consume large images and often insert a compression step to reduce the resulting visual token count before the language model \citep{hu2025mplug}; in exchange, they train end to end and handle handwriting and irregular layouts that OCR struggles with.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\columnwidth]{include/sp_modalities.pdf}
+    \caption{Multimodal feature representation and fusion mechanisms. Adapted from Ding et al. \citep{ding2026survey}.}
+    \label{fig:sp_modalities}
+\end{figure}
+
+\paragraph{Single-page Multimodal Representation.} Within both families, a system must still decide how to represent text, layout, and visual content, and how to fuse them. Text is recovered as injected OCR strings \citep{wang2024docllm}, through joint text-layout-vision encoders \citep{luo2024layoutllm, zhu2025enhancing}, or as a pretraining objective for the vision encoder itself \citep{wang2025marten}. Layout is encoded as positional features attached to text tokens \citep{xu2020layoutlm, zhu2025enhancing}, as coordinates verbalised in the prompt \citep{perot2024lmdx}, or through dedicated layout tokens \citep{zhu2025simple}. Visual content is managed through low-resolution patch embeddings \citep{tanaka2024instructdoc}, high-resolution shape-adaptive cropping \citep{ye2023ureader, hu2024mplug}, or token compression that cuts the visual sequence by an order of magnitude \citep{hu2025mplug, yu2024texthawk2}. Fusion draws these together through dedicated multimodal encoders \citep{huang2022layoutlmv3}, shared training objectives \citep{hu2024mplug, wang2025marten}, or prompt-based interleaving of text, layout, and images. Single-page systems make these choices assuming the entire document fits in a single backbone input; the multi-page setting (Chapter~\ref{ch:survey}), breaks that assumption, reframing each choice around which pages or regions the system should attend to in the first place.
+
+\subsection{General-Domain MLLMs and MP-VRDU}
+\label{sec:bg-designspace}
+Frontier general-domain MLLMs can read a rendered page directly from pixels and handle single-page and short multi-page inputs reliably when resolution is sufficient. Even so, the products built on them rarely rely on page images alone: in their web interfaces and coding agents, both Anthropic and OpenAI parse an uploaded PDF for text and render it to per-page images, placing both in the model's context \citep{anthropic2026pdf, openai2026files}. This is itself a document-specialised pipeline, albeit a very simple one, and its limits are quickly apparent: uploading a large document or several smaller ones soon fills the context window, and more complex document types often fail to be read at all.
+
+Document understanding can be framed as a question answering task over a single document or even a corpus of documents. The current frontier, however, lies in how general-domain vision-language models (MLLMs) can be leveraged, together with the machinery built around them, to answer such questions over documents that the backbone cannot process directly. This machinery is the subject of MP-VRDU: how the document is encoded, how evidence is selected and delivered to the model, and how reasoning is orchestrated over what is delivered. The boundary is not absolute, since some interventions modify or further train the backbone itself rather than only the components around it, but the backbone is the constant and the surrounding machinery is where most design effort is spent.
+
+\subsection{Challenges of the Multi-Page Setting}
+\label{sec:bg-challenges}
+Answering a question over a long multi-page document usually requires only a small fraction of the document content, though some tasks, such as whole-document summarisation, draw on the whole document. Feeding the entire document to an MLLM is not a general solution, since long multi-page documents routinely exceed what a backbone can hold in its context window~\cite{xu2026managing}. MP-VRDU systems must therefore select which parts of the document reach the MLLM backbone. Scaling MLLMs to longer contexts does not resolve this: long-context models attend poorly to evidence buried mid-input \citep{liu2024lost}, and the memory and compute required grow with sequence length, so the achievable context is bounded by the capacity of current hardware rather than by the architecture alone. Answering often requires integrating evidence from several parts of a document at once, so a system must locate every relevant evidence unit rather than the single best one, and missing any of them is enough to answer incorrectly or be unable answer at all \citep{xu2026locating}. Compounding the challenge, cross-page structure such as section hierarchy and cross-references cannot be recovered from any part of the document in isolation \citep{tito2023hierarchical}, and questions often require such cross-page structural to formulate to gather evidence for the correct answer.
+
+
+% ============================================================================
+%  Survey
+% ============================================================================
+\input{survey/survey}
+
+% ============================================================================
+%  Empirical
+% ============================================================================
+\input{empirical/empirical}
+
+
+% ============================================================================
+%  Conclusion
+% ============================================================================
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+This thesis has treated multi-page visually rich document understanding as an evidence-management problem. Rather than viewing MP-VRDU as a direct extension of single-page document understanding, it has examined how systems represent, select, and reason over sparse evidence distributed across long documents. Chapter~\ref{ch:survey} develops this perspective at the field level by organising existing systems according to how they manage document-scale evidence. Chapter~\ref{ch:empirical} then tests the resulting design assumptions within a controlled pipeline, identifying where failures arise and which interventions meaningfully change downstream performance.
+
+Together, the two chapters point to a common conclusion. MP-VRDU performance depends not only on the capability of the underlying multimodal model, but on how evidence is acquired, preserved, prioritised, and used throughout the pipeline. The survey shows that recent systems increasingly move these decisions outside the backbone through compression, retrieval, and iterative orchestration, while the empirical study shows why these decisions matter: vision is necessary but complementary to text, missing evidence imposes a much stronger constraint than moderate distractor exposure, and cross-page reasoning remains difficult even when the required evidence is fully supplied. This chapter draws these findings together, proposes a simple adaptive pipeline that follows from them, and outlines the open challenges that define the next stage of MP-VRDU research.
+
+\section{A Simple Adaptive-Trajectory Pipeline}
+\label{sec:simple_method}
+
+Chapter~\ref{ch:survey} established that MP-VRDU is fundamentally an evidence-management problem, while Chapter~\ref{ch:empirical} established representation, selection, and reasoning as three fundamental loci of system failure. In this section, we introduce a simple adaptive-trajectory agentic framework designed directly around these findings. Rather than introducing a novel or complex architecture, the method combines high-fidelity document representation, deep retrieval, and iterative evidence acquisition with a strong vision-language model. The resulting agentic pipeline remains deliberately simple, with no planner, tool set, query reformulation, or explicit document navigation beyond a fixed retrieval ranking.
+
+\textbf{Our contributions are as follows:} \textbf{(1)} We introduce a lightweight agentic framework for MP-VRDU that achieves state-of-the-art performance on principal long-document understanding benchmarks. \textbf{(2)} We further validate the evidence-management framework developed in Chapter~\ref{ch:survey} and the empirical failure attribution developed in Chapter~\ref{ch:empirical} by translating these findings directly into the design of an agentic system. \textbf{(3)} We expose a small set of parameters controlling evidence coverage, per-turn context, and trajectory depth, allowing the framework to scale across different deployment settings.
+
+\subsection{Method Overview}
+\label{sec:simple_adaptive_method}
+
+The framework consists of three agents that iteratively acquire, synthesise, and adjudicate document evidence. All three agents are instantiated from the same underlying vision-language model, with their behaviour differentiated through role-specific instructions and inputs:
+
+\begin{enumerate}
+    \item The \texttt{reader} agent traverses document pages in retrieval-ranked order, records answer-relevant evidence, and decides whether sufficient evidence has been collected to stop reading.
+    \item The \texttt{synthesizer} agent receives only the accumulated evidence record and produces an answer from the evidence gathered so far.
+    \item The \texttt{arbiter} agent receives the accumulated evidence record and the \texttt{synthesizer}'s answer, then decides whether to accept the answer or return control to the \texttt{reader} agent for further evidence acquisition.
+\end{enumerate}
+
+The three agents operate in an adaptive loop. When the \texttt{reader} agent proposes \texttt{STOP}, control passes to the \texttt{synthesizer} agent, which produces an answer from the accumulated record. The \texttt{arbiter} agent then either terminates the trajectory or returns control to the \texttt{reader} agent at the next unread page in the retrieval ranking. The \texttt{arbiter} agent cannot replace the answer itself and may only accept the current answer or request further evidence. This makes premature stopping recoverable rather than final. Due to thesis length constraints, we report only the main design and configuration here, with full prompt templates and implementation details provided in Appendix~\ref{app:simple_method_details}.
+
+\paragraph{Configuration.} We realise the framework using the same representation and model family examined in Chapter~\ref{ch:empirical}. The \texttt{reader}, \texttt{synthesizer}, and \texttt{arbiter} agents all share a single 4-bit NF4 Qwen3-VL-8B-Instruct model with greedy decoding, with role-specific instructions defining their behaviour. Document pages are ranked once per question using ColQwen3 and then visited in ranked order. The \texttt{reader} agent receives the accumulated evidence record together with \(p\) pages per turn, with \(p=1\) by default. Each page uses the full \textbf{TLV} representation with Unlimited-OCR markdown and the high-resolution visual preset. At each turn, the \texttt{reader} agent records relevant evidence in markdown, reproducing textual or tabular content where appropriate and converting visual evidence into a textual description that can be carried forward. The \texttt{synthesizer} and \texttt{arbiter} agents operate only on the accumulated record and therefore do not receive page images.
+
+\paragraph{Deployment.} The agentic design avoids placing the full retrieved document into a single multimodal context. Each \texttt{reader} turn contains only \(p\) pages and the accumulated evidence record, while the shared model weights remain resident throughout the trajectory. Increasing the number of pages read therefore increases the number of short agent turns rather than constructing one large multimodal context. Combined with 4-bit quantisation and a single shared model across all three agents, the default configuration is designed to operate on a single 24--32\,GB GPU. The parameter \(p\) additionally allows inference speed to be traded against per-turn context by controlling how many pages the \texttt{reader} agent processes at once.
+
+\paragraph{Parameters.} Four parameters control the agentic trajectory. \(B=20\) bounds the total number of pages that may be read for a question, while \(p=1\) determines the number of pages supplied to each \texttt{reader} turn. The initial stopping floor \(k=5\) requires at least five \texttt{reader} turns before a \texttt{STOP} decision is honoured, reducing premature termination. If the \texttt{arbiter} agent reopens the trajectory, \(m=3\) similarly requires at least three additional \texttt{reader} turns before another stopping proposal can terminate the new iteration. Together, these parameters separate total evidence coverage from per-turn context and agentic trajectory depth, allowing the same framework to be adapted to different compute budgets.
+
+\subsection{Results}
+\label{sec:simple_adaptive_results}
+
+\input{include/simple_method_results_v2}
+
+\section{Open Challenges and Future Work}
+\label{sec:conc_challenges}
+
+The survey of Chapter~\ref{ch:survey} identifies five challenges that define the open MP-VRDU frontier. They arise from a consistent pattern across the surveyed systems: progress comes from moving evidence handling out of the backbone, through compression, retrieval, or iterative orchestration, but each shift relocates the bottleneck rather than removing it. Three concern system capability, in the evidence pipeline itself, in faithfulness, and in efficiency. Two concern data and evaluation, in supervision integrity and in evaluation scope.
+
+\subsection{Evidence Pipeline Bottleneck}
+\label{sec:conc_pipeline}
+
+MP-VRDU systems must reconcile high-resolution per-page reading with document-scale evidence aggregation, an objective that exceeds any MLLM's compute and context budget~\citep{ma2024mmlongbench}. Every architectural family takes a lossy compromise. Compression silently drops fine-grained content and is typically fixed before the question is seen. Retrieval bounds answer accuracy from above, while broader retrieval introduces attention dilution. Iterative retrieval lifts this ceiling only partially, inheriting the recall of every tool it calls. Cross-page structure compounds the problem further, since none of the routes in \S\ref{sec:modality-structure} scales cleanly. Future work should explore query-conditional compression, retrieval that follows cross-references and logical relations, and learned cross-page structural representations.
+
+\subsection{Faithfulness and Abstention}
+\label{sec:conc_faithfulness}
+
+Long documents amplify hallucination risk. When retrieval misses the answer-bearing region or compression discards it, current systems still produce confident answers. Few surveyed systems support abstention, calibrated uncertainty, or citation-grounded generation, leaving users without signals to distinguish supported answers from fabrications. Future work should integrate evidence-grounded decoding, learned abstention against unanswerable or unretrievable questions, and trajectory-level faithfulness audits that verify the cited evidence supports the final answer.
+
+\subsection{Efficiency and Deployability}
+\label{sec:conc_efficiency}
+
+Agentic and retrieval-augmented pipelines routinely issue tens of LLM calls per question, with token costs scaling jointly with document length and trajectory length. The surveyed literature reports almost no inference-cost analysis: end-to-end latency, token budgets per query, and accuracy-cost Pareto curves are largely absent, despite their centrality to enterprise deployment. Future work should treat compute as a first-class evaluation axis, develop efficient inference techniques specific to long documents such as cross-round caching, speculative decoding, and adaptive depth, and explore compact MP-VRDU models~\citep{hannan2026docslm} that operate under realistic on-device or privacy constraints.
+
+\subsection{Supervision Scarcity and Contamination}
+\label{sec:conc_supervision}
+
+Per-page annotation does not scale to documents averaging tens of pages, so most systems rely on LVLM-synthesised QA over scraped PDFs~\citep{tanaka2024instructdoc, jain2025simpledoc, xiong2026docr1, zhang2026docdancer}. Compounding this, benchmark construction often reuses documents from earlier suites: MMLongBench-Doc draws documents from DUDE, SlideVQA, and ChartQA~\citep{ma2024mmlongbench}, while MP-DocVQA is built on DocVQA~\citep{tito2023hierarchical, mathew2021docvqa}. Together, MLLM-generated QA data~\citep{deng2025longdocurl} and benchmark-reused fine-tuning sets~\citep{xiong2026docr1, duan2025docopilot} risk contamination: models may train on benchmark-derived documents and be evaluated on overlapping data, sometimes judged by the same MLLM family. Future work should adopt held-out documents, declare cross-suite overlap, and separate generators from evaluators.
+
+\subsection{Evaluation Methodology and Scope}
+\label{sec:conc_evaluation}
+
+Beyond contamination, two further evaluation gaps persist. Answer-only accuracy masks retrieval failure and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation alongside VQA-style answers~\citep{hui2024uda, zhu2026doclens}, but the practice is not yet standardised, and agentic pipelines produce stochastic trajectories that further complicate reproducibility. Task, language, and domain scope also remain narrow. Real-world MP-VRDU spans summarisation and structured extraction beyond VQA, multilingual layouts beyond English, and domain-specialised settings such as medical, legal, and financial documents, as well as streaming inputs that arrive page-by-page. These dimensions are inherited from SP-VRDU~\citep{ding2026survey} rather than introduced by the multi-page setting and remain underexplored in both regimes. Future work should therefore standardise trajectory-level evaluation with retrieval and grounding metrics, report stochasticity bounds, and broaden coverage along these inherited dimensions.
+
+\section{Concluding Remarks}
+\label{sec:concluding_remarks}
+
+The empirical analysis directly addresses two of the open challenges identified above. For faithfulness and abstention, it shows that targeted abstention can substantially reduce unsupported answers, but also introduces false refusals on difficult yet answerable questions, exposing a calibration problem rather than simply a prompting problem. For efficiency and deployability, the experiments show that practical MP-VRDU performance depends on the accuracy--cost trade-offs introduced by representation, retrieval depth, and reasoner capability, and that stronger performance does not necessarily require maximising every component simultaneously.
+
+More broadly, this thesis argues that MP-VRDU is fundamentally an evidence-management problem. Progress therefore depends not only on stronger multimodal backbones, but on controlling what evidence is preserved, selected, and presented to the reasoner, and on understanding which stage is responsible when the system fails. Designing and evaluating MP-VRDU systems around these mechanisms provides a clearer basis for improving accuracy, faithfulness, and efficiency than treating the pipeline as a monolithic end-to-end model.
+
+% \section*{Word Count}
+% The main text is approximately 16{,}000 words, excluding the abstract, acknowledgements, tables, captions, and the appendix. The appendix contains supplementary detail including the full survey methodology, surveyed corpus details, and extended result tables; these not essential for reading this thesis.
+
+\section*{Statement of AI Use}
+AI assistants were used to correct grammatical inaccuracies and suggest phrasing revisions in the manuscript and to assist with implementation of the experimental pipeline. All generated code was read and tested by the author and the author takes full responsibility for the content of the publications. AI assistants did not participate in research ideation.
+
+\section*{Additional Artefacts}
+\begin{itemize}
+    % \item Survey (Chapter~\ref{ch:survey}), ACL Anthology: \url{https://aclanthology.org/PLACEHOLDER}
+    \item Survey code and surveyed corpus: \url{https://github.com/LeweiXu/MP-VRDU-Survey}
+    % \item Empirical attribution (Chapter~\ref{ch:empirical}), arXiv: \url{https://arxiv.org/abs/PLACEHOLDER}
+    \item Empirical attribution code:: \url{https://github.com/LeweiXu/MP-VRDU-Analysis}
+    \item Original project proposal: \url{https://www.overleaf.com/read/ntdnhjhxkgqt#386d92}
+\end{itemize}
+
+
+% ============================================================================
+%  References
+% ============================================================================
+\unnumberedchapter{References}
+\bibliography{survey/custom, empirical/custom, include/custom}
+
+% ============================================================================
+%  Appendices
+% ============================================================================
+\include{appendix/appendix}
+
+\end{document}

@@ -1,0 +1,16 @@
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Axis & Checkpoints \\
+\midrule
+Scale (primary) & Qwen3-VL-Instruct at 2B, 4B, 8B, 32B \\
+Scale (secondary) & Gemma-3-IT at 4B, 12B, 27B \\
+Family & InternVL3-8B, GLM-4.6V-Flash, MiniCPM-V-4.5, Llama-3.2-11B-Vision \\
+Precision & Qwen3-VL-8B quantized at \texttt{bf16}, 8-bit, 4-bit \\
+Reasoning variant & Qwen3-VL-8B-Thinking \\
+\bottomrule
+\end{tabular}
+\caption{Reasoner variation experiments. All share the same prompt template decoding configuration.}
+\label{tab:reasoners}
+\end{table}

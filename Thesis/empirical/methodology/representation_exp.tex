@@ -1,0 +1,26 @@
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}
+  >{\raggedright\arraybackslash}p{1.1cm}
+  >{\raggedright\arraybackslash}p{2.9cm}
+  >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+Rung & Text channel & Image & Cost & Role \\
+\midrule
+T & Embedded text (PyMuPDF) & -- & Extraction only & Acquisition floor; empty on scanned pages \\
+\midrule
+TL & Parser markdown & -- & Parser pass & Text-only ceiling; recovers reading order and table structure \\
+\midrule
+TLV & Parser markdown & Page image & Parser pass + vision tokens & Combined encoding; the only full option on scanned pages \\
+\midrule
+V & -- & Page image & Vision tokens & Vision-only \\
+\bottomrule
+\end{tabularx}
+\caption{Representation ladder. Ordered by fidelity and, as a consequence, by cost.}
+\label{tab:ladder_def}
+\end{table}

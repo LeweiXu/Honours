@@ -1,0 +1,75 @@
+This section outlines the experimental design used to investigate the stability of RL for query augmentation using LLMs. The goal is to reproduce and extend the DeepRetrieval framework~\cite{jiang2025deepretrieval} to systematically examine how different factors such as model architecture, algorithm choice, and hyperparameter settings, affect the stability and performance of policy optimization. The following sections describe the overall structure of the DeepRetrieval framework, the RL algorithms implemented, and the policy models employed in this study. Details on the experimental configuration, including the selection of hyperparameters, reward function design, and dataset setup, are also presented. Finally, the evaluation metrics used to assess both training stability and retrieval effectiveness are introduced. Together, these components establish a reproducible and controlled methodology for analyzing the dynamic behavior of reinforcement learning in language-based retrieval tasks.
+
+\subsection{DeepRetrieval Structure}
+The reinforcement learning framework examined in this study is based on DeepRetrieval, proposed by \citeauthor{jiang2025deepretrieval}~\cite{jiang2025deepretrieval}. DeepRetrieval formulates query generation as a reinforcement learning problem, allowing LLMs to learn query augmentation strategies that directly optimize retrieval performance. Instead of training on manually labeled or teacher-generated examples, the model interacts with real-world retrieval systems and receives feedback in the form of retrieval rewards. The framework has demonstrated strong performance across several retrieval settings. As shown in the original study, DeepRetrieval achieved substantial gains on three major benchmarks~\cite{jiang2025deepretrieval}:
+\begin{itemize}
+    \item Literature search on real-world search engines such as PubMed and ClinicalTrials.gov,
+    \item Classic information retrieval datasets, and
+    \item Text-to-SQL tasks involving structured database queries.
+\end{itemize}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/deepretrieval_performance.png}
+    \caption{DeepRetrieval Performance on: (a) Literature Search Performance (Re- call@3K) on Real-World Search Engines; (b) Performance on Classic Information Retrieval and SQL database search Tasks. From \citeauthor{jiang2025deepretrieval}~\cite{jiang2025deepretrieval}}
+    \label{fig:fig4}
+\end{figure}
+The model consistently outperformed both supervised fine-tuning baselines and larger commercial LLMs, highlighting the effectiveness of RL in aligning query generation with retrieval outcomes.
+
+This project focuses on reproducing and analyzing the literature search task on PubMed, where the objective is to retrieve biomedical publications relevant to structured clinical queries. Using the Transformer Reinforcement Learning library (TRL), the training pipeline is implemented to systematically study how hyperparameters, model size and RL algorithms affect the stability of RL in this setting.
+
+The basic structure of the DeepRetrieval task is illustrated as follows~\ref{fig:fig5}. A query is first provided as input to the language model, which generates an augmented query intended to improve retrieval coverage and precision. This augmented query is then sent to a retrieval engine, which returns a set of documents. A retrieval reward is computed by comparing the retrieved results against ground-truth relevant documents, measuring how effectively the generated query retrieves useful information. The total reward is then propagated back to the model, which updates its parameters to improve future query reformulation. Over multiple iterations, the model learns to produce more effective queries that align with retrieval objectives.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/deepretrieval_structure.png}
+    \caption{Abstractive Overview of DeepRetrieval. From\citeauthor{jiang2025deepretrieval}~\cite{jiang2025deepretrieval}}
+    \label{fig:fig5}
+\end{figure}
+
+\subsection{Hyperparameters}
+Training stability in PPO is often governed by a small number of highly sensitive hyperparameters. Following conclusions from prior analyses~\cite{eimer2023hyperparameters, adkins2024method}, four key factors were selected for systematic investigation:
+\begin{itemize}
+\item \textbf{Learning Rate:} Controls the magnitude of policy updates. Higher values accelerate training but can lead to divergence or oscillating KL divergence, while overly small values slow convergence and reduce learning efficiency.
+\item \textbf{KL Penalty Coefficient:} Regulates how much the policy is allowed to deviate from the reference model. A small penalty encourages exploration but risks instability, whereas a large penalty enforces stability at the cost of learning speed.
+\item \textbf{Number of PPO Epochs:} Determines how many passes are made over each batch of data when computing policy gradients. More epochs can improve sample efficiency but may also amplify overfitting and instability if updates become too aggressive.
+\item \textbf{Reward Formulation and Scale:} The total reward consists of retrieval performance and format adherence. Reward normalization or scaling directly affects policy gradient magnitude and can alter the balance between stability and learning signal strength.
+\end{itemize}
+
+Each hyperparameter was varied systematically while holding others constant to isolate its influence on training dynamics, including KL divergence trends, entropy decay, policy and value losses, and overall reward progression. By combining two model architectures, two optimization algorithms, and four controlled hyperparameter dimensions, this experimental design provides a comprehensive foundation for analyzing how both model scale and algorithmic choice affect RL stability in language-based retrieval tasks.
+
+\subsection{Large Language Models}
+To examine whether model capacity influences training stability, experiments were conducted using two transformer-based language models of different scales:
+\begin{itemize}
+    \item Qwen2-0.5B-Instruct, a compact model suitable for rapid experimentation, and
+    \item LLaMA-3.2-3B-Instruct, a larger model with greater representational capacity and potentially more stable gradient dynamics.
+\end{itemize}
+These models were selected to represent different scales and architectures while maintaining accessibility and compatibility with open source training infrastructure. The Qwen2-0.5B~\cite{team2024qwen2} model provides a lightweight configuration suitable for rapid experimentation, while LLaMA-3.2-3B~\cite{Llama3_2_3B} offers a mid-sized counterpart with stronger reasoning and retrieval capabilities. Comparing their behavior under identical training settings enables a direct examination of how model capacity influences stability and convergence in reinforcement learning.
+
+\subsection{Algorithms}
+Beyond standard PPO~\cite{schulman2017proximal}, an additional experiment employed GRPO~\cite{shao2024deepseekmath} as a comparative baseline  to assess how group-based feedback affects stability in reinforcement learning. Figure~\ref{fig:fig6} illustrates the training workflow for both PPO and GRPO as implemented in this study. The overall process involves four main components: the policy model, the reference model, the value model, and the reward model, which interact through a feedback loop to iteratively improve query generation.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Thesis/img/ppo_grpo.png}
+    \caption{PPO and GRPO workflow. From \citeauthor{shao2024deepseekmath}~\cite{shao2024deepseekmath}}
+    \label{fig:fig6}
+\end{figure}
+The policy model is the large language model responsible for generating augmented queries given an input query $q$. In reinforcement learning terminology, the policy defines a probability distribution $\pi_{\theta}(o|q)$ over possible outputs $o$. During each iteration, the policy model samples one or more candidate outputs, which are then evaluated by the reward model. In this work, the policy model is the only component updated through gradient optimization. 
+
+The reference model is a frozen copy of the initial policy used to compute the KL divergence between the current policy and its reference distribution. This term acts as a regularizer that constrains the degree of policy deviation across updates. A large KL divergence indicates that the policy is diverging too quickly from its starting point, which can lead to instability. The KL penalty therefore provides an adaptive mechanism for stabilizing optimization, ensuring that the model improves gradually without catastrophic policy shifts.
+
+The value model estimates the expected return $v(q)$ of a given query. It is only used in PPO, this step is replaced in GRPO by group comparison between the output reward. It provides a baseline for computing the advantage function, which quantifies how much better or worse a particular output is compared with the average expectation. In this study, the value model shares the same architecture and initialization as the policy model but is trained separately. Its outputs are used to compute Generalized Advantage Estimation (GAE)~\cite{schulman2015high}, which smooths the temporal credit assignment and reduces variance in policy gradient updates.
+
+The reward model evaluates generated outputs using the reward functions. It produces scalar rewards $r$ based on output quality. These rewards form the learning signal for both PPO and GRPO, guiding the policy model toward behaviors that produce more effective query augmentations. In this study, three progressively complex reward functions were implemented to examine how reward structure and scaling influence training behavior and convergence stability. Each reward design incrementally introduces more task specific supervision, transitioning from simple syntactic signals to semantically grounded retrieval metrics. 
+
+The first reward formulation is based purely on the length of the generated query. Shorter and more concise queries are assigned higher rewards. This design produces a smooth and bounded reward signal that encourages brevity and penalizes verbosity, providing a simple yet stable feedback mechanism for early stage experiments. Although this reward does not directly assess retrieval performance, it offers a controlled environment for isolating the stability effects of different hyperparameter configurations and algorithms. The second reward introduces a structural constraint based on query formatting. In this case, the model is rewarded for producing outputs that conform to a Boolean-style query structure, typically expressed as a sequence of logical expressions such as (phrase 1) AND/OR (phrase 2) ... This encourages the policy to generate syntactically valid, machine readable queries suitable for retrieval engines. The third and most comprehensive reward formulation combines format adherence with retrieval performance, providing a balanced signal that captures both syntactic and semantic quality. The retrieval component measures how effectively the generated query retrieves relevant documents, quantified using Recall@50 based on ground-truth publication sets. The combined reward $R_{\text{combined}}$ is expressed as a weighted sum:
+$$ R_{\text{combined}} = 0.2 R_{\text{fmt}} + 0.8 R_{\text{recall}@50} $$
+The intuition is that enforcing Boolean structure guides the model toward outputs that search engines can interpret more precisely, which in turn improves the effectiveness of retrieval optimization.
+
+In both PPO and GRPO, only the policy and value models are trainable, the reference and reward models remain fixed throughout training. Each training step involves:
+\begin{enumerate}
+    \item Sampling queries and generating outputs from the policy model.
+    \item Computing rewards via the reward model and KL divergence via the reference model.
+    \item Estimating advantages through the value model or group computation using GAE.
+    \item Updating the policy and value model parameters to maximize expected reward while maintaining stability.
+\end{enumerate}
+Through this iterative interaction, the model progressively learns to generate queries that yield higher retrieval rewards while minimizing instability in KL divergence and loss terms. The comparative setup between PPO and GRPO enables an evaluation of how algorithmic feedback mechanisms influence convergence stability under identical task and reward conditions.

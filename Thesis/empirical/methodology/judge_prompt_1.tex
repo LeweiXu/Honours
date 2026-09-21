@@ -1,0 +1,14 @@
+\begin{figure}[h]
+\centering
+\begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily]
+You judge answers to document questions.\\
+Return only JSON with keys:\\
+- verdict: one of correct, incorrect\\
+- extracted\_answer: the answer extracted from the model response, or empty string\\
+- rationale: a short reason\\[0.5em]
+Mark correct when the model answer is semantically equivalent to the gold answer.\\
+For unanswerable questions, mark correct only when the model abstains.
+\end{tcolorbox}
+\caption{Judge accuracy rubric.}
+\label{fig:judge_prompt}
+\end{figure}

@@ -1,0 +1,43 @@
+% LongDocURL accuracy by task tag and question type, across the four rungs.
+% Teal = accuracy on the LongDocURL scale; bold marks each row's winning rung.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{ngray}{HTML}{7A8494}
+\newcommand{\qshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(88-14)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\qcell}[1]{\qshade{#1}#1}
+\newcommand{\qbest}[1]{\qshade{#1}\textbf{#1}}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}ll rrrr r@{}}
+\toprule
+Task tag & Question type & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} & \textcolor{ngray}{\scriptsize$n$} \\
+\midrule
+Understanding & \texttt{extract} & \qcell{74.1} & \qcell{77.1} & \qbest{83.4} & \qcell{74.6} & \textcolor{ngray}{\scriptsize1243} \\
+\midrule
+\multirow{4}{*}{Locating}
+ & \texttt{extract\_fig2tab} & \qcell{58.4} & \qbest{71.6} & \qcell{62.3} & \qcell{55.4} & \textcolor{ngray}{\scriptsize231} \\
+ & \texttt{topic2title}      & \qcell{27.9} & \qcell{28.8} & \qbest{35.1} & \qcell{30.8} & \textcolor{ngray}{\scriptsize201} \\
+ & \texttt{summary2title}    & \qcell{67.2} & \qbest{81.1} & \qcell{77.2} & \qcell{74.3} & \textcolor{ngray}{\scriptsize137} \\
+ & \texttt{summary2tab}      & \qcell{14.9} & \qcell{18.3} & \qbest{19.6} & \qcell{19.0} & \textcolor{ngray}{\scriptsize126} \\
+\cmidrule(l){2-7}
+ & \emph{Locating, pooled}   & \qcell{43.5} & \qbest{51.6} & \qcell{50.0} & \qcell{45.4} & \textcolor{ngray}{\scriptsize695} \\
+\midrule
+\multirow{4}{*}{Reasoning}
+ & \texttt{calculate} & \qcell{61.0} & \qcell{66.7} & \qbest{72.8} & \qcell{50.7} & \textcolor{ngray}{\scriptsize145} \\
+ & \texttt{count}     & \qcell{57.9} & \qcell{56.2} & \qbest{66.3} & \qcell{58.0} & \textcolor{ngray}{\scriptsize117} \\
+ & \texttt{compare}   & \qbest{81.1} & \qcell{78.8} & \qcell{80.2} & \qcell{65.2} & \textcolor{ngray}{\scriptsize112} \\
+ & \texttt{summarize}$^\dagger$ & \qbest{84.6} & \qcell{76.9} & \qcell{81.8} & \qbest{84.6} & \textcolor{ngray}{\scriptsize13} \\
+\cmidrule(l){2-7}
+ & \emph{Reasoning, pooled}  & \qcell{66.8} & \qcell{67.5} & \qbest{73.4} & \qcell{58.3} & \textcolor{ngray}{\scriptsize387} \\
+\midrule
+\textbf{All} & & \qcell{63.7} & \qcell{68.0} & \qbest{71.9} & \qcell{63.1} & \textcolor{ngray}{\scriptsize2325} \\
+\bottomrule
+\end{tabular}
+\caption{LongDocURL accuracy by task tag and question type. On oracle pages. The spread across types dwarfs the spread across rungs: \texttt{summary2tab} stays under 20\% at every rung while \texttt{extract} never drops below 74\%, so what a question asks for bounds accuracy more tightly than how the page is encoded.}
+\label{tab:ldu_tasks_acc}
+\end{table}

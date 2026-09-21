@@ -1,0 +1,41 @@
+% Integration: accuracy by gold evidence-page count, both datasets side by side.
+% Teal = accuracy on a per-dataset scale; warm wash on M-S deepens with the deficit.
+% 3+ pools every question citing three or more gold pages; its value is derived so
+% that the bucket columns reproduce the pooled Multi row exactly.
+\definecolor{gapred}{HTML}{B03A2E}
+\definecolor{ngray}{HTML}{7A8494}
+\definecolor{accteal}{HTML}{1BAF7A}
+\newcommand{\ishade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(70-14)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\icell}[1]{\ishade{#1}#1}
+\newcommand{\jshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-55)/(80-55)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\jcell}[1]{\jshade{#1}#1}
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}l rrr rr @{\hskip 6pt\vrule\hskip 6pt} rrr rr@{}}
+\toprule
+ & \multicolumn{5}{c@{\hskip 6pt}}{\textbf{MMLongBench-Doc}} & \multicolumn{5}{c}{\textbf{LongDocURL}} \\
+\cmidrule(r){2-6}\cmidrule(l){7-11}
+ & \multicolumn{3}{c}{Gold pages} & \multicolumn{2}{c@{\hskip 6pt}}{Pooled} & \multicolumn{3}{c}{Gold pages} & \multicolumn{2}{c}{Pooled} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-9}\cmidrule(lr){10-11}
+\textbf{Rung} & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{Multi} & \textbf{M$-$S} & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{Multi} & \textbf{M$-$S} \\
+\textcolor{ngray}{\scriptsize$n$}
+ & \textcolor{ngray}{\scriptsize480} & \textcolor{ngray}{\scriptsize246} & \textcolor{ngray}{\scriptsize112} & \textcolor{ngray}{\scriptsize358} &
+ & \textcolor{ngray}{\scriptsize1093} & \textcolor{ngray}{\scriptsize898} & \textcolor{ngray}{\scriptsize302} & \textcolor{ngray}{\scriptsize1200} & \\
+\midrule
+T   & \icell{37.1} & \icell{28.9} & \icell{17.7} & \icell{25.4} & \cellcolor{gapred!12}$-$11.7 & \jcell{65.6} & \jcell{62.2} & \jcell{62.2} & \jcell{62.2} & \cellcolor{gapred!4}$-$3.4 \\
+TL  & \icell{44.6} & \icell{33.3} & \icell{25.0} & \icell{30.7} & \cellcolor{gapred!17}$-$13.9 & \jcell{74.0} & \jcell{63.4} & \jcell{59.2} & \jcell{62.4} & \cellcolor{gapred!12}$-$11.6 \\
+TLV & \icell{63.7} & \icell{37.8} & \icell{38.4} & \icell{38.0} & \cellcolor{gapred!42}$-$25.7 & \jcell{74.7} & \jcell{70.4} & \jcell{65.5} & \jcell{69.3} & \cellcolor{gapred!6}$-$5.4 \\
+V   & \icell{55.0} & \icell{34.6} & \icell{31.1} & \icell{33.5} & \cellcolor{gapred!33}$-$21.5 & \jcell{64.5} & \jcell{61.5} & \jcell{63.5} & \jcell{62.0} & \cellcolor{gapred!3}$-$2.5 \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy (\%) by gold evidence-page count on oracle pages. Teal deepens with accuracy on a per-dataset scale; the M$-$S column is the multi-page deficit against single-page accuracy, shaded to deepen with the deficit. The 3+ column pools three or more gold pages, since its sub-buckets are too thin to read alone.}
+\label{tab:integration}
+\end{table}

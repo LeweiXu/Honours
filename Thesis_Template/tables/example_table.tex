@@ -1,0 +1,15 @@
+% One .tex per table. booktabs rules, no vertical lines.
+\begin{table}[htbp]
+  \centering
+  \caption{An example table.}
+  \label{tab:example}
+  \begin{tabular}{lrrr}
+    \toprule
+    Method & Accuracy & F1 & Params (M) \\
+    \midrule
+    Baseline        & 0.712 & 0.694 & 12 \\
+    Baseline + tune & 0.784 & 0.771 & 12 \\
+    Proposed        & 0.836 & 0.829 & 27 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

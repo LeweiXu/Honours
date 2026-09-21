@@ -1,0 +1,144 @@
+% ============================================================================
+%  packages.tex -- every package and every style decision for the template.
+%
+%  The numbers in here were measured off a reference thesis PDF, so don't
+%  change them casually. Where a value looks odd there's a comment saying why.
+% ============================================================================
+
+% ---- encoding and fonts ----------------------------------------------------
+%  times.sty only swaps the text families (rm -> Times, sf -> Helvetica,
+%  tt -> Courier) and leaves maths in Computer Modern. That mix is deliberate:
+%  it is what the reference document does. If you switch to mathptmx or newtx
+%  the maths will change too and the look will drift.
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+
+% ---- language --------------------------------------------------------------
+\usepackage[australian]{babel}
+\usepackage{csquotes}
+
+% ---- colour ----------------------------------------------------------------
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+
+% ---- page geometry ---------------------------------------------------------
+%  Text block is 16cm wide, 2.5cm from the top, 3cm off the bottom.
+%  \headheight and \headsep stay at the report 11pt defaults (12pt / 25pt).
+%  fancyhdr will warn that 12pt is a bit tight for the running head; ignore it.
+%  Enlarging \headheight moves the header and breaks the match.
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=3cm,headsep=26.61pt]{geometry}
+
+% ---- line spacing ----------------------------------------------------------
+%  1.1 x the 11pt default, i.e. 14.96pt baselines. Captions are pulled back to
+%  single spacing further down, in the caption setup.
+\usepackage{setspace}
+\setstretch{1.1}
+
+% ---- floats, graphics, tables ----------------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+% ---- maths -----------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% ---- lists -----------------------------------------------------------------
+\usepackage{enumitem}
+
+% ---- dummy text (delete this block once you have real writing) -------------
+%  lipsum's Latin has no hyphenation patterns, so the odd paragraph would set
+%  overfull without a little extra slack. \emergencystretch only kicks in on
+%  lines that would otherwise overflow, so it changes nothing else.
+\usepackage{lipsum}
+\emergencystretch=1em
+
+% ============================================================================
+%  Headings
+% ============================================================================
+\usepackage{titlesec}
+
+%  Chapter openers are two flush-left \huge bold lines, "Chapter N" then the
+%  title, 8pt apart. (The report default puts the title at \Huge; this doesn't.)
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {\chaptertitlename\ \thechapter}{8.6pt}
+  {\huge}
+\titlespacing*{\chapter}{0pt}{50.6pt}{40.7pt}
+
+%  Section sizes are exact point sizes rather than \Large / \large, because
+%  that is what the reference measures at: 16pt, 14pt, 12pt.
+\titleformat{\section}
+  {\normalfont\fontsize{16}{18}\selectfont\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{14}{16}\selectfont\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}{\thesubsubsection}{1em}{}
+
+\titlespacing*{\section}      {0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+\titlespacing*{\subsection}   {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}   % chapters + sections + subsections in the TOC
+
+% ============================================================================
+%  Running heads and page numbers
+% ============================================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+%  Bold uppercase "N. CHAPTER TITLE", outer edge of the spread, thin rule
+%  under it. Page number centred in the footer on every page.
+\fancyhead[LE,RO]{\normalfont\bfseries\leftmark}
+\fancyfoot[C]{\normalfont\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\thechapter.\ #1}}{}}
+%  \chapter* (References, and anything else unnumbered) leaves the mark alone,
+%  so set it by hand there -- see \unnumberedchapter in main.tex.
+
+% ============================================================================
+%  Captions
+% ============================================================================
+%  "Figure 2.3 Some caption text." -- bold label, no colon, a plain space
+%  before the text. Single-line captions centre, longer ones justify to the
+%  full text width. Captions are single spaced even though the body is 1.1.
+\captionsetup{labelsep=space,labelfont=bf,font=singlespacing}
+
+% ============================================================================
+%  Cross-references and links
+% ============================================================================
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{xurl}
+\urlstyle{same}
+\hypersetup{
+  colorlinks=true,
+  linktocpage=true,   % in the TOC/LoF/LoT the page number is the link, not the
+                      % entry text, so the text stays black and only the number
+                      % goes blue
+  linkcolor=blue,     % TOC page numbers, \ref, page refs
+  citecolor=teal,     % \cite
+  urlcolor=blue,
+  filecolor=blue,
+}
+
+% ============================================================================
+%  Bibliography -- IEEE numeric, pdflatex + bibtex (NOT biber)
+% ============================================================================
+\usepackage[numbers,square,sort&compress]{natbib}
+\bibliographystyle{IEEEtranN}
+%  The "References" heading is set by \unnumberedchapter in main.tex, so stop
+%  natbib adding a second "Bibliography" heading of its own.
+\renewcommand{\bibsection}{}

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP-VRDU — Techniques Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFCFD;
+    --ink:#16222E;
+    --slate:#5A6B7B;
+    --line:#DCE4EC;
+    --amber:#C97B3C;
+
+    /* blue ramp, core -> outer */
+    --b1:#1E3A5F;
+    --b2:#2E5C8A;
+    --b3:#5A8BB8;
+    --b4:#9FC1DD;
+    --core:#16222E;
+
+    --disp:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#c9d1da;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:grid; grid-template-rows:auto 1fr auto;
+    box-shadow:0 24px 60px rgba(22,34,46,.22);
+  }
+
+  /* faint blueprint grid in the background */
+  .slide::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(30,58,95,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30,58,95,.035) 1px, transparent 1px);
+    background-size:40px 40px;
+    mask-image:linear-gradient(to bottom, transparent, #000 20%, #000 85%, transparent);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding:38px 56px 20px; border-bottom:1px solid var(--line);
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--amber); font-weight:500;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:40px;
+    letter-spacing:-.02em; line-height:1;
+  }
+
+  /* ---------- BODY ---------- */
+  .body{
+    display:grid; grid-template-columns:1.15fr .85fr;
+    align-items:center; padding:6px 56px 0;
+    position:relative; z-index:2;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    display:flex; align-items:center; justify-content:flex-end;
+    padding:16px 56px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--slate);
+    letter-spacing:.04em; position:relative; z-index:2;
+  }
+  footer .dot{color:var(--amber); margin:0 10px;}
+  footer b{color:var(--ink); font-weight:600;}
+
+  /* ================= SLIDE 6 — technique matrix ================= */
+  .bodyTech{
+    display:flex; flex-direction:column; justify-content:center; gap:20px;
+    padding:6px 56px 0; position:relative; z-index:2;
+  }
+
+  .matrix{
+    display:grid; grid-template-columns:172px 1fr 1fr;
+    border:1px solid var(--line); border-right:none; border-bottom:none;
+    background:#fff;
+  }
+  .matrix > *{border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+
+  /* corner: names the two axes */
+  .mcorner{
+    padding:11px 13px; display:flex; flex-direction:column; gap:3px;
+    justify-content:flex-end; background:var(--paper);
+  }
+  .mcorner span{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--slate);
+  }
+
+  /* column heads: when the technique acts */
+  .mhead{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:12px 15px; color:#fff;
+  }
+  .mhead b{
+    font-family:var(--mono); font-size:13px; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase;
+  }
+  .mhead i{
+    font-style:normal; font-family:var(--mono); font-size:10px;
+    color:rgba(255,255,255,.62); letter-spacing:.06em;
+  }
+  .mhead.train{background:var(--b1);}
+  .mhead.infer{background:var(--b3);}
+
+  /* row heads: what the technique manages */
+  .mrow{
+    padding:14px 13px; background:var(--paper);
+    display:flex; gap:9px; align-items:flex-start;
+  }
+  .mrow u{
+    display:block; text-decoration:none; width:7px; height:7px; flex:none;
+    background:var(--b2); margin-top:4px;
+  }
+  .mrow b{
+    font-family:var(--mono); font-size:11.5px; font-weight:600;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--b1);
+  }
+  .mrow small{
+    display:block; font-family:var(--body); font-size:11px; color:var(--slate);
+    letter-spacing:0; text-transform:none; font-weight:400; margin-top:3px;
+    line-height:1.3;
+  }
+
+  /* cells: the techniques themselves */
+  .mcell{padding:14px 15px; display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start;}
+  .mcell span{
+    font-family:var(--mono); font-size:11px; color:var(--b1); letter-spacing:.01em;
+    border:1px solid var(--line); background:var(--paper); padding:5px 9px;
+    white-space:nowrap;
+  }
+
+  /* what runs underneath every training row */
+  .mband{
+    display:flex; align-items:center; gap:20px;
+    border:1px solid var(--line); border-left:2px solid var(--amber);
+    background:#fff; padding:13px 20px;
+  }
+  .mband .tag{
+    font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--amber); white-space:nowrap;
+  }
+  .mband .vr{width:1px; height:24px; background:var(--line); flex:none;}
+  .mband p{font-size:14px; line-height:1.35;}
+  .mband p b{font-weight:600;}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{ box-shadow:none; width:1280px; height:720px; page-break-after:always; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <header>
+    <div>
+      <div class="eyebrow">§5–§6 · Where the field intervenes</div>
+      <h1>Techniques Overview</h1>
+    </div>
+  </header>
+
+  <div class="bodyTech">
+
+    <div class="matrix">
+
+      <div class="mcorner">
+        <span>manages ↓</span>
+        <span>acts at →</span>
+      </div>
+      <div class="mhead train"><b>Training-time</b><i>§6</i></div>
+      <div class="mhead infer"><b>Inference-time</b><i>§5</i></div>
+
+      <div class="mrow"><u></u><div><b>Select</b><small>which pages reach the model</small></div></div>
+      <div class="mcell">
+        <span>modality-aligned retrievers</span>
+        <span>cross-page fusion</span>
+        <span>logical-relevance scoring</span>
+      </div>
+      <div class="mcell">
+        <span>late-interaction retrieval (ColPali / ColQwen)</span>
+        <span>LLM reranking</span>
+        <span>iterative retrieval</span>
+        <span>adaptive page selection</span>
+      </div>
+
+      <div class="mrow"><u></u><div><b>Compress</b><small>how much of each page survives</small></div></div>
+      <div class="mcell">
+        <span>token-reduction modules</span>
+        <span>summary tokens</span>
+        <span>recurrent state</span>
+      </div>
+      <div class="mcell">
+        <span>thumbnail browsing + selective high-res</span>
+        <span>dynamic cropping budget</span>
+        <span>evidence-guided allocation</span>
+      </div>
+
+      <div class="mrow"><u></u><div><b>Structure</b><small>what links page to page</small></div></div>
+      <div class="mcell">
+        <span>layout tokens</span>
+        <span>structure-aware parsing supervision</span>
+      </div>
+      <div class="mcell">
+        <span>tree / graph indices</span>
+        <span>outline &amp; section routing</span>
+        <span>structured navigation</span>
+      </div>
+
+      <div class="mrow"><u></u><div><b>Reason</b><small>how evidence becomes an answer</small></div></div>
+      <div class="mcell">
+        <span>trace imitation</span>
+        <span>reward-driven RL (GRPO)</span>
+        <span>uncertainty calibration</span>
+      </div>
+      <div class="mcell">
+        <span>chain-of-thought</span>
+        <span>self-reflection</span>
+        <span>self-consistency</span>
+        <span>ReAct / tool calls</span>
+        <span>multi-agent roles</span>
+      </div>
+
+    </div>
+
+    <div class="mband">
+      <div class="tag">Cross-cutting</div>
+      <div class="vr"></div>
+      <p><b>PEFT / LoRA</b> (backbone frozen, small modules trained) and <b>multi-stage curriculum</b> recur across every training row, so the choice of module is driven more by compute budget than by target component.</p>
+    </div>
+
+  </div>
+
+  <footer>
+    <div><b>06</b> / 06<span class="dot">·</span>Techniques Overview</div>
+  </footer>
+
+</div>
+</body>
+</html>

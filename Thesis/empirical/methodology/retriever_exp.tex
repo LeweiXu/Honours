@@ -1,0 +1,29 @@
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{1.5cm}
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+Arm & Retriever & Params & Index and cost \\
+\midrule
+Text & BM25 & -- & Term postings per document; no encoding pass \\
+\midrule
+Text & BGE-M3 & 568M & One vector per page \\
+\midrule
+Text & Qwen3-Embedding-4B & 4B & One vector per page; sequence cap 4096 \\
+\midrule
+Vision & ColModernVBERT & 250M & One vector per image patch; requires rendering \\
+\midrule
+Vision & ColQwen2.5 & 3B & One vector per image patch; requires rendering \\
+\midrule
+Vision & ColQwen3 & 4B & One vector per image patch; requires rendering \\
+\bottomrule
+\end{tabularx}
+\caption{Selection: retriever exerpiments. Rrdered by cost within each arm. Late-interaction scoring stores many vectors per page rather than one, so the vision arm carries a larger index and a more expensive scoring pass than its parameter count alone suggests.}
+\label{tab:retrievers}
+\end{table}

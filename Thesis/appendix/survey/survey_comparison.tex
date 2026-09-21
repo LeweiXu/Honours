@@ -1,0 +1,23 @@
+\begin{table*}[h]
+\centering
+\setstretch{1}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash\hsize=#1\hsize}X}
+\begin{tabularx}{\textwidth}{@{}L{1.75} L{0.5} L{1.0} L{0.75} L{1.0}@{}}
+\toprule
+\textbf{Survey} & \textbf{Venue} & \textbf{Scope} & \textbf{Multi-Page Treatment} & \textbf{Organising Framing} \\
+\midrule
+A Survey of Deep Learning Approaches for OCR and Document Understanding~\citeauthor{subramani2020survey} & arXiv 2020 & Pre-MLLM OCR pipelines & Not covered & Pipeline stage (detection, recognition, layout) \\
+Deep Learning Approaches for Information Extraction from Visually Rich Documents: Datasets, Challenges and Methods~\citeauthor{gbada2025deep} & IJDAR 2025 & Information extraction over VRDs & Not covered & Extraction task and method \\
+Deep Learning based Visually Rich Document Content Understanding: A Survey~\citeauthor{ding2026deep} & AI Review 2026 & Content understanding over VRDs & Not covered & Task formulation, architecture, pretraining \\
+A Survey on MLLM-based Visually Rich Document Understanding: Methods, Challenges, and Emerging Trends~\citeauthor{ding2026survey} & ACL 2026 & MLLM-era VRDU & In passing & OCR dependency; architecture, training, benchmarks \\
+Scaling Beyond Context: A Survey of Multimodal Retrieval-Augmented Generation for Document Understanding~\citeauthor{gao2026scaling} & ACL 2026 & Multimodal RAG for long documents & Partial (RAG techniques only) & Retrieval-augmented generation \\
+\midrule
+\textbf{This survey} & EMNLP 2026 & \textbf{Multi-page VRDU} & \textbf{Distinct problem} & \textbf{Evidence management} \\
+\bottomrule
+\end{tabularx}
+\caption{Comparison of this survey with prior VRDU surveys. Prior surveys either predate the multi-page literature or address it only within a broader single-page or extraction-focused scope. This survey is the first to treat multi-page VRDU as a distinct problem organised around evidence management.}
+\label{tab:survey-comparison}
+\end{table*}

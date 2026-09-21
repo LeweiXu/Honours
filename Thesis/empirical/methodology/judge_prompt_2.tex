@@ -1,0 +1,14 @@
+\begin{figure}[h]
+\centering
+\begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily]
+$\langle$accuracy only judge prompt, plus "abstained" in verdict choices$\rangle$
+ABSTENTION\\
+Return the verdict "abstained" whenever the response declines to answer because it judges the evidence insufficient, however it is worded. "Not answerable", "the document does not provide this", "there is no document evidence to determine this" and "it is not possible to determine this from the given information" are all abstentions. A response that notes a limitation and then commits to an answer anyway is NOT an abstention: judge the answer it commits to.\\[0.5em]
+ERROR CATEGORY\\
+Decide the verdict FIRST, using only the two rules above, and do not revisit it. The error category explains a verdict you have already reached; it never changes one. In particular, a response that states the gold answer in its own words, or surrounds it with explanation, is still correct.\\[0.5em]
+$\langle$the eleven categories, in priority order$\rangle$
+\end{tcolorbox}
+\caption{Judge analysis rubric.}
+% The correctness sentences are identical to Figure~\ref{fig:judge_prompt}; what is added is a definition of the \emph{abstained} verdict and the error taxonomy.}
+\label{fig:judge_prompt_errcat}
+\end{figure}

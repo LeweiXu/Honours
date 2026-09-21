@@ -1,0 +1,41 @@
+% Parser fidelity: text-only vs text+image accuracy for each text source,
+% split digital / scanned. MMLongBench-Doc only.
+% Teal = accuracy on a fixed [0,74] scale; warm = the vision gain (points).
+% PyMuPDF reads the embedded text layer and runs no parser, so it is the baseline
+% the three layout parsers are read against.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\pshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-0)/(74-0)*65))}%
+  \edef\tmpcol{accteal!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}%
+}
+\newcommand{\pcell}[1]{\pshade{#1}#1}
+\newcommand{\gaincell}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1-2)/(54-2)*55))}%
+  \edef\tmpcol{recwarm!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}$+$#1%
+}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l rrr @{\hskip 10pt\vrule\hskip 10pt} rrr}
+\toprule
+ & \multicolumn{3}{c@{\hskip 10pt}}{\textbf{Digital}} & \multicolumn{3}{c}{\textbf{Scanned}} \\
+\cmidrule(r){2-4}\cmidrule(l){5-7}
+Text source & Text & $+$Image & $\Delta$ & Text & $+$Image & $\Delta$ \\
+\midrule
+PyMuPDF        & \pcell{40.6} & \pcell{49.7} & \gaincell{9.1} & \pcell{4.0}  & \pcell{57.7} & \gaincell{53.7} \\
+PaddleOCR-VL   & \pcell{40.1} & \pcell{49.7} & \gaincell{9.6} & \pcell{32.8} & \pcell{61.2} & \gaincell{28.4} \\
+MinerU 2.5     & \pcell{26.6} & \pcell{46.0} & \gaincell{19.3} & \pcell{27.4} & \pcell{55.7} & \gaincell{28.4} \\
+Unlimited-OCR  & \pcell{42.3} & \pcell{50.2} & \gaincell{7.9} & \pcell{34.3} & \pcell{63.7} & \gaincell{29.4} \\
+\midrule
+Spread (max$-$min) & 15.6 & 4.2 & & 30.3 & 8.0 & \\
+\bottomrule
+\end{tabular}
+\caption{Parser fidelity by text source and scan status. On MMLongBench-Doc. Adding the page image collapses the choice of parser: the spread across text sources falls from 30.3 points to 8.0 on scanned pages and from 15.6 to 4.2 on born-digital ones.}
+\label{tab:parser}
+\end{table}

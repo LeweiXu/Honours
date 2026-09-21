@@ -1,0 +1,41 @@
+% Resolution sweep by evidence source: low/med/high at the TLV and V rungs.
+% Teal = accuracy on the shared ladder scale; warm = the low->high gain (points).
+% Bold marks the best resolution in each row, within each rung block.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\rshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(74-14)*65))}%
+  \edef\tmpcol{accteal!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}%
+}
+\newcommand{\rcell}[1]{\rshade{#1}#1}
+\newcommand{\rbest}[1]{\rshade{#1}\textbf{#1}}
+\newcommand{\rgain}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1-0)/(18-0)*55))}%
+  \edef\tmpcol{recwarm!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}$+$#1%
+}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l rrrr @{\hskip 10pt\vrule\hskip 10pt} rrrr}
+\toprule
+ & \multicolumn{4}{c@{\hskip 10pt}}{\textbf{TLV}} & \multicolumn{4}{c}{\textbf{V}} \\
+\cmidrule(r){2-5}\cmidrule(l){6-9}
+Evidence source & low & med & high & $\Delta$ & low & med & high & $\Delta$ \\
+\midrule
+Chart            & \rcell{38.2} & \rcell{44.9} & \rbest{48.3} & \rgain{10.1} & \rcell{34.3} & \rcell{44.9} & \rbest{48.3} & \rgain{14.0} \\
+Figure           & \rcell{39.7} & \rcell{45.5} & \rbest{48.3} & \rgain{8.6}  & \rcell{38.3} & \rcell{40.0} & \rbest{43.8} & \rgain{5.5} \\
+Layout & \rcell{46.6} & \rcell{50.0} & \rbest{54.2} & \rgain{7.6}  & \rcell{47.5} & \rcell{49.2} & \rbest{53.4} & \rgain{5.9} \\
+Text        & \rcell{52.9} & \rbest{55.0} & \rbest{55.0} & \rgain{2.1}  & \rcell{38.8} & \rcell{45.4} & \rbest{51.5} & \rgain{12.7} \\
+Table            & \rcell{48.8} & \rbest{49.8} & \rcell{48.8} & \rgain{0.0}  & \rcell{25.3} & \rcell{37.3} & \rbest{42.4} & \rgain{17.1} \\
+\midrule
+\textbf{All}     & \rcell{49.2} & \rcell{52.5} & \rbest{54.7} & \rgain{5.5}  & \rcell{37.8} & \rcell{45.7} & \rbest{50.2} & \rgain{12.4} \\
+\bottomrule
+\end{tabular}
+\caption{Render resolution by evidence source. On MMLongBench-Doc, at the TLV and V rungs. $\Delta$ indicates difference between high and low resolution.}
+\label{tab:resolution_sweep}
+\end{table}

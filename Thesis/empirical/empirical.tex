@@ -1,0 +1,445 @@
+\chapter{Empirical Attribution of Failure Modes}
+\label{ch:empirical}
+
+This chapter is adapted from \textbf{Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution}~\cite{xu2026locating}, by \textbf{Lewei Xu}, Yihao Ding, Zihan Xu, Daniel Yitian Su, Daochang Liu, Siwen Luo, Yifan Peng, and Wei Liu, \emph{submitted to EACL and currently under review}. The first author was responsible for formulating the failure taxonomy and attribution framework; designing the experimental methodology; implementing and running all experiments; analysing and interpreting the results; and preparing the full manuscript, including the main text, methodological details, empirical analysis, figures and tables, and appendix material. 
+
+\section{Introduction}
+Multi-page visually rich document understanding has advanced rapidly, but it remains difficult to determine why these systems fail. Modern MP-VRDU pipelines combine document encoding, evidence selection, and multimodal reasoning, and errors at any one stage can propagate to the final answer. As a result, improvements to one component are often evaluated only through end-to-end accuracy, making it difficult to distinguish whether a gain comes from better representation, better evidence selection, or better use of the evidence already available. This makes failure attribution an important complement to the system-level organisation developed in the previous chapter.
+
+The literature reflects substantial disagreement about what limits MP-VRDU systems. OCR-free methods argue that operating directly on page images avoids information loss introduced by text extraction and preserves visual and layout cues that may be difficult to recover from parsed text \citep{tanaka2025vdocrag, zheng2026doc, cho2024m3docrag}. Other studies instead find that vision-only reasoners remain weaker on dense textual content and that combining textual and visual representations can outperform either alone \citep{hannan2026docslm, han2025mdocagent, suri2025visdom}, while some report the opposite, with vision-only pipelines outperforming combined representations \citep{liu2025resolving}. Retrieval findings are similarly mixed. Retrieving too little evidence can omit information needed to answer the question \citep{yan2026docseeker, li2026avir}, whereas retrieving too much can introduce irrelevant context, attention dilution, and position-dependent degradation \citep{liu2024lost, wang2024needle, pez2025enhancing}. Some work therefore prioritises broad evidence coverage \citep{liu2025resolving, zhu2026doclens}, while others emphasise reranking or adaptive retrieval to reduce irrelevant context \citep{li2026avir, pez2025enhancing}. Reasoning failures have likewise been attributed to difficulty combining evidence across pages \citep{zheng2026doc}, errors in interpreting evidence within individual pages \citep{guo2026end}, and a tendency to answer even when the available evidence is insufficient \citep{landeghem2023document, zhang2025dream, ma2024mmlongbench}. We interpret these competing claims as evidence of three distinct loci at which MP-VRDU systems can fail: \textbf{representation, selection, and reasoning}.
+
+\textbf{Our contributions are as follows:} \textbf{(1)} We introduce an attribution framework that formalises MP-VRDU failure through three system-level loci: representation, selection, and reasoning (\S\ref{sec:attribution_framework}). \textbf{(2)} We conduct a controlled empirical study that intervenes on one locus at a time to isolate the mechanisms underlying each and test competing claims about modality, evidence selection, and reasoning under a unified experimental setting (\S\ref{sec:emp_methodology}, \S\ref{sec:emp_findings}). \textbf{(3)} We analyse the resulting error patterns and derive practical implications for the design and deployment of MP-VRDU systems under constrained compute budgets (\S\ref{sec:emp_error_analysis}, \S\ref{sec:practical_discussion}).
+
+\section{Related Work}
+\label{sec:relatedwork}
+% Most evaluations of representations, retrievers, and reasoners report end-to-end accuracy, which registers that a method improved a system without identifying the stage responsible \citep{tanaka2025vdocrag, han2025mdocagent, suri2025visdom, yan2026docseeker}. 
+OCR-cascade studies isolate the encoding stage and trace a parser mistake as it propagates untouched through a text-only pipeline, in which no image channel is present to recover the corrupted content \citep{zhang2025ocr}. Component ablations isolate the selection stage instead, finding that most gain comes from running a short retrieval loop rather than from adapting it \citep{shaikh2026dissecting} and that the retrieval algorithm matters more than the generator \citep{ke2026not}, though both operate over pre-segmented text corpora in which no encoding stage enters the accounting. Faithfulness diagnostics trace how evidence is used after retrieval, and both facet-level tracing \citep{elchafei2026facet} and Graph-RAG decompositions \citep{zarrinkia2026reasoning} find the gold answer present in most retrieved contexts and attribute the residual error to integration rather than retrieval, on text and without the cross-page structure that makes integration hard. Unified benchmarks improve comparability by scoring retrieval paradigms for visually rich documents under one protocol \citep{peng2025unidoc}, yet compare whole pipelines, so a difference is attributable to a paradigm rather than to a stage within it. Each of these studies isolates one stage with the others held absent, or aggregates over all of them. None intervenes stage by stage within a single multi-page pipeline, which is what attributes an error to the encoding, the selection, or the reasoning, and places the field's competing claims at the locus each concerns.
+
+\section{Attribution Framework}
+\label{sec:attribution_framework}
+
+\begin{figure*}[h]
+\centering
+\includegraphics[width=\linewidth]{empirical/framework.pdf}
+\caption{The three failure modes and their mechanisms.}
+\label{fig:framework}
+\end{figure*}
+
+An incorrect answer arises at one of three failure loci. \textbf{Representation} fails when the encoding does not preserve the evidence a question needs. \textbf{Selection} fails when the required evidence is missing from, or diluted within, what reaches the reasoner. \textbf{Reasoning} fails when the reasoner cannot combine the evidence it holds, or misjudges whether that evidence supports an answer. The three are hierarchical: evidence lost in encoding cannot be selected, and evidence never selected cannot be reasoned over. This allows attribution to be possible, since a locus can be tested only once those above it are neutralised.
+
+Because the loci are defined by system function rather than architecture, the techniques surveyed in Chapter~\ref{ch:survey} reduce failure at one or more of them rather than forming categories of their own. Some act on a single locus. Retrieval and reranking change what evidence reaches the reasoner without altering how the document is encoded or how the reasoner integrates it. Others act on several at once. An agentic controller mainly addresses selection, gathering evidence over several rounds rather than in one fixed pass, but can also act on representation when it re-renders a region at higher resolution, and on reasoning when it revises an answer through self-refinement.
+
+\subsection{Representation}
+\label{sec:fm_representation}
+Representation is the conversion of the document into an artifact the later stages consume. That artifact may be the embedded text layer, parser markdown, a cropped page region, the rendered page image, or a combination of these. What happens after the artifact is tokenised, such as projection, resampling, or compression, belongs to the reasoning locus, since it is a property of the backbone rather than of the conversion. The choice of artifact therefore fixes both what a document can express and the cost of conversion. Representation failures occur through two mechanisms:
+\paragraph{(1) Modality Ceiling.} Each modality can represent only a bounded range of signals. A representation preserves a signal only when its modality can encode it and at the granularity permitted by its representation. For example, text tokens cannot capture non-linguistic information, and visual tokens express fine-grained details only when sufficient spatial resolution and token budget are available.
+\paragraph{(2) Conversion Fidelity.} For signals that a modality can represent, conversion fidelity measures how accurately the encoding reproduces them. Failures occur when the conversion degrades or corrupts a signal that the modality could otherwise carry. For instance, a document parser may misread a numeric value and cause the downstream reasoner to operate on an incorrect but seemingly reliable representation \citep{zhang2025ocr}.
+
+\subsection{Selection}
+\label{sec:fm_selection}
+Selection decides which parts of the encoded document are placed before the reasoner. The operation exists only in the multi-page setting, where the whole document does not fit in context. Similarity retrieval is a common instantiation but not the only one: techniques such as structural navigation, adaptive re-ranking and agentic inspection all deliver evidence often across many iterations (\S\ref{sec:tf-retrieval}, \S\ref{sec:tf-agentic}). Granularity is a further choice; most systems select whole pages, matching benchmark annotations and late-interaction retrievers, though a section, a table, or a cropped figure can serve as the unit. 
+% Coarser units carry surrounding material along with the evidence, while finer ones raise precision at the risk of cutting through an evidence unit. 
+Selection failures arise through two mechanisms:
+\paragraph{(1) Evidence Coverage.} This mechanism measures how much of the evidence required to answer a question is present in the selected context, \emph{i.e.}, the recall of the required evidence units. Omitting required evidence leaves the reasoner with an incomplete evidence set, placing an upper bound on downstream accuracy regardless of the reasoner's capability.
+\paragraph{(2) Distractor Exposure.} Selection may also deliver evidence that is irrelevant to the question. This mechanism measures the extent to which distractors accompany the required evidence. Unlike omission, distractors do not by themselves make the evidence insufficient, but they increase the burden on the reasoner to identify and use the relevant content.
+
+\subsection{Reasoning}
+\label{sec:fm_reasoning}
+Reasoning produces an answer from the evidence the earlier two stages deliver. This locus is what remains once the representation carries the evidence a question needs and the selection places that evidence before the reasoner. 
+% Even then, failure may arise from ambiguous or underspecified questions, which belong to no locus, being a property of the data itself. 
+If the evidence is provided to the reasoner at sufficient fidelity and completeness, the remaining failures can only be attributed to the reasoner itself. Repair can come in the form of instruction, scale, architecture, or training (\S\ref{sec:tf-reasoning}, \S\ref{sec:train-reasoning}). Unlike representation and selection, reasoning failures can arise through many mechanisms, such as arithmetic error over correctly read values or answering a different question from the one asked; we focus on two multi-page specific failures:
+\paragraph{(1) Evidence Integration.} Multi-page questions may require the reasoner to combine complementary information from several pages, including content whose meaning spans page boundaries. A model may succeed when all relevant evidence is given but fail when it must connect distributed evidence on its own. This difficulty may be amplified in long contexts, where evidence at different positions is not used equally reliably \citep{liu2024lost}.
+\paragraph{(2) Response Calibration.} This mechanism concerns whether the model aligns its response with the level of support provided by the available evidence. Unlike integration, calibration is tested both when sufficient evidence is present and when it is absent by construction. Failures occur in two directions: \emph{hallucination}, where the model produces an answer unsupported by the available evidence \citep{li2023survey}, and \emph{false abstention}, where it refuses to answer despite having sufficient evidence. We treat these as a single mechanism because they represent opposite sides of the same decision, so an intervention that reduces one tends to increase the other \citep{whitehead2022reliable}.
+
+\section{Methodology}
+\label{sec:emp_methodology}
+We instantiate the framework in a \textbf{single-pass retriever--generator} document question answering system, evaluated over two MP-VRDU benchmarks whose annotations make the controlled experiments possible. We first describe the system and the attribution experiments that isolate each mechanism (\S\ref{sec:attribution}), followed by the experimental configurations of representation, selection, and reasoning (\S\ref{sec:emp_representation}--\S\ref{sec:emp_reasoning}), including additional experiments comparing practical pipeline choices (\S\ref{sec:emp_additional}). We then describe the two datasets (\S\ref{sec:emp_mmlongbench}, \S\ref{sec:emp_longdocurl}) and conclude with the evaluation protocol (\S\ref{sec:emp_evaluation}).
+\subsection{Attribution by Construction}
+\label{sec:attribution}
+
+The document question answering system consists of three stages that correspond to the three failure loci described in \S\ref{sec:attribution_framework}. For each question, the system performs the following:
+
+\begin{enumerate}
+    \item \textbf{Encoding Stage:} every page of the document is converted into the representation the later stages consume, as parser markdown, a rendered page image, or both. The conversion runs once per document and is cached, so the same encoded pages serve every question over that document and no question changes what a page contains.
+    \item \textbf{Retrieval Stage:} a retriever scores every encoded page against the question and returns the highest-ranked $k$. Scoring is at page granularity, matching the annotation granularity of both datasets, so a retrieved unit and an annotated evidence unit are the same object. The selected pages are restored to document order before assembly, so a page's position in the context reflects the document rather than its rank.
+    \item \textbf{Inference Stage:} a multimodal LLM receives the assembled pages, the question, and an instruction describing the task, and emits an answer in a single pass. It sees nothing else of the document, and no output is fed back to an earlier stage.
+\end{enumerate}
+
+The system's stages act once and in order, allowing failures to be attributed by constructing conditions that isolate one locus while holding the others fixed. Across the six mechanisms defined in \S\ref{sec:attribution_framework}, we vary the relevant representation, evidence, or reasoning condition and compare relevant metrics against an appropriate controlled baseline. Table~\ref{tab:experiments} summarises these experiments.
+
+The default configuration is fixed across the study: pages are encoded at \textbf{TLV}, retrieved by ColQwen3, and fed to Qwen3-VL-8B-Instruct in \texttt{bf16} with greedy decoding and no instruction beyond the question. Each mechanism experiment changes only the condition required to test that failure while keeping other stages fixed.
+% Additional configuration and intervention experiments likewise replace individual components within this controlled pipeline, allowing their effects to be distinguished from changes elsewhere in the system.
+
+\input{empirical/methodology/experiments}
+
+\subsection{Representation Experiments}
+\label{sec:emp_representation}
+
+Each page is encoded from two signals: a text channel and the page image. The representation experiments run only on questions answerable from their annotated evidence, and modality comparisons are analysed according to the source from which that evidence must be recovered.
+
+\input{empirical/methodology/representation_exp}
+
+\paragraph{Modality ceiling.} We vary which signals reach the reasoner at all, across the four rungs of Table~\ref{tab:ladder_def}: embedded text (\textbf{T}), layout-aware parser text (\textbf{TL}), parser text combined with the page image (\textbf{TLV}), and the page image alone (\textbf{V}). The comparison tests whether the required evidence remains recoverable when textual, structural, or visual signals are unavailable, rather than assuming that one representation is uniformly preferable across question types.
+
+\input{empirical/methodology/rung_variation_exp}
+
+\paragraph{Conversion fidelity.} We vary the quality of each channel while holding the representation rung fixed, through the parser for text and the render resolution for the image (Table~\ref{tab:fidelity}). These experiments test whether information that a modality can in principle represent is degraded before reaching the reasoner, and whether improving the fidelity of that conversion improves downstream performance.
+
+\paragraph{Configuration.} The \textbf{T} rung supplies the PDF's embedded text layer, read directly with PyMuPDF, while \textbf{TL} supplies markdown produced by a layout-aware parser that applies OCR where required. \textbf{TLV} combines this parser markdown with the rendered page image, and \textbf{V} supplies the image alone; no bounding boxes or other explicit layout signals are passed to the reasoner. The default parser is PaddleOCR-VL (0.9B)~\citep{cui2025paddleocr}, run through the \texttt{paddleocr} 3.7 pipeline with PP-DocLayoutV2 layout analysis, PP-OCRv5 detection and recognition, and orientation and unwarping enabled. MinerU 2.5 (1.2B)~\citep{niu2026mineru2} and Unlimited-OCR (3.3B)~\citep{yin2026unlimited} provide the parser comparisons. Pages are rasterised at 200 DPI and downsampled to a per-page pixel budget before inference, since the backbone packs one vision token per $28 \times 28$ patch. Every experiment uses the \texttt{med} image preset except the resolution sweep, which evaluates all three presets. A fifth encoding, \textbf{TV}, combines embedded text with the page image without parsing and is used as a direct contrast against \textbf{TLV}.
+
+\subsection{Selection Experiments}
+\label{sec:emp_selection}
+Selection determines which evidence reaches the reasoner. We investigate failures caused by incomplete evidence coverage and by exposure to irrelevant pages.
+
+\input{empirical/methodology/selection_exp}
+
+\paragraph{Evidence coverage.} We vary how much of the required evidence reaches the reasoner by withholding gold pages from questions that cite more than one. These conditions run on multi-page questions only and are evaluated against the corresponding complete gold-page oracle. Pages are ranked by ColQwen3 within the document, allowing us to remove either the highest- or lowest-ranked gold page, or retain only one of them. A condition that a question cannot satisfy is excluded and recorded rather than silently satisfied with a different page set.
+
+\paragraph{Distractor exposure.} We vary how much irrelevant evidence accompanies the required evidence by adding top-ranked non-gold pages to a complete gold set. Conditions are blocked on the exact gold-page count, so questions requiring different amounts of evidence are not pooled at the same retrieval depth. The range of $k$ narrows as the gold count rises, keeping the supplied context at six pages or fewer and preventing distractor count from being confounded with arbitrary increases in context length.
+
+\paragraph{Configuration.} ColQwen3 is used to rank both gold and non-gold pages for the constructed selection conditions. As a late-interaction visual retriever, it scores the question directly against each rendered page image rather than its extracted text. For evidence coverage, ranking is restricted to the annotated gold set; for distractor exposure, non-gold pages are ranked separately and the highest-scoring pages are appended to the complete gold set. The constructed page sets are evaluated across the \textbf{T}, \textbf{TL}, \textbf{TLV}, and \textbf{V} representations, with verdict transitions additionally computed against the corresponding \textbf{TLV} oracle condition.
+
+\subsection{Reasoning Experiments}
+\label{sec:emp_reasoning}
+
+Reasoning determines how the available evidence is used to produce a response. We investigate failures in integrating evidence across the supplied context and in calibrating responses to the support that evidence provides.
+
+% \input{empirical/methodology/reasoning_exp}
+
+\paragraph{Evidence integration.} We test evidence integration by separating questions according to the structure of the evidence required to answer them while supplying the annotated evidence directly to the reasoner. The resulting question pools distinguish evidence that can be resolved from an individual page from evidence that must be combined across multiple pages.
+
+\input{empirical/methodology/prompting_exp}
+
+\paragraph{Response calibration.} We test response calibration by varying both whether the supplied evidence supports an answer and whether the reasoner is explicitly permitted to abstain. The attribution comparison uses the \texttt{none} and \texttt{abstain} prompt modes on answerable and unanswerable questions. Answerable questions receive their oracle gold pages, while unanswerable questions receive the top three pages ranked by BM25, providing plausible but non-supporting evidence. This allows us to measure unsupported answers when evidence is insufficient and false abstentions when it is sufficient. The remaining prompt modes in Table~\ref{tab:prompt_modes} are evaluated separately as additional reasoning interventions in \S\ref{sec:emp_additional}.
+
+\paragraph{Configuration.} The default reasoner is Qwen3-VL-8B-Instruct, loaded in \texttt{bf16}. Each condition uses the prompt template in Figure~\ref{fig:prompt_template}, combining an optional instruction preamble with the question and assembled document context. Under \texttt{none}, the instruction field is empty; the calibration intervention replaces it with the \texttt{abstain} preamble, which constrains responses to the supplied evidence and returns \emph{Not answerable} when that evidence lacks the answer. The context contains the selected pages in document order, represented according to the active rung. The completed prompt is passed through the model's chat template and answered in a single inference sequence. Generation uses greedy decoding (\texttt{do\_sample=False}) with no temperature, top-$p$, top-$k$, or repetition penalty. The input has no explicit token cap, while output is limited by a configured generation budget of 256 tokens, with longer budgets of up to 2048 tokens used for prompts that elicit intermediate reasoning.
+
+\input{empirical/methodology/prompt_template}
+
+\subsection{Additional Experiments}
+\label{sec:emp_additional}
+
+The attribution experiments above isolate specific mechanisms of representation, selection, and reasoning failure by constructing controlled evidence conditions. We additionally compare practical choices within the same pipeline that affect how these stages are implemented. 
+% These experiments complement the mechanism analysis rather than defining additional failure modes.
+
+\paragraph{Retrievers.} We compare six page-level retrievers spanning lexical, dense-text, and late-interaction visual retrieval. Text retrievers consist of BM25, BGE-M3, and Qwen3-Embedding, while the vision retrievers consists of ColModernVBERT, ColQwen2.5, and ColQwen3. We additionally evaluate joint retrieval by taking the deduplicated union of matched text and vision retrievers. Retrieval is evaluated independently of answer generation using page-level precision, recall, and F1 against the annotated evidence pages across increasing retrieval depths. This comparison therefore examines the practical trade-off between retrieval precision and coverage rather than constructing an incomplete-evidence condition for attribution.
+
+\input{empirical/methodology/retriever_exp}
+
+\paragraph{Prompt modes.} Beyond the \texttt{none} and \texttt{abstain} modes used in the response calibration experiment, we evaluate the remaining prompt interventions in Table~\ref{tab:prompt_modes}. These progressively introduce grounding, balanced abstention, explicit step-by-step reasoning, and evidence extraction before reasoning while holding the supplied evidence fixed. The comparisons therefore test whether changing how the reasoner is instructed to use the same evidence can mitigate reasoning failures without altering representation or selection.
+
+\input{empirical/methodology/models_exp}
+
+\paragraph{Model variations.} We vary the reasoner itself across model scale, weight precision, and model family. Within Qwen3-VL, we compare models from 2B to 32B parameters, alongside 16-bit, 8-bit, and 4-bit variants of the 8B model. We additionally compare a quantised larger model against the full-precision 8B configuration at a similar memory budget, and compare the default reasoner Qwen3-VL-8B with alternative model families at the same approximate scale. These experiments examine how practical resource and capability choices affect downstream document question answering without treating model capacity as a separate reasoning mechanism.
+
+\paragraph{Configuration.} Unless explicitly varied, the additional experiments inherit the default pipeline configuration described above. The retriever comparison uses page-level retrieval over the encoded document. All text retrievers index the embedded PDF text layer and separately the parser output from our default parser, while the visual retrievers operate on page images rendered at 200 DPI. The prompt and model experiments hold the supplied evidence context fixed when comparing reasoning interventions. Qwen3-VL-8B-Instruct remains the default reasoner for experiments that do not vary the model, loaded in \texttt{bf16} and decoded greedily. Prompt-based comparisons use the common document-question template, with the selected instruction prepended to the same question and evidence context. Reasoning-bearing prompt modes and thinking model variants receive a larger generation budget at 2048 tokens and mark their final response with \texttt{Answer:}, from which the final answer is extracted before evaluation.
+
+\subsection{MMLongBench-Doc Dataset}
+\label{sec:emp_mmlongbench}
+
+MMLongBench-Doc~\citep{ma2024mmlongbench} is the primary dataset. It is the only multi-page benchmark we are aware of that annotates, per question, the evidence pages, the kind of evidence the question draws on, and the document's domain, while also supplying a pool of plausible questions unsupported by the document. Evidence pages make coverage measurable and define the oracle retriever, evidence source resolves representation findings by what the question actually requires, and the unanswerable pool makes calibration testable rather than inferred. The benchmark contains 135 documents averaging 47.5 pages and 847 answerable questions. Its questions are manually created or revised by expert annotators and subsequently quality-controlled. Multi-page questions are constructed to require information collection and reasoning over the annotated evidence pages, so we generally treat each gold page as necessary evidence rather than as another occurrence of the same answer. As with any human annotation, however, the page sets should not be assumed perfectly minimal in every case. Table~\ref{tab:mmlb_composition} gives the composition.
+
+\input{empirical/datasets/mmlb_composition}
+\input{empirical/datasets/mmlb_questions}
+
+\paragraph{Operational definitions.} Four labels are derived rather than read from the annotation, and each is fixed for every experiment.
+
+\begin{enumerate}
+    \item \textbf{Unanswerable} is a gold answer of exactly \emph{Not answerable}, giving 244 questions. A further two questions carry an answer with no annotated evidence page; they are excluded from the oracle conditions, which have no pages to supply.
+    \item \textbf{Evidence pages} are converted from the dataset's 1-based numbering to 0-based indices, de-duplicated, and read as physical page positions, which is the dataset's own convention.
+    \item \textbf{Scan status} is auto-detected per document. A page counts as carrying text when at least 20 characters are extractable, and a document is scanned when none of its sampled pages does. This gives 104 born-digital and 31 scanned documents.
+    \item \textbf{Gold-page count} is the length of the de-duplicated evidence-page list, and is the hop label throughout: single-page questions cite one page, multi-page questions cite two or more.
+\end{enumerate}
+
+% \paragraph{Document domains.} MMLongBench-Doc assigns each document one of seven domains, manually categorised at collection~\citep{ma2024mmlongbench}. They are not defined in the source, so we characterise them by the documents they contain.
+
+% \begin{itemize}
+%     \item \textbf{Research report / Introduction:} survey and market-research reports, typically dense with charts and summary statistics.
+%     \item \textbf{Academic paper:} conference and journal papers, with equations, figures, and reference lists.
+%     \item \textbf{Guidebook:} product manuals and institutional handbooks, dominated by procedural text and inline icons.
+%     \item \textbf{Tutorial / Workshop:} presentation decks, sparse in text per page and heavy in layout, and the domain with the most scanned documents.
+%     \item \textbf{Financial report:} annual filings, whose content sits almost entirely in tables and running text.
+%     \item \textbf{Brochure:} promotional and prospectus material, laid out for visual impact rather than reading order.
+%     \item \textbf{Administration / Industry file:} internal and operational documents such as newsletters, forms, and industrial records.
+% \end{itemize}
+
+% \paragraph{Subsets.} The annotations determine which pool each experiment runs on. Representation and reasoning conditions use answerable questions, so accuracy is measured without abstention mixed into it. Coverage conditions withhold evidence from multi-page questions and are read against the multi-page oracle. Exposure conditions block on an exact gold-page count. Integration is analysed by both gold-page count and evidence-source count, separating questions that combine several sources on one page from those that combine evidence across pages. Multi-page questions range from two gold pages to a 24-page outlier, and 96 also cite more than one evidence source. Calibration pairs the answerable and unanswerable pools. Where informative, findings are additionally split by evidence source, document domain, and scan status.
+
+\subsection{LongDocURL Dataset}
+\label{sec:emp_longdocurl}
+
+We additionally use LongDocURL~\citep{deng2025longdocurl} as a secondary dataset mainly for replication purposes. It contains 2,317 answerable questions over documents spanning 51--149 pages and provides task-family, question-type, answer-format, evidence-source, and evidence-page annotations. Its QA pairs and supporting evidence are produced through a semi-automated pipeline in which LLMs and LVLMs generate candidate questions and evidence before automated and human verification against the source document. Unlike MMLongBench-Doc, the annotated evidence pages are not a minimal set that must all be present to answer the question. Multiple annotated pages may contain redundant or independently sufficient evidence. We account for this distinction when interpreting LongDocURL coverage and integration results. Table~\ref{tab:ldu_composition} gives the composition.
+
+\input{empirical/datasets/ldu_composition}
+\input{empirical/datasets/ldu_questions}
+
+LongDocURL is less challenging than MMLongBench-Doc in several ways. Its documents are born-digital, it contains almost no unanswerable questions, and many questions can be answered directly from the document text, even when the annotated evidence is visual. We therefore use LongDocURL as a secondary dataset to test whether the main findings also hold under a less demanding setting.
+
+\paragraph{Operational definitions.} The derived labels follow Section~\ref{sec:emp_mmlongbench} except where the annotation differs.
+
+\begin{enumerate}
+    \item \textbf{Gold-page count} is the length of the evidence-page list, as before. Counting de-duplicated pages moves three questions from multi-page to single-page relative to the dataset's own totals, since three questions repeat a page. We report the dataset's totals so the figures are checkable against its paper, and run on the de-duplicated counts.
+    \item \textbf{Task tag} occupies the field the pipeline reads as the document label, so the Understanding, Locating, and Reasoning tags serve here as the stratification that document domain provides on MMLongBench-Doc.
+    \item \textbf{Unanswerable} questions number 8, which is too few to support a calibration condition.
+\end{enumerate}
+
+\paragraph{Question types.} LongDocURL nests nine question types inside its three task tags~\citep{deng2025longdocurl}. Understanding and Reasoning are single types and four types respectively; the four Locating types are each defined by the pair of element types a question must move between.
+
+\begin{itemize}
+    \item \textbf{Understanding.} \texttt{extract} asks for information stated directly in the document, found by identifying keywords or reading a table.
+    \item \textbf{Reasoning.} \texttt{calculate} requires arithmetic over extracted values; \texttt{count} requires enumerating instances; \texttt{compare} requires ordering or contrasting two or more values; \texttt{summarize} requires condensing content into a single statement.
+    \item \textbf{Locating.} \texttt{topic2title} gives a description and asks which section title it matches; \texttt{summary2title} gives a paragraph summary and asks for the title of the section it came from; \texttt{summary2tab} gives a description and asks which named tables it refers to; \texttt{extract\_fig2tab} requires reading a figure and a table together to answer.
+\end{itemize}
+
+\subsection{Evaluation Protocol}
+\label{sec:emp_evaluation}
+
+\paragraph{Scoring and Judge Inputs.} Answers are scored by an LLM judge rather than exact match because correct responses may differ from the gold answer in units, rounding, or formatting. Each response is reduced to a binary \emph{correct}/\emph{incorrect} verdict based on semantic equivalence, and accuracy is the proportion judged correct. Gemini-2.5-Flash is the primary judge, run at temperature 0 with JSON-only output. Every judge receives the same four fields: the question, gold answer, an explicit unanswerable flag derived from the gold answer, and the model answer. The judge is not shown document content, evidence annotations, representation or retrieval settings, model configuration, prompt condition, or cost telemetry. This keeps the scoring criterion fixed across experimental arms and prevents the judge from conditioning on the manipulation being evaluated.
+
+\paragraph{Rubrics and Judge Validation.} Two judge rubrics are used over the same input payload. The \textbf{accuracy rubric} in Figure~\ref{fig:judge_prompt} is used where only correctness is required, while the \textbf{analysis rubric} in Figure~\ref{fig:judge_prompt_errcat} additionally supports abstention and error categorisation. Across 19,983 responses scored under both rubrics, the analysis rubric is 0.8--2.9 points stricter, but none of the 36 pairwise rung orderings reverses and key ladder deltas change by at most 0.8 points. We further validate the primary judge against GPT-4o, an independent model family, on 500 stratified responses, obtaining 96.0\% agreement and Cohen's $\kappa = 0.918$ (95\% CI [0.881, 0.951]). Against a human annotator on a 120-response subset, agreement is 98.3\% with $\kappa = 0.966$ (95\% CI [0.915, 1.000]). Agreement is stable across representation rungs (0.938--0.969), and the near-balanced validation pool yields a prevalence index of 0.156 and PABAK of 0.920.
+
+% \paragraph{Error Categories.} Each incorrect response is assigned exactly one category from Table~\ref{tab:error_taxonomy}, using the listed priority order so that the first applicable category is selected. Correct responses receive no category. Because the analysis judge sees only the question, gold answer, unanswerable flag, and model answer, the taxonomy captures observable answer errors rather than inferred pipeline causes. It therefore cannot attribute failures to unseen factors such as a particular page, representation rung, retriever, or evidence source. The taxonomy is nearly exhaustive in practice, with \texttt{other} assigned to only one of the 1,853 incorrect responses on the representation ladder.
+
+\input{empirical/methodology/judge_prompt_1}
+\input{empirical/methodology/judge_prompt_2}
+\input{empirical/methodology/judge_error_cats}
+
+\paragraph{Error categories.} Each incorrect response is assigned exactly one category from Table~\ref{tab:error_taxonomy}, using the listed priority order so that the first applicable category is selected. Categories are determined only from the question, gold answer, and model response; the judge is not shown the document pages, representation rung, or retriever, avoiding attribution to pipeline stages it cannot observe. Correct responses receive no category. The taxonomy is nearly exhaustive in practice, with \texttt{other} assigned to only one of the 1,853 incorrect responses on the representation ladder.
+
+% \begin{enumerate}
+%     \item \texttt{insufficient\_evidence}: The response declines because the evidence does not support an answer.
+%     \item \texttt{no\_answer\_reached}: The response reasons but never commits, trailing off or stopping mid-calculation.
+%     \item \texttt{answered\_unanswerable}: The question is unanswerable and a substantive answer is given.
+%     \item \texttt{equivocal}: The gold answer is present but not committed to.
+%     \item \texttt{wrong\_count}: A ``how many'' question is answered with a different count.
+%     \item \texttt{wrong\_value}: A non-count numeric answer differs from the gold value.
+%     \item \texttt{wrong\_entity}: A non-numeric answer names a different thing.
+%     \item \texttt{incomplete\_list}: The gold answer is a set and the response gives a subset.
+%     \item \texttt{over\_inclusive\_list}: The response includes items the gold answer does not.
+%     \item \texttt{unit\_or\_format\_mismatch}: The same quantity is given in a non-matching unit, scale, or granularity.
+%     \item \texttt{other}: None of the above.
+% \end{enumerate}
+
+\paragraph{Confidence intervals.} Every reported accuracy carries a 95\% confidence interval from a document-level bootstrap: 1,000 resamples at a fixed seed, taking the 2.5 and 97.5 percentiles. Documents are resampled rather than questions, because questions drawn from one document are not independent and a question-level interval would understate the variation. Every reported condition runs over its whole pool rather than a sample, so no sampling stage enters the interval.
+
+% \paragraph{Comparisons.} Two conditions are read as different when their intervals separate. Sufficiency comparisons, which ask whether a cheaper encoding matches a richer one rather than whether it differs from it, use a pre-registered margin of 3 accuracy points. Paired conditions over the same questions are additionally read as verdict transitions, reporting the proportion of oracle-correct answers a change breaks and the proportion of oracle-incorrect answers it repairs. A net difference alone cannot distinguish a condition that leaves answers untouched from one that breaks and repairs in equal measure, and the two carry different implications for what failed.
+
+% \paragraph{Reproducibility.} Every condition is decoded greedily, with self-consistency the single exception, so a condition is reproducible from its identity. One result cell is identified by the question, the page set, the representation, the reasoner, the visual resolution, and the prompt mode. Cells are cached under that identity, so two conditions differing in any of it cannot collide, and every reported figure is traceable to the configuration that produced it.
+
+
+\section{Empirical Findings}
+\label{sec:emp_findings}
+
+We organise the findings by where failures arise in the MP-VRDU pipeline. \S\ref{sec:findings_representation} examines representation, showing when information is lost through modality limits or imperfect conversion. \S\ref{sec:findings_selection} studies selection, where incomplete evidence coverage is substantially more damaging than moderate distractor exposure. \S\ref{sec:findings_reasoning} then examines reasoning, where the remaining bottlenecks are evidence integration and response calibration.
+
+\subsection{Representation}
+\label{sec:findings_representation}
+
+Representation determines what evidence is preserved for downstream reasoning. OCR-free approaches argue that operating directly on page images avoids losses introduced by text extraction and better preserves visual structure~\citep{cho2024m3docrag,tanaka2025vdocrag}, while text-based and joint representations remain stronger for dense textual content and often benefit from combining text with vision~\citep{hannan2026docslm,han2025mdocagent,suri2025visdom}. Our results suggest that these differences are best understood through two mechanisms: modality ceiling determines what information a representation can expose, while conversion fidelity determines how faithfully that information survives encoding.
+
+\subsubsection{Modality Ceiling}
+
+\input{empirical/findings_tables/ladder}
+
+\paragraph{Vision is Necessary but Not Sufficient.} Our results support the importance of vision, but not the replacement of text. At \textbf{T} and \textbf{TL}, abstention is especially high for chart questions (32.6\% and 28.1\%) and figure questions (36.6\% and 24.8\%), but falls to 7.3\% and 7.6\% at \textbf{TLV}. Since the annotated gold pages are always present, these refusals indicate a modality ceiling: the relevant page reaches the reasoner, but text-only representations often cannot preserve the graphical or spatial signal needed to answer. Adding vision therefore converts many representation-limited cases into answerable ones rather than simply improving reasoning. The incorrect rate changes much less across rungs, suggesting that the remaining failures arise either downstream, when the reasoner misuses available evidence, or from conversion-fidelity errors within a modality that should in principle contain the required signal. 
+% Vision alone is also insufficient: \textbf{V} remains below \textbf{TLV}, since linguistic evidence is often easier to access when supplied explicitly as text rather than recovered from pixels.
+
+\paragraph{Vision Alone Does Not Eliminate Representation Limits.} Although vision expands the range of evidence available to the system, \textbf{V} remains below \textbf{TLV} overall, at 42.6\% versus 49.5\%. This gap should not be interpreted as evidence that the page image inherently lacks the required information. Much of the textual and structural content supplied explicitly under \textbf{TLV} is also visible in the image, but recovering it from pixels introduces additional demands. Fine-grained details may be lost at the chosen resolution, relevant evidence may occupy only a small region of a dense page, and the reasoner may be less reliable at recognising or using visually encoded text and structure. Text therefore remains complementary because it exposes some information in a form that is easier for the model to access, rather than necessarily because it contains fundamentally different evidence.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/findings_figures/ladder_ldu_sources.pdf}
+  \caption[LongDocURL accuracy by representation rung and evidence source]{LongDocURL accuracy by representation rung and evidence source. Evidence-source differences remain substantial across representation rungs.}
+  \label{fig:ladder_ldu_sources}
+\end{figure}
+
+\paragraph{LongDocURL Replicates the Representation Pattern.} LongDocURL reproduces the same overall ordering, with \textbf{TLV} achieving the best pooled accuracy and outperforming the text-only rungs across every evidence source except tables (Figure~\ref{fig:ladder_ldu_sources}). The modality gap is weaker, however, because LongDocURL often exposes answer-relevant content directly through the document text layer even when the annotated evidence source is a figure or layout element. This helps explain why figure questions already reach 62.5\% at \textbf{T} and 65.7\% at \textbf{TL}, before rising to 73.4\% at \textbf{TLV}. The replication therefore supports the same underlying conclusion while showing that the apparent strength of a modality ceiling depends partly on dataset construction and how much visual evidence is redundantly recoverable from text.
+
+\subsubsection{Conversion Fidelity}
+
+% \input{empirical/findings_tables/parser}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\columnwidth]{empirical/findings_figures/parser.pdf}
+  \caption[Parser accuracy by text source]{Parser accuracy by text source with and without page images. Adding vision substantially reduces sensitivity to parser choice, particularly on scanned documents.}
+  \label{fig:parser}
+\end{figure}
+
+\paragraph{Conversion Fidelity Constrains the Text Representation.} Parser choice changes only how the document is converted into text, yet produces substantial differences in downstream accuracy. This indicates that conversion fidelity is itself a representation bottleneck rather than a neutral preprocessing choice. MinerU produces the weakest parsed-text results on both digital and scanned documents, reaching 26.6\% and 27.4\%, compared with 40.1\% and 32.8\% for PaddleOCR-VL and 42.3\% and 34.3\% for Unlimited-OCR. The gap is especially revealing across document types. On born-digital pages, parsing mainly restructures or corrects an existing text layer, whereas on scanned pages it also determines whether a usable text representation is acquired at all. This is most extreme for PyMuPDF, where accuracy falls to 4.0\% on scans because the embedded text layer is often absent. In these cases, conversion failure does not merely degrade the representation but can remove the text channel entirely.
+
+\paragraph{Vision Can Recover Conversion Errors.} Adding the page image substantially reduces the differences between parsers, showing that conversion loss can often be recovered when the original visual signal remains available. The spread between parsers falls from 15.7 points to 4.2 on digital documents and from 30.3 points to 8.0 on scanned documents. The weakest parser therefore benefits most from adding vision, indicating that many conversion errors are not irreversible once a second modality preserves the underlying signal. Information omitted or distorted during parsing can still be recovered directly from the page image, so the two channels provide partially redundant evidence. This redundancy reduces the extent to which parser quality constrains downstream performance. Conversion errors therefore become most damaging when no complementary channel retains the missing information.
+
+\input{empirical/findings_tables/resolution}
+
+\paragraph{Visual Fidelity Matters Most Without Textual Support.} Render resolution follows the same redundancy principle. Increasing resolution produces a much larger gain for \textbf{V} than for \textbf{TLV}, where accompanying text already preserves part of the fine-grained content that additional pixels would otherwise recover (Table~\ref{tab:resolution_sweep}). Low-resolution rendering is therefore most damaging when vision alone must carry small text, spatial detail, or other fine-grained visual evidence. Once those signals are redundantly represented in text, the marginal value of higher visual fidelity falls. Parser quality and render resolution thus expose the same mechanism from opposite sides: conversion errors matter most when they destroy the last usable representation of the required evidence.
+
+\subsection{Selection}
+\label{sec:findings_selection}
+
+Selection determines which evidence reaches the reasoner. While both incomplete retrieval and irrelevant context are commonly treated as potential obstacles to long-document understanding~\citep{liu2025resolving,shi2023large,liu2024lost}, our results suggest that their effects are sharply asymmetric: incomplete coverage removes information that downstream stages cannot reliably recover, whereas irrelevant pages impose a comparatively smaller burden within the tested context range.
+
+\subsubsection{Evidence Coverage}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{empirical/findings_figures/sufficiency.pdf}
+    \caption[Verdict transitions under partial evidence coverage]{Verdict transitions after withholding or retaining gold evidence pages on MMLongBench-Doc and LongDocURL. Missing evidence predominantly converts correct answers into incorrect ones, while repairs are comparatively rare.}
+    \label{fig:sufficiency}
+\end{figure}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{empirical/findings_figures/coverage_types.pdf}
+    \caption[LongDocURL coverage sensitivity by question type]{LongDocURL verdict transitions under partial evidence coverage, grouped by question type. Extractive questions are relatively robust, while question types requiring evidence combination show substantially larger losses.}
+  \label{fig:coverage_types}
+\end{figure}
+
+\paragraph{Evidence Coverage Is a Hard Constraint.} Our results confirm the field's expectation that incomplete evidence coverage strongly limits downstream performance. As Figure~\ref{fig:sufficiency} shows, removing required evidence overwhelmingly converts previously correct answers into incorrect ones, while the reverse transition is rare. On MMLongBench-Doc, withholding a single gold page changes 24.7--27.0\% of previously correct answers to incorrect, compared with only 4.3--4.5\% moving in the opposite direction. Retaining just one gold page widens this imbalance further, with 28.4--30.4\% changing from correct to incorrect and only 2.3--2.6\% being repaired. Missing evidence therefore places a hard constraint on downstream reasoning because information removed at selection cannot reliably be reconstructed later. Performance does not collapse completely, however, indicating that annotated multi-page questions are not always strictly dependent on every labelled page and may sometimes remain answerable from redundant evidence or information recoverable by the reasoner.
+
+\paragraph{LongDocURL Replicates the Coverage Effect.} LongDocURL shows the same dependence on evidence coverage, although its annotations appear to contain more redundancy. Keeping only the highest-ranked gold page leaves 47.0\% of questions correct and retains 50.5\% accuracy, while dropping the highest-ranked gold page is substantially more damaging than dropping the lowest-ranked one. Figure~\ref{fig:coverage_types} explains much of this weaker pooled effect. \texttt{extract}, which dominates the benchmark, is comparatively robust because a single retained page often still contains the required answer span. In contrast, \texttt{calculate} questions require all necessary values to remain available, while \texttt{count} and \texttt{topic2title} more often depend on combining evidence across pages. LongDocURL therefore reproduces the coverage constraint, but the magnitude of the effect depends on whether the labelled pages are jointly necessary or partially redundant.
+
+\subsubsection{Distractor Exposure}
+
+\input{empirical/findings_tables/robustness}
+
+\paragraph{Distractor Exposure Is Comparatively Harmless.} Our results challenge the common concern that longer contexts necessarily degrade evidence use. Prior work on \emph{lost in the middle} and related long-context effects shows that models can struggle when relevant information is buried among competing tokens, particularly as context length grows~\citep{liu2024lost}. In our setting, however, adding up to five distractor pages produces only modest changes. At \textbf{TLV}, single-page MMLongBench-Doc questions remain essentially stable, while two-page questions show a larger but still gradual decline as additional distractors are introduced. The verdict transitions show that distractors break some answers but also repair others, suggesting that they perturb evidence discrimination rather than simply remove usable information. The tested range is also practically bounded by the hardware available for multimodal inference. Within these realistic page budgets, preserving recall appears more important than aggressively removing irrelevant evidence.
+
+\paragraph{The Remaining Distractor Cost Appears to Be a Reasoning Problem.} LongDocURL strengthens this interpretation. Its two-page questions do not show the same decline despite receiving the same number of additional pages, making a pure attention-dilution explanation less likely. As established in the representation analysis, LongDocURL is also substantially easier overall than MMLongBench-Doc across representation rungs, suggesting that its questions leave more margin before distractors begin to affect reasoning. A more plausible explanation is that the harder MMLongBench-Doc questions are therefore more sensitive to small increases in reasoning burden once irrelevant evidence is introduced. This distinction is important for retrieval design. Distractor-induced failures may be recoverable through stronger reasoning or evidence-selection interventions, whereas omitted evidence cannot be reconstructed once it is absent from the context. 
+% Retrieval can therefore favour recall over precision within the tested range, accepting moderate distractor exposure to reduce the more fundamental risk of missing required evidence.
+
+\subsection{Reasoning}
+\label{sec:findings_reasoning}
+
+Reasoning determines whether the supplied evidence is correctly combined and interpreted to produce an answer. Even when representation preserves the required information and selection delivers it to the reasoner, failures can still arise at this final stage. Our results identify two recurring limitations: current models struggle to integrate evidence distributed across pages, and they do not reliably distinguish genuinely insufficient evidence from difficult but answerable cases.
+
+\subsubsection{Evidence Integration}
+
+\input{empirical/findings_tables/integration_sources}
+% \input{empirical/findings_tables/integration_multihop}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/findings_figures/integration_multihop.pdf}
+  \caption[Accuracy by multi-hop evidence structure]{Accuracy by multi-hop evidence structure at the \textbf{TLV} rung. MMLongBench-Doc accuracy declines as evidence must be combined across additional sources and pages, while LongDocURL shows a large deficit only for question types established as genuinely multi-hop.}
+  \label{fig:integration_multihop}
+\end{figure}
+
+\paragraph{Cross-Page Integration Adds a Distinct Reasoning Burden.} Our results show that questions requiring evidence from several pages remain substantially harder even when all annotated evidence is supplied. As shown in Figure~\ref{fig:integration_multihop}, MMLongBench-Doc \textbf{TLV} accuracy falls from 66.2\% for single-page, single-source questions to 42.0\% when a single evidence source spans multiple pages, and to 35.0\% when multiple sources are also involved. Because its gold pages largely form a minimal evidence set, these multi-page questions generally require several pieces of evidence to be combined. Since oracle pages are supplied, the deficit arises after the required evidence has already reached the reasoner. LongDocURL shows a much smaller pooled deficit because many nominally multi-page questions remain answerable from a single retained page.
+
+\paragraph{Multi-Hop Integration Drives the MMLongBench-Doc Deficit.} Table~\ref{tab:integration_sources} further supports this interpretation by showing that the multi-page deficit varies substantially with the evidence being combined. Questions involving tables and charts show some of the largest declines, consistent with the additional burden of recovering and relating several structured pieces of evidence. The difficulty therefore appears to arise primarily from the integration operation required by the question rather than from page count alone.
+
+\paragraph{LongDocURL Shows the Same Deficit on Genuinely Multi-Hop Questions.} As established in the evidence-coverage analysis, \texttt{topic2title}, \texttt{summary2tab}, \texttt{calculate}, and \texttt{count} are the LongDocURL question types that are genuinely multi-hop because they become substantially less answerable when only the highest-ranked gold page is retained. Figure~\ref{fig:integration_multihop} shows that these types fall to 40.3\% on multi-page questions, a 34.2-point deficit relative to the single-page baseline, while the remaining multi-page types reach 82.7\%. LongDocURL therefore exhibits the same integration bottleneck once the analysis focuses on questions that genuinely require multiple pieces of evidence.
+
+% \begin{figure}[p]
+%   \centering
+%   \includegraphics[width=\columnwidth]{empirical/findings_figures/worked_examples.pdf}
+%   \caption[Worked examples of the six failure mechanisms]{Worked examples of the six failure mechanisms, one question each, from MMLongBench-Doc under Qwen3-VL-8B. Every band gives the question, its gold answer, and what the reasoner returned under each condition that mechanism is tested by, marked with the judge's verdict; the quotations are the model's own output, elided at [\ldots]. The annotated gold pages are supplied in every condition except \emph{drop top} and \emph{drop bottom}, so a wrong answer anywhere else is not a coverage failure, and the conditions are named as \S\ref{sec:emp_methodology} defines them. Each example is reproducible from its question id.}
+%   \label{fig:worked_examples}
+% \end{figure}
+
+
+\subsubsection{Response Calibration}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\columnwidth]{empirical/findings_figures/abstention_outcomes.pdf}
+  \caption[Effect of abstention prompting on answerable and unanswerable questions]{Effect of targeted abstention prompting at the \textbf{TLV} rung. The instruction reduces unsupported answering when evidence is insufficient, but also increases refusal on answerable questions.}
+  \label{fig:abstention_outcomes}
+\end{figure}
+
+\paragraph{The Reasoner Does Not Reliably Calibrate Evidence Sufficiency.} Figure~\ref{fig:abstention_outcomes} shows that targeted abstention prompting at the \textbf{TLV} rung makes the reasoner substantially more conservative, but not selectively so. On unanswerable questions, refusal rises from 45.5\% to 74.6\%, substantially reducing unsupported answers. The same intervention also raises refusal on answerable questions from 6.2\% to 27.7\%, while correct answers fall from 49.5\% to 40.0\%. Incorrect answers decline as well, indicating that the prompt suppresses some unreliable responses, but it does so by shifting the model towards refusal rather than by improving its ability to distinguish sufficient from insufficient evidence. The reasoner therefore remains poorly calibrated between cases where evidence is genuinely absent and cases where the available evidence is simply difficult to interpret.
+
+\input{empirical/findings_tables/abstention_sources}
+
+\paragraph{Reasoning Difficulty Is Mistaken for Evidence Insufficiency.} Table~\ref{tab:abstention_sources} supports this interpretation by showing that false abstention varies with the evidence being reasoned over. Under the abstention instruction, refusal reaches 35.5\% for figure questions and 30.3\% for table questions, compared with 25.3\% for charts and 24.1\% for text. Since all questions are evaluated with oracle pages and the full \textbf{TLV} representation, these differences cannot be explained by missing evidence. Instead, the model appears increasingly willing to abstain as interpretation becomes more difficult, suggesting that reasoning difficulty is being treated as evidence insufficiency. Response calibration therefore remains coupled to reasoning confidence rather than to whether the required evidence is actually present.
+\section{Error Analysis}
+\label{sec:emp_error_analysis}
+
+The error taxonomy provides a finer view of how the reasoner fails once representation and evidence selection are controlled. Unlike the preceding analyses, each category is reported as a share of the full question pool for that condition, allowing direct comparison across prompt modes, evidence sources, and evidence-page counts. 
+Since the abstention trade-off has already been analysed in \S\ref{sec:findings_reasoning}, we do not revisit the \texttt{abstain} variants here and instead focus on the remaining prompt behaviours and error shifts.
+
+\subsection{Prompt Mode Analysis}
+
+% \input{empirical/analysis/error_profile}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_profile.pdf}
+  \caption[Error profile by prompt mode]{Error profile by prompt mode on answerable and unanswerable questions. Answerable errors are decomposed by failure type, while the unanswerable pool reports unsupported answers. Grounding primarily shifts non-commitment into explicit errors, while chain-of-thought leaves answerable accuracy largely unchanged and increases unsupported answering on unanswerable questions.}
+  \label{fig:error_profile}
+\end{figure}
+
+\paragraph{Grounding Encourages Commitment Without Improving Reliability.} The grounded prompt removes one visible failure mode, but largely by shifting errors rather than preventing them. On the answerable pool, \emph{no answer reached} falls from 6.8\% to 0.0\%, yet wrong-count, wrong-value, and wrong-entity errors all increase. The same tendency appears on the unanswerable pool, where the rate of answered-unanswerable questions rises from 54.5\% to 62.7\%. Grounding therefore appears to make the model more willing to commit to an answer without improving whether that answer is supported or correct.
+
+\paragraph{Chain-of-Thought Does Not Improve Calibration.} Chain-of-thought prompting produces almost no change in overall performance on answerable questions, with the total incorrect rate moving from 50.5\% to 49.8\%. More surprisingly, it performs worse on the unanswerable pool, where 57.0\% of questions are answered despite the evidence being insufficient. This runs counter to the expectation that explicit reasoning should help the model recognise when the available evidence cannot support an answer. Instead, longer reasoning may encourage the model to construct or rationalise an answer from incomplete context rather than identify the missing evidence. Reasoning longer is therefore not equivalent to reasoning about evidential sufficiency.
+
+\subsection{Error Patterns by Evidence and Integration}
+\label{sec:error_evidence_integration}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_sources.pdf}
+  \caption[Error profile by evidence source]{Error profile by evidence source on the answerable pool with oracle pages and no prompt instruction. Different evidence types produce distinct failure patterns: layout and figure questions are dominated by wrong-count errors, while tables and charts more often produce wrong-value errors.}
+  \label{fig:error_sources}
+\end{figure}
+
+\paragraph{Error Type Depends on the Evidence Being Interpreted.} The evidence-source breakdown shows that different modalities do not simply vary in overall difficulty, but fail in different ways. Layout and figure questions are dominated by wrong-count errors, reaching 28.8\% and 24.1\%, which is consistent with difficulty identifying or enumerating visually distributed elements. Tables and charts instead show larger wrong-value errors at 15.4\% and 15.7\%, suggesting that the relevant structure is often located but the wrong numeric value is extracted or used. Tables also show a comparatively high no-answer-reached rate of 14.4\%, indicating that structured evidence can cause the reasoning process to fail before a final answer is committed. Evidence source therefore affects not only whether the model fails, but the form that failure takes.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_integration.pdf}
+  \caption[Error profile by evidence-page count]{Error profile by evidence-page count on the answerable pool with oracle pages and no prompt instruction. Moving from single-page to multi-page questions sharply increases non-commitment, wrong-count, and wrong-value errors, while insufficient-evidence errors do not increase.}
+  \label{fig:error_integration}
+\end{figure}
+
+\paragraph{Cross-Page Integration Amplifies Reasoning Errors.} Moving from one page to multiple pages produces a clear shift in the error profile. Relative to single-page questions, the pooled multi-page set shows a 10.4-point increase in no-answer-reached errors, a 9.9-point increase in wrong-count errors, and a 4.0-point increase in wrong-value errors. By contrast, insufficient-evidence errors decrease slightly. Since every oracle page is supplied, these failures are not caused by missing evidence, but by difficulty combining and operating over evidence that is already present. The largest change also occurs when moving from one page to two pages, with total incorrect rising from 40.5\% to 62.8\%, while 3+ pages reach 64.0\%. This suggests that crossing the page boundary itself introduces much of the reasoning burden, rather than error increasing proportionally with each additional page.
+
+\section{Practical Discussion}
+\label{sec:practical_discussion}
+
+The preceding experiments isolate where MP-VRDU systems fail. We now consider what those findings imply for system design and deployment. Rather than treating representation, retrieval, and reasoning independently, the results suggest that compute should be allocated across the pipeline according to where information is most likely to be lost and where additional capacity can still recover it.
+
+\subsection{Representation Cost and Fidelity}
+\label{sec:discussion_representation}
+
+\input{empirical/discussion/deployment_rungs}
+
+\paragraph{Representation Should Match the Deployment Constraint.} Table~\ref{tab:deployment_rungs} shows that the main practical cost of richer representations comes from visual input, which increases context size and memory pressure far more than text-only encoding. This matters because deployment budgets are shared across page count, batch size, latency, and accelerator memory. The representation findings in Table~\ref{tab:ladder_source} show that vision is essential for some evidence sources, while Table~\ref{tab:resolution_sweep} shows that visual fidelity itself also carries a cost. A deployed system should therefore treat representation as a resource-allocation decision. Visual input is justified when the workload contains evidence that text cannot preserve, but using it indiscriminately reduces the number of pages or queries that can be processed within the same hardware budget.
+
+\paragraph{The Best Representation Is Not Always the Best Deployment Choice.} In capability terms, a sufficiently strong reasoner should benefit from retaining the richest available evidence, but real-world systems rarely operate without compute constraints. The modality results in Table~\ref{tab:ladder_source} and parser results in Figure~\ref{fig:parser} suggest that the appropriate representation depends on the expected document and question distribution. For predominantly textual, born-digital workloads such as academic papers, embedded or parsed text may preserve most of the required evidence at substantially lower cost. Scanned, figure-heavy, chart-heavy, or layout-sensitive workloads are more likely to justify visual input. Mixed deployments can instead escalate selectively, using a cheaper text representation by default and invoking vision only when the document or question requires it. The practical objective is therefore not to maximise representation richness, but to use the cheapest representation that preserves the evidence required by the target workload.
+
+\subsection{Retrieval Quality and Efficiency}
+\label{sec:discussion_retrieval}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{empirical/discussion/retrieval.pdf}
+  \caption[Retrieval recall by depth and gold-page count]{Retrieval recall by depth and gold-page count on MMLongBench-Doc. Recall increases consistently with retrieval depth, while questions requiring two gold pages remain harder to cover than single-page questions.}
+  \label{fig:retrieval}
+\end{figure}
+
+\paragraph{Retrieval Depth Should Favour Recall.} As Figure~\ref{fig:retrieval} shows, recall rises steadily with retrieval depth across all six retrievers, and the two-gold-page pool remains harder to cover than the one-gold-page pool at the same \(k\). In deployment, the operating point should therefore be chosen around an acceptable coverage target rather than precision in isolation. A larger \(k\) may be justified for questions likely to depend on several pages, while simpler or highly localised tasks can stop earlier. Retrieval itself is comparatively inexpensive once the index is built, so the main practical cost of increasing \(k\) is the additional reasoner context and generation latency incurred when more pages are subsequently processed.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{empirical/discussion/retrieval_scan.pdf}
+  \caption[Retrieval recall by document type and retrieval representation]{Retrieval recall by document type and retrieval representation on MMLongBench-Doc. Parser-based text retrieval substantially improves robustness on scanned documents, while visual retrievers remain strongest and most consistent across both document types.}
+  \label{fig:retrieval_scan}
+\end{figure}
+
+\paragraph{Retrieval Representation Trades Cost for Robustness.} Figure~\ref{fig:retrieval_scan} shows that retrieval representation affects robustness as well as preprocessing cost. Embedded-text retrieval is inexpensive because it can use the existing PDF text layer, but it degrades sharply on scanned documents. Parser-text retrieval adds conversion overhead while recovering much of this lost performance, and visual retrieval requires page rendering and visual embedding but remains the strongest and most consistent across document types. The resulting trade-off is therefore not simply text versus vision. Once the corresponding indexes are precomputed, query-time retrieval remains small relative to multimodal generation, making representation choice primarily a balance between document-preparation cost and retrieval robustness.
+
+
+\subsection{Reasoner Capability and Deployment Trade-offs}
+\label{sec:discussion_reasoner}
+
+\input{empirical/discussion/reasoner}
+
+\paragraph{Reasoner Choice Is a Capability--Efficiency Trade-off.} The choice of reasoner reflects the broader capability--efficiency trade-off that underlies modern language and multimodal model deployment. Increasing model scale can improve task capability, but parameter count alone is an imperfect predictor of performance. As Table~\ref{tab:reasoner} shows, similarly sized model families differ substantially on MP-VRDU, while scaling within a family generally improves accuracy at considerable memory and compute cost. This makes model selection a joint decision over architecture, scale, token efficiency, and the target workload rather than a simple preference for the largest available checkpoint. The cost is particularly relevant for MP-VRDU because each query may already contain thousands of textual and visual tokens. In practice, organisations should therefore benchmark candidate model families on their own document distribution and choose the model that provides sufficient capability within the available latency, memory, and throughput budget.
+
+\paragraph{Quantisation Can Preserve Capacity Under a Fixed Memory Budget.} Quantisation changes this trade-off without substantially reducing accuracy in our experiments. Table~\ref{tab:reasoner} shows that reducing Qwen3-VL-8B from 16-bit to 8- or 4-bit precision changes accuracy only slightly across the tested representations while reducing its weight footprint from 17.5\,GB to approximately 10.3 and 6.8\,GB. This contrasts with studies reporting larger degradation under low-bit quantisation on long-context and reasoning-intensive tasks~\cite{mekala2025quantization,li2025quantization,marchisio2024quantization}. One possible explanation is that many document QA instances require comparatively constrained operations over already supplied evidence, such as recovering an entity, count, or value, making them less sensitive to small weight perturbations than extended reasoning or generation. Quantisation also does not increase latency in our measurements and produces a small improvement, consistent with prior work showing that well-supported low-precision inference can improve deployment efficiency~\citep{kurtic2025quantization}. More importantly, the 4-bit 32B model outperforms the 16-bit 8B model across all four representation rungs at a similar weight budget. For fixed-memory deployment, reducing numerical precision may therefore be preferable to reducing model scale, although this result should not be interpreted as evidence that low-precision inference is generally lossless.
+
+
+\section{Conclusion}
+\label{sec:emp-conc}
+
+This chapter examined MP-VRDU failure through controlled attribution across representation, selection, and reasoning. The results show that vision is necessary but remains complementary to text, that missing required evidence is substantially more damaging than moderate distractor exposure, and that cross-page integration remains difficult even when all required evidence is supplied. The analysis further shows that prompt interventions can shift error behaviour without necessarily improving underlying reasoning or calibration. Together, these findings show that MP-VRDU failure is distributed across the evidence pipeline and that end-to-end accuracy alone is insufficient to identify the mechanism responsible.

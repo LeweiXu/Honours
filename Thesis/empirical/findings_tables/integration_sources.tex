@@ -1,0 +1,44 @@
+% Integration by evidence source at the TLV rung, both datasets side by side.
+% Teal = accuracy on a per-dataset scale; warm wash on M-S deepens with the deficit,
+% over [0, 38] points.
+% Source rows OVERLAP: a question citing Chart and Table is counted in both, so the
+% rows are blocks and the All row pools each question once rather than summing them.
+% Multi is derived from the 2 and 3+ buckets and their n, so the buckets reproduce it.
+% Read the 3+ column for trend: crossed with five sources it thins out, to n=20 on
+% Chart and n=12 on Table.
+\definecolor{gapred}{HTML}{B03A2E}
+\definecolor{accteal}{HTML}{1BAF7A}
+\newcommand{\kshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(70-14)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\kcell}[1]{\kshade{#1}#1}
+\newcommand{\nshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-40)/(88-40)*65))}%
+  \edef\tmpcol{accteal!\shadeval}\expandafter\cellcolor\expandafter{\tmpcol}}
+\newcommand{\ncell}[1]{\nshade{#1}#1}
+
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}l rrr rr @{\hskip 6pt\vrule\hskip 6pt} l rrr rr@{}}
+\toprule
+\multicolumn{6}{c@{\hskip 6pt}}{\textbf{MMLongBench-Doc}} & \multicolumn{6}{c}{\textbf{LongDocURL}} \\
+\cmidrule(r){1-6}\cmidrule(l){7-12}
+ & \multicolumn{3}{c}{Gold pages} & \multicolumn{2}{c@{\hskip 6pt}}{Pooled} & & \multicolumn{3}{c}{Gold pages} & \multicolumn{2}{c}{Pooled} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){8-10}\cmidrule(lr){11-12}
+\textbf{Evidence source} & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{Multi} & \textbf{M$-$S} & \textbf{Evidence source} & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{Multi} & \textbf{M$-$S} \\
+\midrule
+Chart            & \kcell{58.2} & \kcell{32.2} & \kcell{15.0} & \kcell{27.8} & \cellcolor{gapred!36}$-$30.4 & ---    &              &              &              &              &              \\
+Figure           & \kcell{49.4} & \kcell{34.3} & \kcell{44.9} & \kcell{38.7} & \cellcolor{gapred!13}$-$10.7 & Figure & \ncell{68.4} & \ncell{84.3} & \ncell{63.3} & \ncell{79.3} & \cellcolor{gapred!13}$+$10.9 \\
+Layout & \kcell{64.3} & \kcell{44.1} & \kcell{34.6} & \kcell{40.0} & \cellcolor{gapred!29}$-$24.3 & Layout & \ncell{63.1} & \ncell{52.5} & \ncell{58.1} & \ncell{54.0} & \cellcolor{gapred!11}$-$9.1 \\
+Text        & \kcell{66.2} & \kcell{44.7} & \kcell{40.0} & \kcell{43.3} & \cellcolor{gapred!27}$-$22.9 & Text   & \ncell{82.3} & \ncell{85.2} & \ncell{73.9} & \ncell{82.3} & \cellcolor{gapred!0}0.0 \\
+Table            & \kcell{69.2} & \kcell{31.6} & \kcell{41.7} & \kcell{32.7} & \cellcolor{gapred!43}$-$36.5 & Table  & \ncell{75.4} & \ncell{52.2} & \ncell{42.3} & \ncell{51.1} & \cellcolor{gapred!29}$-$24.3 \\
+\midrule
+\textbf{All}     & \kcell{63.7} & \kcell{37.8} & \kcell{38.4} & \kcell{38.0} & \cellcolor{gapred!30}$-$25.7 & \textbf{All} & \ncell{74.7} & \ncell{70.4} & \ncell{65.2} & \ncell{69.2} & \cellcolor{gapred!6}$-$5.5 \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy by gold-page count and evidence source at the \textbf{TLV} rung. The single- to multi-page deficit varies substantially by evidence type, indicating that integration difficulty depends on what evidence must be combined as well as where it is located.}
+\label{tab:integration_sources}
+\end{table}
