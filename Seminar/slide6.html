@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Challenges of the Multi-Page Setting</title>
+<title>Seminar Overview</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -61,17 +61,31 @@
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 6 ================= */
-  .s6 .list{display:flex; flex-direction:column; justify-content:space-between; height:100%;}
-  .s6 .item{display:flex; gap:26px; align-items:baseline;}
-  .s6 .item > b{
+  .s6 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1060px;}
+  .s6 ol{list-style:none; margin-top:36px;}
+  .s6 ol > li{display:flex; gap:24px; align-items:baseline; margin-bottom:34px;}
+  .s6 ol > li:last-child{margin-bottom:0;}
+  .s6 ol > li > b{
     font-family:var(--mono); font-size:14px; font-weight:500; color:var(--navy);
     flex:none; width:22px;
   }
-  .s6 .item h2{
-    font-family:var(--disp); font-size:23px; font-weight:600;
-    letter-spacing:-.018em; flex:none; width:410px; line-height:1.2;
+  .s6 h2{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; line-height:1.25;
   }
-  .s6 .item p{font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s6 .authors{margin-top:9px; font-size:14px; font-weight:300; color:var(--slate);}
+  .s6 .authors strong{font-weight:600; color:var(--ink);}
+  .s6 .venue{
+    margin-top:8px; font-family:var(--mono); font-size:12.5px;
+    letter-spacing:.03em; color:var(--navy);
+  }
+  .s6 .covers{display:flex; gap:14px; margin-top:14px; align-items:baseline;}
+  .s6 .covers b{
+    font-family:var(--mono); font-size:10.5px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--mute);
+    flex:none; width:76px;
+  }
+  .s6 .covers p{font-size:14.5px; font-weight:300; line-height:1.45; color:var(--slate);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -86,34 +100,34 @@
 
 <div class="slide s6">
 
-  <h1>Challenges of the Multi-Page Setting</h1>
+  <h1>Seminar Overview</h1>
 
   <div class="body">
-    <div class="list">
-      <div class="item">
+    <p class="lead">Two papers came out of this Honours project. The rest of the seminar follows them in turn.</p>
+
+    <ol>
+      <li>
         <b>1</b>
-        <h2>The document exceeds the context window</h2>
-        <p>Long multi-page documents routinely outrun what a backbone can hold, so the system must select which parts of the document reach the MLLM at all.</p>
-      </div>
-      <div class="item">
+        <div>
+          <h2>Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding</h2>
+          <div class="authors"><strong>Lewei Xu</strong>, Yihao Ding, Zihan Xu, Siwen Luo, Daochang Liu, Wei Liu</div>
+          <div class="venue">Main Conference of EMNLP 2026</div>
+          <div class="covers"><b>Next</b><p>MP-VRDU organised through evidence management: a taxonomy of four architectural families, multimodal representation, and inference-time and training strategies.</p></div>
+        </div>
+      </li>
+      <li>
         <b>2</b>
-        <h2>Scaling the context does not resolve it</h2>
-        <p>Long-context models attend poorly to evidence buried mid-input, and memory and compute grow with sequence length, so the achievable context is bounded by hardware.</p>
-      </div>
-      <div class="item">
-        <b>3</b>
-        <h2>Every required evidence unit must be located</h2>
-        <p>Answering often means integrating evidence from several parts of the document at once, and missing any one of them is enough to answer incorrectly or not at all.</p>
-      </div>
-      <div class="item">
-        <b>4</b>
-        <h2>Cross-page structure is not recoverable in isolation</h2>
-        <p>Section hierarchy and cross-references cannot be read off any single part of the document, yet questions often need them to gather the evidence in the first place.</p>
-      </div>
-    </div>
+        <div>
+          <h2>Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution</h2>
+          <div class="authors"><strong>Lewei Xu</strong>, Yihao Ding, Zihan Xu, Daniel Yitian Su, Daochang Liu, Siwen Luo, Yifan Peng, Wei Liu</div>
+          <div class="venue">Submitted to EACL, under review</div>
+          <div class="covers"><b>Then</b><p>Failure attributed to three loci, representation, selection, and reasoning, through controlled interventions on a single pipeline.</p></div>
+        </div>
+      </li>
+    </ol>
   </div>
 
-  <div class="corner"><b>06</b> / 25 <span>&middot;</span> Background</div>
+  <div class="corner"><b>06</b> / 24 <span>&middot;</span> Overview</div>
 
 </div>
 </body>
