@@ -1,0 +1,33 @@
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{ll}
+\toprule
+\textbf{Component} & \textbf{Configuration} \\
+\midrule
+Reasoner & Qwen3-VL-8B-Instruct \\
+Quantisation & 4-bit NF4 \\
+Compute dtype & FP16 \\
+Decoding & Greedy \\
+Retriever & ColQwen3.5 \\
+Parser & Unlimited-OCR \\
+Reader representation & \textbf{TLV}, high resolution \\
+Synthesizer full pages & \textbf{TLV}, medium resolution \\
+Page budget \(B\) & 25 \\
+Pages per reader turn \(p\) & 1 \\
+Initial stopping floor \(k\) & 6 \\
+Post-reopen floor \(m\) & 3 \\
+Maximum synthesis attempts \(C\) & 3 \\
+Reader decode budget & 4096 tokens \\
+Synthesizer decode budget & 4096 tokens \\
+Arbiter decode budget & 4096 tokens \\
+Completion budget & 1024 tokens \\
+Flagged synthesis pages & All that fit in context \\
+Hardware & 1$\times$ NVIDIA V100 16\,GB \\
+\bottomrule
+\end{tabular}
+\caption{Configuration of our system used evaluation}
+\label{tab:method_configuration}
+\end{table}

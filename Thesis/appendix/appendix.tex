@@ -102,5 +102,33 @@ Table~\ref{tab:reasoner_hop} reports accuracy by the number of gold evidence pag
 % \input{appendix/empirical/error_integration}
 
 \clearpage
-\section{Full Method Details}
+\chapter{Additional Method Details}
 \label{app:simple_method_details}
+
+\section{Implementation Details}
+\label{app:simple_method_details}
+
+This appendix provides the main implementation details for the evidence-management pipeline introduced in \S\ref{sec:simple_method}. We report the role-specific prompts and the configuration used for the MMLongBench-Doc experiments. Lower-level implementation details, including caching, batching, and output recovery, are omitted.
+
+\subsection{Role Prompts}
+\label{app:method_prompts}
+
+The three roles share the same underlying vision-language model but receive different instructions and evidence. The \texttt{reader} extracts persistent evidence from each visited page and decides whether enough evidence has been collected to attempt an answer. The \texttt{synthesizer} reasons over the assembled evidence and produces the answer, while the \texttt{arbiter} determines whether the available evidence is sufficient or whether reading should continue. Figures~\ref{fig:method_reader_prompt}--\ref{fig:method_arbiter_prompt} show the principal instructions; repetitive formatting rules and error-recovery instructions are omitted for brevity.
+
+\input{appendix/method/reader_prompt}
+
+\input{appendix/method/synthesizer_prompt}
+
+\input{appendix/method/arbiter_prompt}
+
+\subsection{Evidence Assembly}
+\label{app:method_evidence}
+
+The \texttt{reader} maintains an append-only evidence record containing only information relevant to the question. Each record is associated with its source page, and pages considered likely to contain answer-bearing evidence are additionally marked for full presentation during synthesis. When the \texttt{synthesizer} is invoked, evidence is reordered by document position rather than retrieval rank. A marked page contributes the \texttt{reader}'s record, Unlimited-OCR text, and the rendered page image, while an unmarked page contributes only its retained record. Pages with an empty record are omitted. If no page is marked, the two highest-ranked pages already inspected are supplied in full as a fallback. This preserves broad evidence coverage while preventing every inspected page from entering the final multimodal context.
+
+\subsection{Configuration}
+\label{app:method_configuration}
+
+Table~\ref{tab:method_configuration} details specific pipeline configurations. The \texttt{reader} traverses the fixed retrieval ranking until it proposes stopping or exhausts the page budget. A stopping proposal is ignored before \(k\) pages have been inspected. If the \texttt{arbiter} requests further evidence, at least \(m\) additional pages are read before another stopping proposal is accepted. At most \(C\) synthesis attempts are permitted. These controls bound evidence coverage and trajectory depth independently of the underlying model.
+
+\input{appendix/method/configuration}

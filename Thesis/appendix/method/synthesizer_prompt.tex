@@ -1,0 +1,52 @@
+\begin{figure}[h]
+\centering
+\fbox{%
+\begin{minipage}{0.94\linewidth}
+\small
+\textbf{\texttt{SYNTHESIZER} prompt (abridged)}
+\vspace{0.5em}
+
+\ttfamily
+You are answering a question about a long document. You cannot see all of it. A reader went through it page by page.
+
+The EVIDENCE is organised by document page. A page may contain:
+
+\begin{itemize}
+    \item \texttt{READER'S RECORD}: a summary that may be incomplete;
+    \item \texttt{PARSED TEXT}: the extracted text, preferred for exact words, numbers, names, and identifiers;
+    \item \texttt{PAGE IMAGE}: the original visual evidence, preferred for charts, figures, layout, colour, and other visual information.
+\end{itemize}
+
+Use only the supplied EVIDENCE. Where sources disagree, prefer parsed text for textual content and the page image for visual content.
+
+Think step by step before answering.
+
+\vspace{0.5em}
+\textbf{CHECK THE QUESTION}
+
+Verify the specific premises assumed by the QUESTION, including names, dates, pages, figures, tables, groups, metrics, and whether the requested object exists.
+
+If a required premise is contradicted or absent where it would have to appear, do not substitute the nearest matching fact.
+
+\vspace{0.5em}
+\textbf{ABSTENTION}
+
+Answer \texttt{Not answerable} only when the supplied evidence genuinely does not contain what is required. Before abstaining, inspect the full parsed text and page images and write:
+
+\texttt{MISSING: <specific unsupported fact>}
+
+\vspace{0.5em}
+\textbf{COUNTS AND LISTS}
+
+For counting or list questions, construct a page-wise tally. Verify items against the full page evidence where available, exclude non-matching and duplicate items, and then aggregate across pages.
+
+\vspace{0.5em}
+\textbf{OUTPUT}
+
+\texttt{REASONING: <step-by-step reasoning>}\\
+\texttt{ANSWER: <concise final answer>}
+\end{minipage}%
+}
+\caption{Abridged prompt for the \texttt{synthesizer} role. The prompt combines explicit reasoning, premise verification, calibrated abstention, and structured aggregation.}
+\label{fig:method_synthesizer_prompt}
+\end{figure}

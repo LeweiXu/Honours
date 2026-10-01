@@ -84,7 +84,7 @@ Retrieval narrows long documents to compact evidence units for downstream reason
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\columnwidth]{survey/figures/ColPali.png}
-    \caption{ColPali late-interaction visual retrieval vs standard retrieval. Included for illustrative purposes. Extracted from Faysse et al. \cite{faysse2025colpali}}
+    \caption[ColPali late-interaction retrieval]{ColPali late-interaction retrieval for visually rich document pages. Query-token embeddings are matched against patch-level page embeddings using \emph{MaxSim}, producing a relevance score that preserves fine-grained alignment between query terms and local page regions.}
     \label{fig:colpali}
 \end{figure}
 
@@ -116,8 +116,8 @@ Agentic methods distribute the MP-VRDU workflow across one or more LLM-instantia
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\columnwidth]{survey/figures/docagent_structure.png}
-    \caption{Architecture of DocAgent. Included for illustrative purposes. Extracted from Yang et al.~\cite{sun2025docagent}.}
-    % ``We first construct the document outline as a compact XML tree structure. An actor agent processes the outline and question as input, leveraging retrieval tools to extract relevant content for answering the question. Next, an evaluator agent reviews the initial response. If a correction is necessary, the actor agent's memory is updated through reflection, facilitating knowledge transfer across tasks.''}
+    \caption{Architecture of DocAgent. Included for illustrative purposes. Extracted from Yang et al.~\cite{sun2025docagent}.
+    ``We first construct the document outline as a compact XML tree structure. An actor agent processes the outline and question as input, leveraging retrieval tools to extract relevant content for answering the question. Next, an evaluator agent reviews the initial response. If a correction is necessary, the actor agent's memory is updated through reflection, facilitating knowledge transfer across tasks.''}
     \label{fig:docagent_decomposition}
 \end{figure}
 

@@ -33,21 +33,21 @@
 \multicolumn{6}{l}{\emph{Family (8B class, bf16)}} \\
 \quad Qwen3-VL-8B & \cellcolor{accteal!18}31.9 & \cellcolor{accteal!24}38.4 & \cellcolor{accteal!38}52.4 & \cellcolor{accteal!32}45.5 & \cellcolor{recwarm!35}17.5 \\
 \quad InternVL3-8B & \cellcolor{accteal!5}19.3 & \cellcolor{accteal!11}25.3 & \cellcolor{accteal!19}32.6 & \cellcolor{accteal!10}24.1 & \cellcolor{recwarm!31}15.9 \\
-\quad GLM-4.6V-Flash (9B dense) & \cellcolor{accteal!12}25.8 & \cellcolor{accteal!20}33.5 & \cellcolor{accteal!30}44.1 & \cellcolor{accteal!17}31.0 & \cellcolor{recwarm!43}20.6 \\
-\quad MiniCPM-V-4.5 (8B) & \cellcolor{accteal!17}30.8 & \cellcolor{accteal!24}37.9 & \cellcolor{accteal!48}61.9 & \cellcolor{accteal!40}53.8 & \cellcolor{recwarm!35}17.4 \\
+\quad GLM-4.6V-Flash (9B dense) & \cellcolor{accteal!12}25.9 & \cellcolor{accteal!19}32.9 & \cellcolor{accteal!29}42.7 & \cellcolor{accteal!17}30.9 & \cellcolor{recwarm!43}20.6 \\
+\quad MiniCPM-V-4.5 (8B) & \cellcolor{accteal!17}30.7 & \cellcolor{accteal!24}38.1 & \cellcolor{accteal!46}60.1 & \cellcolor{accteal!39}53.3 & \cellcolor{recwarm!35}17.4 \\
 \quad Llama-3.2-11B-Vision & \cellcolor{accteal!12}26.5 & \cellcolor{accteal!20}34.3 & \cellcolor{accteal!19}33.3 & \cellcolor{accteal!11}25.3 & \cellcolor{recwarm!45}21.3 \\
 \cmidrule(lr){1-6}
 \multicolumn{6}{l}{\emph{Scale (Gemma-3, bf16)}} \\
-\quad 4B & \cellcolor{accteal!8}22.1 & \cellcolor{accteal!16}30.4 & \cellcolor{accteal!26}39.9 & \cellcolor{accteal!20}33.8 & \cellcolor{recwarm!12}8.6 \\
-\quad 12B & \cellcolor{accteal!16}30.4 & \cellcolor{accteal!24}37.5 & \cellcolor{accteal!37}50.9 & \cellcolor{accteal!29}42.6 & \cellcolor{recwarm!53}24.4 \\
-\quad 27B & -- & -- & -- & -- & \cellcolor{recwarm!55}54.9 \\
+\quad 4B & \cellcolor{accteal!8}22.1 & \cellcolor{accteal!16}30.5 & \cellcolor{accteal!26}39.5 & \cellcolor{accteal!20}33.6 & \cellcolor{recwarm!12}8.6 \\
+\quad 12B & \cellcolor{accteal!16}30.5 & \cellcolor{accteal!23}36.9 & \cellcolor{accteal!34}48.1 & \cellcolor{accteal!28}41.6 & \cellcolor{recwarm!53}24.4 \\
+\quad 27B & \cellcolor{accteal!19}32.8 & \cellcolor{accteal!26}40.0 & \cellcolor{accteal!38}52.0 & \cellcolor{accteal!31}44.6 & \cellcolor{recwarm!55}54.9 \\
+% \cmidrule(lr){1-6}
+% \multicolumn{6}{l}{\emph{Sparse (mixture of experts)}} \\
+% \quad Qwen3-VL-30B-A3B-Instruct & -- & -- & -- & -- & -- \\
 \cmidrule(lr){1-6}
-\multicolumn{6}{l}{\emph{Sparse (mixture of experts)}} \\
-\quad Qwen3-30B-A3B-Instruct & -- & -- & -- & -- & -- \\
-\cmidrule(lr){1-6}
-\multicolumn{6}{l}{\emph{Reasoning variant (Qwen3-VL-8B, TLV only)}} \\
+\multicolumn{6}{l}{\emph{Reasoning variant (Qwen3-VL-8B)}} \\
 \quad Instruct & \cellcolor{accteal!18}31.9 & \cellcolor{accteal!24}38.4 & \cellcolor{accteal!38}52.4 & \cellcolor{accteal!32}45.5 & \cellcolor{recwarm!35}17.5 \\
-\quad Thinking & -- & -- & \cellcolor{accteal!48}62.2 & -- & \cellcolor{recwarm!35}17.5 \\
+\quad Thinking & \cellcolor{accteal!21}34.8 & \cellcolor{accteal!29}42.9 & \cellcolor{accteal!48}62.2 & \cellcolor{accteal!38}52.1 & \cellcolor{recwarm!35}17.5 \\
 \bottomrule
 \end{tabular}
 \caption{Reasoner accuracy across scale, precision, matched budget and family. Accuracy (\%) on oracle pages over the full answerable pool; GB is the model weight footprint, not peak VRAM.}
@@ -74,8 +74,8 @@
 % one family that loses accuracy when the pages are added}: it peaks at TL (34.3) and drops to
 % 33.3 at TLV and 25.3 at V, so for it the ladder inverts and the parser text is the better
 % input. Every other family gains on the visual rungs.
-% \textbf{The Thinking checkpoint ran at TLV only} and gains 9.8 points there over the
-% Instruct model it forks from, the largest single move in the table; its value is in the
+% \textbf{The Thinking checkpoint beats the Instruct model it forks from at every rung},
+% by 2.9 to 9.8 points and most at TLV, the largest single move in the table; its value is in the
 % hop split rather than the level, since it nearly closes the multi-page deficit
 % ($-$9.1 against $-$19.9). \textbf{GLM-4.6V} is the 107B mixture-of-experts member of the
 % GLM line, a different architecture from the 9B dense Flash variant above rather than a

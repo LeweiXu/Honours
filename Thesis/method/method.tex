@@ -1,0 +1,62 @@
+\chapter{A Simple Adaptive-Trajectory Method}
+\label{ch:simple_method}
+
+The preceding chapters develop an evidence-management view of MP-VRDU and identify where failures arise within representation, selection, and reasoning. This chapter translates those findings into a deliberately simple working system and evaluates whether they remain useful when combined.
+
+\section{Introduction}
+\label{sec:simple_method_intro}
+
+We introduce a simple adaptive evidence-management pipeline designed directly from the findings of Chapters~\ref{ch:survey} and~\ref{ch:empirical}. Rather than introducing a specialised document backbone or complex orchestration framework, the method combines broad evidence acquisition, selective evidence presentation, and structured reasoning within an adaptive trajectory. The aim is to test whether these principles are sufficient to produce a competitive MP-VRDU system while retaining a transparent and configurable design.
+
+\textbf{Our contributions are as follows:} \textbf{(1)} We introduce a simple adaptive evidence-management pipeline that achieves performance competitive with leading MP-VRDU systems using the same backbone. \textbf{(2)} We provide a system-level validation of the evidence-management perspective and empirical attribution findings by translating them into concrete choices over representation, selection, and reasoning. \textbf{(3)} We characterise the resulting deployment trade-offs through configurable evidence-coverage and trajectory parameters, together with measurements of token usage, latency, memory use, and trajectory length.
+
+\section{Methodology}
+\label{sec:simple_adaptive_method}
+
+We combines high-fidelity multimodal representation, broad evidence acquisition, selective evidence presentation, and structured reasoning. Its design follows the three failure loci identified in the attribution study. For \textbf{representation}, pages are read through complementary textual and visual channels so that evidence lost or difficult to access through one remains available through the other. For \textbf{selection}, the system favours broad evidence acquisition because additional pages can either disrupt or repair an answer depending on the context they contribute; evidence gathering is therefore separated from deciding which pages should be exposed in full to the final reasoner. For \textbf{reasoning}, the final answer is produced with explicit intermediate reasoning, premise checking, and abstention so that the gathered evidence is both integrated and checked for sufficiency. The resulting pipeline uses three specialised roles implemented by the same underlying vision-language model:
+
+\begin{enumerate}
+    \item The \texttt{reader} traverses pages in retrieval-ranked order, records answer-relevant evidence from each page, marks pages likely to contain answer-bearing information, and decides when sufficient evidence has been collected to attempt an answer.
+    \item The \texttt{synthesizer} receives the accumulated evidence in document order. Pages marked as answer-bearing are supplied in full through their textual and visual representations, while other useful pages remain available through the compact records produced by the \texttt{reader}. It then reasons over the assembled evidence and produces a candidate answer.
+    \item The \texttt{arbiter} receives the accumulated evidence and candidate answer and decides whether the current evidence is sufficient to terminate the trajectory or whether control should return to the \texttt{reader} for further evidence acquisition. It cannot replace the answer itself.
+\end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{method/simple_method.pdf}
+    \caption{Architecture of our simple method.}
+    \label{fig:simple_method_architecture}
+\end{figure}
+
+The three roles form an adaptive evidence-processing loop. When the \texttt{reader} proposes \texttt{STOP}, the \texttt{synthesizer} receives the retained records and full representations of pages marked as answer-bearing, with the highest-ranked read pages used as fallback when none are marked. It then reasons over the evidence, checks question premises, and must identify the missing fact before returning \emph{Not answerable}. The \texttt{arbiter} either accepts the answer or resumes reading from the next unread page. Full prompts and implementation details are provided in Appendix~\ref{app:simple_method_details}.
+
+\paragraph{Configuration.} We instantiate all three roles with a shared 4-bit NF4 \texttt{Qwen3-VL-8B-Instruct} model using greedy decoding. Document pages are ranked once per question using ColQwen3.5 and visited in that order. The \texttt{reader} processes pages using the full \textbf{TLV} representation, combining Unlimited-OCR text with the high-resolution visual preset. During synthesis, every page marked as answer-bearing is reintroduced through its Unlimited-OCR text and page image at medium resolution, while unflagged pages contribute only their retained records. This preserves the redundant text and vision channels identified as beneficial in Chapter~\ref{ch:empirical} while limiting the amount of full multimodal context presented.
+
+\paragraph{Deployment parameters.} Five parameters control the amount and depth of evidence acquisition. \(B\) sets the maximum number of pages that may be read, \(p\) controls the number of pages processed per \texttt{reader} turn, \(k\) sets the minimum initial reading depth before stopping is allowed, \(m\) sets the minimum additional reading after the \texttt{arbiter} reopens a trajectory, and \(C\) bounds the number of synthesis attempts. These parameters allow the same pipeline to scale across deployment settings: larger budgets increase evidence coverage and trajectory depth, while smaller values reduce latency, token use, and memory pressure.
+
+\section{Experiments}
+\label{sec:simple_method_experiments}
+
+\paragraph{Setup and comparison.} We reuse the experimental infrastructure of Chapter~\ref{ch:empirical}, including, document preprocessing, evaluation, and the Qwen3-VL model family. The deployment configuration is chosen specifically to run on a single NVIDIA V100 16\,GB GPU, using 4-bit NF4 Qwen3-VL-8B-Instruct with FP16 compute and greedy decoding, with \(B=25\), \(p=1\), \(k=6\), \(m=3\), and \(C=3\). We report answer accuracy overall, by evidence source, and on unanswerable questions. We compare against M3DocRAG, MoLoRAG, MDocAgent, and SLEUTH, which represent recent MP-VRDU systems evaluated on MMLongBench-Doc with the same Qwen3-VL-8B backbone. Holding the backbone fixed makes the comparison primarily reflect differences in how each system retrieves, manages, and reasons over document evidence rather than differences in model capacity. We additionally include the gold-page \textbf{TLV} baseline from Chapter~\ref{ch:empirical}, which supplies the annotated evidence directly to the same reasoner and therefore provides a controlled reference for whether the proposed pipeline can recover comparable performance without access to oracle page annotations.
+
+\paragraph{Efficiency and deployment.} The pipeline avoids placing all retrieved pages into a single multimodal context: evidence is acquired over successive \texttt{reader} turns, while only selected pages are exposed in full during synthesis and the shared model weights remain resident throughout the trajectory. Alongside accuracy, we therefore report input and output token counts, prefill and decoding latency, peak GPU memory usage, and the numbers of \texttt{reader}, \texttt{synthesizer}, and \texttt{arbiter} turns executed per question. These measurements characterise the additional inference cost introduced by adaptive evidence acquisition and allow accuracy to be considered alongside latency, memory use, and trajectory depth.
+
+\section{Results}
+\label{sec:simple_adaptive_results}
+
+\input{method/simple_method_results}
+
+\paragraph{Performance.} Table~\ref{tab:mmlongbench_method_comparison_v2} shows that the proposed pipeline reaches 54.5\% accuracy on MMLongBench-Doc, the highest result among the open 7--8B systems reported in the table. Within the Qwen3-VL-8B group, this exceeds DocTrace at 52.9\% and MARDoc at 52.7\%, despite our reasoner being deployed at 4-bit precision and without task-specific training. More importantly, the method exceeds the gold-page \textbf{TLV} baseline by 5.0 points, improving from 49.5\% to 54.5\%. This supports the central hypothesis that annotated evidence pages are not necessarily an upper bound when evidence acquisition and reasoning are considered jointly: a system can benefit from gathering additional document context while controlling which evidence is presented in full during synthesis. The gains are not uniform, however. The largest improvements over the gold-page baseline occur for tables, from 50.5\% to 59.9\%, and unanswerable questions, from 52.5\% to 71.9\%, while text and figure performance remain approximately unchanged and layout questions decline. Multi-page accuracy also remains a clear weakness at 37.8\%, below DocTrace's 41.1\%, indicating that the higher overall accuracy does not eliminate the underlying difficulty of integrating evidence across pages.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{method/method_trajectory_v2.pdf}
+    \caption{Trajectory of our method.}
+    \label{fig:method_trajectory}
+\end{figure}
+
+\paragraph{Adaptive evidence acquisition.} Figure~\ref{fig:method_trajectory} shows that the pipeline does not uniformly consume its full page budget. The largest group terminates after six pages, the earliest point permitted by the stopping floor \(k=6\), while progressively fewer questions continue deeper into the retrieval ranking and a smaller group reaches the \(B=25\) limit. Reopened trajectories account for part of this longer tail, with some questions requiring one or multiple \texttt{CONTINUE} decisions after an initial synthesis attempt. This differs substantially from the annotated evidence distribution, where most answerable questions contain only one or two gold pages. The gap reflects the practical setting in which the locations of those pages are unknown and additional contextual pages may also contribute useful evidence.
+
+\input{method/method_cost}
+
+\paragraph{Inference cost.} Table~\ref{tab:method_cost} quantifies the cost of this adaptive behaviour. The pipeline uses 13.9 turns per question on average, compared with a median of 9.0, with the \texttt{reader} accounting for 11.2 turns and the \texttt{synthesizer} and \texttt{arbiter} invoked only 1.4 and 1.3 times per question respectively. Mean peak memory is 8.2\,GiB, remaining comfortably within the 16\,GB budget of the deployment GPU, while the average question consumes 78,215 text-input tokens, 11,733 visual tokens, and 13,721 output tokens across its trajectory. The principal cost is latency rather than memory: mean prefill time is only 29.7\,s per question compared with 968.1\,s of decoding, with a median total of roughly 9.3 minutes. The method therefore trades additional sequential inference for bounded memory use and broader evidence acquisition, with the deployment parameters providing a direct mechanism for reducing trajectory depth where lower latency is required.
