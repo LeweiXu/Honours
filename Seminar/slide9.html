@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Multi-Page Multimodal Representation</title>
+<title>Text Modality</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,23 +63,19 @@
   /* ================= SLIDE 9 ================= */
   .s9 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s9 .lead b{font-weight:600; color:var(--ink);}
-  .s9 .mods{display:grid; grid-template-columns:repeat(3,1fr); gap:52px; margin-top:36px;}
-  .s9 .mods h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:20px;
+  .s9 ul{list-style:none; margin-top:30px;}
+  .s9 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s9 .mods p{
-    position:relative; padding-left:24px; margin-bottom:18px;
-    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
+  .s9 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s9 .mods p::before{
-    content:""; position:absolute; left:0; top:10px;
-    width:9px; height:2px; background:var(--navy);
-  }
-  .s9 .mods p:last-child{margin-bottom:0;}
-  .s9 .mods p b{font-weight:600; color:var(--ink);}
-  .s9 .close{margin-top:34px; font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s9 ul li b{font-weight:600; color:var(--ink);}
+  .s9 ul li:last-child{margin-bottom:0;}
+  .s9 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
   .s9 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -95,33 +91,22 @@
 
 <div class="slide s9">
 
-  <h1>Multi-Page Multimodal Representation</h1>
+  <h1>Text Modality</h1>
 
   <div class="body">
-    <p class="lead">Every evidence decision is enacted over a modality, and its cost depends on how that modality is represented. Each one trades <b>page coverage</b> against <b>reading fidelity</b>.</p>
+    <p class="lead">Text is the cheap modality: we can <b>search it and read it efficiently</b>. The problem is that a long document contains far too much of it.</p>
 
-    <div class="mods">
-      <div>
-        <h3>Text</h3>
-        <p><b>Volume.</b> Text across pages routinely exceeds what the backbone can process, so it is either compressed into a fixed budget before the question is seen, or indexed and retrieved.</p>
-        <p><b>Continuity.</b> Paragraphs, tables, and section context break at page boundaries, and every repair pulls in neighbours by proximity rather than by question.</p>
-      </div>
-      <div>
-        <h3>Visual</h3>
-        <p><b>Resolution.</b> Token cost scales with page count times per-page resolution, forcing a choice between compressing every page and reading a retrieved subset at full fidelity.</p>
-        <p><b>Signal competition.</b> One visual budget must carry text-bearing pixels, figures and charts, and layout cues within the same page.</p>
-      </div>
-      <div>
-        <h3>Cross-page structure</h3>
-        <p><b>Hierarchy and reading order.</b> Sections, lists, and captions span page boundaries, and parser errors propagate into every downstream retrieval step.</p>
-        <p><b>Cross-page references.</b> &ldquo;See Figure 3&rdquo; has to be resolved to its referent on another page, which similarity scoring cannot do.</p>
-      </div>
-    </div>
+    <ul>
+      <li><b>Volume.</b> A system either compresses every page into a fixed budget, or selects only the passages it thinks it needs. Both are lossy, and either can discard the thing that turns out to matter.</li>
+      <li><b>Continuity.</b> Paragraphs, tables, and section context run across page boundaries, so a chunk cut at the wrong place loses the context that makes it readable.</li>
+      <li><b>Noise.</b> OCR and parsing errors accumulate across pages. Because extracted text is usually also the retrieval index, those errors degrade finding as well as reading.</li>
+      <li><b>Heterogeneity.</b> Text density varies sharply from page to page, yet almost every system applies one fixed budget to the whole document.</li>
+    </ul>
 
-    <p class="close">Heterogeneity cuts across all three and receives the least attention: <b>text density and visual complexity vary sharply from page to page</b>, yet almost every system applies one fixed budget to the whole document.</p>
+    <p class="close">Some evidence cannot be recovered from text at all. <b>That is where the page image matters.</b></p>
   </div>
 
-  <div class="corner"><b>09</b> / 25 <span>&middot;</span> Literature</div>
+  <div class="corner"><b>09</b> / 33 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

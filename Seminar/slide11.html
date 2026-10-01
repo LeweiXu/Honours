@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Reasoning Strategies</title>
+<title>Cross-Page Structure Modality</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,24 +63,19 @@
   /* ================= SLIDE 11 ================= */
   .s11 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s11 .lead b{font-weight:600; color:var(--ink);}
-  .s11 .cols{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
-  .s11 .cols h3{
-    font-family:var(--mono); font-size:11px; font-weight:500;
-    letter-spacing:.18em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:20px;
+  .s11 ul{list-style:none; margin-top:30px;}
+  .s11 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s11 .cols p{
-    position:relative; padding-left:24px; margin-bottom:17px;
-    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
+  .s11 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s11 .cols p::before{
-    content:""; position:absolute; left:0; top:10px;
-    width:9px; height:2px; background:var(--navy);
-  }
-  .s11 .cols p:last-child{margin-bottom:0;}
-  .s11 .cols p b{font-weight:600; color:var(--ink);}
-  .s11 .cols code{font-family:var(--mono); font-size:13px; color:var(--ink);}
-  .s11 .close{margin-top:32px; font-size:15px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s11 ul li b{font-weight:600; color:var(--ink);}
+  .s11 ul li:last-child{margin-bottom:0;}
+  .s11 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
   .s11 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -96,29 +91,21 @@
 
 <div class="slide s11">
 
-  <h1>Reasoning Strategies</h1>
+  <h1>Cross-Page Structure Modality</h1>
 
   <div class="body">
-    <p class="lead">Reasoning acts over a <b>single fixed evidence buffer</b> assembled before the call. The step itself acquires nothing new, so its contribution lies in how faithfully the delivered evidence is used, not in recovering evidence the buffer omits.</p>
+    <p class="lead">A long document is <b>more than a stack of independent pages</b>. Its structure is what turns isolated page observations into document evidence.</p>
 
-    <div class="cols">
-      <div>
-        <h3>Inference-time</h3>
-        <p><b>Sequential.</b> Chain-of-thought elicits intermediate reasoning before the answer, which binds evidence from different pages step by step, decomposes multi-hop questions into single-hop ones, and externalises the trace for verification. Self-reflection extends the same thread with iterative revision against the buffer, optionally under a verifier.</p>
-        <p><b>Parallel.</b> Self-consistency samples several chains and takes the majority, or has an LLM adjudicate between reasoning paths. Tree-of-thoughts explores branches with backtracking, but has seen limited uptake, since in MP-VRDU evidence sparsity rather than search branching is the dominant difficulty.</p>
-      </div>
-      <div>
-        <h3>Trained</h3>
-        <p><b>Trace imitation.</b> Supervise the backbone on demonstration chains wrapped in fixed schema tags such as <code>&lt;think&gt;</code>, <code>&lt;evidence&gt;</code>, and <code>&lt;answer&gt;</code>, refined with DPO to prefer faithful chains over hallucinated shortcuts.</p>
-        <p><b>Reward-driven.</b> Optimise the reasoning policy with GRPO against a composite reward of answer accuracy, evidence-page recall, and format compliance. Usually warm-started from imitation rather than learned from scratch, so the two are sequential rather than alternative.</p>
-        <p><b>Uncertainty calibration.</b> Train an aggregation head that selects across candidate outputs by calibrated uncertainty, giving a learned self-consistency signal without sampling several chains at test time.</p>
-      </div>
-    </div>
+    <ul>
+      <li><b>Hierarchy and reading order.</b> Sections, lists, and captions tell us how the parts fit together, and the same evidence can mean different things depending on which section it sits under.</li>
+      <li><b>Cross-page references.</b> A sentence on one page points to a figure on another. Resolving &ldquo;see Figure 3&rdquo; to its referent is not something similarity scoring can do.</li>
+      <li><b>Spanning elements.</b> Tables and arguments continue across page boundaries, so the useful unit is larger than a page but smaller than the document.</li>
+    </ul>
 
-    <p class="close">All of it is independent of architectural family, and all of it is bounded the same way: <b>missing evidence cannot be reasoned back into existence</b>.</p>
+    <p class="close">Systems recover this by building outlines, trees, or graphs over the document. <b>Errors in that structure then mislead every step that follows.</b></p>
   </div>
 
-  <div class="corner"><b>11</b> / 25 <span>&middot;</span> Literature</div>
+  <div class="corner"><b>11</b> / 33 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

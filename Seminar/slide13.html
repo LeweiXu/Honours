@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>What is Document Understanding?</title>
+<title>Reasoning Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -60,26 +60,23 @@
   .corner b{color:var(--navy); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 4 ================= */
-  .s4 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s4 .lead b{font-weight:600; color:var(--ink);}
-  .s4 .qs{margin-top:34px;}
-  .s4 .q{display:flex; gap:22px; align-items:baseline; margin-bottom:19px;}
-  .s4 .q:last-child{margin-bottom:0;}
-  .s4 .q > b{
-    font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--navy);
-    flex:none; width:20px;
+  /* ================= SLIDE 13 ================= */
+  .s13 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s13 .lead b{font-weight:600; color:var(--ink);}
+  .s13 ul{list-style:none; margin-top:30px;}
+  .s13 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s4 .q p{font-size:16px; font-weight:400; line-height:1.45; color:var(--ink); flex:1;}
-  .s4 .q span{
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.11em;
-    text-transform:uppercase; color:var(--mute); flex:none;
-    width:210px; text-align:right; padding-top:3px;
+  .s13 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s4 .foot{
-    margin-top:30px; font-family:var(--mono); font-size:10.5px;
-    letter-spacing:.05em; color:var(--mute);
-  }
+  .s13 ul li b{font-weight:600; color:var(--ink);}
+  .s13 ul li:last-child{margin-bottom:0;}
+  .s13 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s13 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -92,25 +89,23 @@
 </head>
 <body>
 
-<div class="slide s4">
+<div class="slide s13">
 
-  <h1>What is Document Understanding?</h1>
+  <h1>Reasoning Strategies</h1>
 
   <div class="body">
-    <p class="lead">One broad way to define it: get a system to <b>answer a natural-language question over a document</b>, accurately. The systems range from rule-based lookup, through trained vision-language models, to pipelines built around pretrained general-domain ones.</p>
+    <p class="lead">Once the evidence is assembled, the model still has to make sense of it. Some answers need <b>facts from different pages combined, step by step</b>.</p>
 
-    <div class="qs">
-      <div class="q"><b>1</b><p>&ldquo;What year was this report published?&rdquo;</p><span>fact lookup</span></div>
-      <div class="q"><b>2</b><p>&ldquo;According to the table, which region had the highest revenue in 2023?&rdquo;</p><span>read a table</span></div>
-      <div class="q"><b>3</b><p>&ldquo;How much did the leading region's revenue grow between the 2022 and 2023 results tables?&rdquo;</p><span>two tables, then arithmetic</span></div>
-      <div class="q"><b>4</b><p>&ldquo;Does the growth described in the executive summary agree with the figures in the results table?&rdquo;</p><span>prose against numbers</span></div>
-      <div class="q"><b>5</b><p>&ldquo;Across the report and its appendix, what evidence supports the conclusion that the new method improved performance, and what limitation qualifies it?&rdquo;</p><span>gather, then qualify</span></div>
-    </div>
+    <ul>
+      <li><b>Ask it to show its reasoning.</b> Chain-of-thought elicits the intermediate steps before the answer, which binds evidence from different pages one hop at a time and leaves a trace you can check.</li>
+      <li><b>Ask it to check itself.</b> Self-reflection has the model audit or revise an initial answer against the same evidence, optionally with a separate verifier.</li>
+      <li><b>Ask it several times.</b> Sampling multiple reasoning paths and taking the majority buys robustness against a single bad chain, and costs proportionally more compute.</li>
+    </ul>
 
-    <div class="foot">Illustrative questions, not quoted benchmark items</div>
+    <p class="close">All of it operates over a <b>fixed buffer of evidence assembled before the call</b>. None of it can recover evidence that was never supplied.</p>
   </div>
 
-  <div class="corner"><b>04</b> / 33 <span>&middot;</span> Background</div>
+  <div class="corner"><b>13</b> / 33 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>A Brief History</title>
+<title>A Simple Adaptive Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -60,36 +60,31 @@
   .corner b{color:var(--navy); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 5 ================= */
-  .s5 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s5 .lead b{font-weight:600; color:var(--ink);}
-  .s5 .track{margin-top:42px;}
-  .s5 .track + .track{margin-top:46px;}
-  .s5 .track > h3{
+  /* ================= SLIDE 30 ================= */
+  .s30 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s30 .lead b{font-weight:600; color:var(--ink);}
+  .s30 .maps{margin-top:36px;}
+  .s30 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
+  .s30 .map:last-child{margin-bottom:0;}
+  .s30 .from{
     font-family:var(--mono); font-size:11px; font-weight:500;
-    letter-spacing:.18em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:20px;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
+    text-align:right;
   }
-  .s5 .row{display:flex; align-items:stretch; gap:22px;}
-  .s5 .stage{flex:1;}
-  .s5 .stage h4{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:9px;
-  }
-  .s5 .stage p{font-size:15px; font-weight:300; line-height:1.5; color:var(--slate);}
-  .s5 .ar{
-    flex:none; width:48px; height:40px; position:relative; align-self:center;
-  }
-  .s5 .ar::before{
-    content:""; position:absolute; left:0; right:8px; top:50%;
-    height:1px; background:var(--rule);
-  }
-  .s5 .close{margin-top:46px; font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);}
-  .s5 .ar::after{
+  .s30 .ar{position:relative; height:30px;}
+  .s30 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
+  .s30 .ar::after{
     content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
     border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
     border-left:8px solid var(--navy);
   }
+  .s30 .to h3{
+    font-family:var(--disp); font-size:19px; font-weight:600;
+    letter-spacing:-.015em; margin-bottom:5px;
+  }
+  .s30 .to p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s30 .close{margin-top:38px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s30 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -102,47 +97,44 @@
 </head>
 <body>
 
-<div class="slide s5">
+<div class="slide s30">
 
-  <h1>A Brief History</h1>
+  <h1>A Simple Adaptive Method</h1>
 
   <div class="body">
-    <p class="lead">A useful starting point is <b>MP-DocVQA</b> in 2023: a benchmark of documents up to twenty pages, with questions answerable from a single page, plus the Hi-VT5 baseline. It is the pivotal moment at which long-document understanding became its own problem.</p>
+    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
 
-    <div class="track">
-      <h3>Benchmarks</h3>
-      <div class="row">
-        <div class="stage">
-          <h4>MP-DocVQA, 2023</h4>
-          <p>Up to twenty pages. One page carries the answer, so the task is finding it.</p>
-        </div>
+    <div class="maps">
+      <div class="map">
+        <div class="from">Representation</div>
         <div class="ar"></div>
-        <div class="stage">
-          <h4>MMLongBench-Doc, LongDocURL</h4>
-          <p>Documents into the hundreds of pages, with questions that combine evidence from several places at once.</p>
+        <div class="to">
+          <h3>Keep text and images together</h3>
+          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Selection</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Gather broadly, present selectively</h3>
+          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order &mdash; but carry most of it forward as compact records rather than as full pages.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Reasoning</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Check whether the answer is supported</h3>
+          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
         </div>
       </div>
     </div>
 
-    <div class="track">
-      <h3>Models</h3>
-      <div class="row">
-        <div class="stage">
-          <h4>Purpose-built, trained end to end</h4>
-          <p>Hi-VT5 and its successors: a document encoder trained for this setting specifically.</p>
-        </div>
-        <div class="ar"></div>
-        <div class="stage">
-          <h4>General-domain VLMs as the backbone</h4>
-          <p>Increasingly sophisticated training and training-free machinery built around a pretrained model that already reads text and page images well.</p>
-        </div>
-      </div>
-    </div>
-
-    <p class="close">A lot happened in between, and quickly. Organising that is what the survey does.</p>
+    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
   </div>
 
-  <div class="corner"><b>05</b> / 33 <span>&middot;</span> Background</div>
+  <div class="corner"><b>30</b> / 33 <span>&middot;</span> Method</div>
 
 </div>
 </body>

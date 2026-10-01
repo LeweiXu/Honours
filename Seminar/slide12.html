@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Agentic Methods</title>
+<title>Retrieval and Navigation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,23 +63,19 @@
   /* ================= SLIDE 12 ================= */
   .s12 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s12 .lead b{font-weight:600; color:var(--ink);}
-  .s12 .cols{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
-  .s12 .cols h3{
-    font-family:var(--mono); font-size:11px; font-weight:500;
-    letter-spacing:.18em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:20px;
+  .s12 ul{list-style:none; margin-top:30px;}
+  .s12 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s12 .cols p{
-    position:relative; padding-left:24px; margin-bottom:17px;
-    font-size:14.5px; font-weight:300; line-height:1.5; color:var(--slate);
+  .s12 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s12 .cols p::before{
-    content:""; position:absolute; left:0; top:10px;
-    width:9px; height:2px; background:var(--navy);
-  }
-  .s12 .cols p:last-child{margin-bottom:0;}
-  .s12 .cols p b{font-weight:600; color:var(--ink);}
-  .s12 .close{margin-top:32px; font-size:15px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s12 ul li b{font-weight:600; color:var(--ink);}
+  .s12 ul li:last-child{margin-bottom:0;}
+  .s12 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
   .s12 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -95,28 +91,21 @@
 
 <div class="slide s12">
 
-  <h1>Agentic Methods</h1>
+  <h1>Retrieval and Navigation</h1>
 
   <div class="body">
-    <p class="lead">The current frontier. A controller selects each evidence-gathering action <b>at inference time</b> rather than executing a plan fixed in advance, so compute scales with question difficulty rather than document length, and the action sequence becomes an inspectable audit trail.</p>
+    <p class="lead">When a question arrives, retrieval <b>narrows the document to a smaller set of pages or passages</b>, so the reasoner never has to process the whole thing.</p>
 
-    <div class="cols">
-      <div>
-        <h3>Inference-time</h3>
-        <p><b>ReAct and tool use.</b> Thought and action interleave in one stream, each observation feeding the next step. Actions are either document-side tool calls to retrievers, parsers, and OCR engines, or structured navigation over a pre-built representation, which trades dependence on tool fidelity for dependence on the index.</p>
-        <p><b>Agentic decomposition.</b> Split the workflow across controllers, each on a narrower input than one backbone doing everything. Modality-specialised variants read text and vision separately and reconcile; role-specialised variants assign plan, execute, verify, and answer, with routing back when a stage detects an error.</p>
-      </div>
-      <div>
-        <h3>Trained</h3>
-        <p><b>Trajectory distillation.</b> Clone a stronger teacher's trajectories by supervised fine-tuning on think-action-observation turns, with rollouts collected in closed-loop interaction and filtered for format validity, answer correctness, and evidence coverage.</p>
-        <p><b>Reinforcement-learned.</b> Optimise the policy directly against trajectory-level rewards combining answer correctness, evidence recall, and tool-use shape, over a constrained action space. Learned termination is a recurring concern, with entropy-based stopping letting the model commit once confidence stabilises.</p>
-      </div>
-    </div>
+    <ul>
+      <li><b>Four ways to search.</b> By words, with a sparse lexical scorer. By learned similarity over text embeddings. By image, with late-interaction encoders that score the question against the rendered page directly. Or by structure, walking a tree or graph built over the document.</li>
+      <li><b>Structure is what similarity cannot do.</b> Scoring passages independently handles paraphrase well, but it cannot follow a cross-reference or a dependency that no single passage carries.</li>
+      <li><b>The main risk is omission.</b> If a page the answer requires never reaches the reasoner, nothing downstream can use what was on it.</li>
+    </ul>
 
-    <p class="close">The price of that flexibility: inference cost is hard to bound in advance, controllers are prompt-sensitive and can commit early to the wrong evidence, and the system still <b>inherits the recall ceiling of every tool it consults</b>.</p>
+    <p class="close">Finding the evidence is only half the task. <b>The model still has to reason with it.</b></p>
   </div>
 
-  <div class="corner"><b>12</b> / 25 <span>&middot;</span> Literature</div>
+  <div class="corner"><b>12</b> / 33 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

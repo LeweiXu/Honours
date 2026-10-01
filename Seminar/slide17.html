@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>What is Document Understanding?</title>
+<title>Why Locate the Failure?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -60,26 +60,21 @@
   .corner b{color:var(--navy); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 4 ================= */
-  .s4 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s4 .lead b{font-weight:600; color:var(--ink);}
-  .s4 .qs{margin-top:34px;}
-  .s4 .q{display:flex; gap:22px; align-items:baseline; margin-bottom:19px;}
-  .s4 .q:last-child{margin-bottom:0;}
-  .s4 .q > b{
-    font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--navy);
-    flex:none; width:20px;
+  /* ================= SLIDE 17 ================= */
+  .s17 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s17 .lead b{font-weight:600; color:var(--ink);}
+  .s17 .qa{margin-top:34px; padding-left:24px; border-left:2px solid var(--navy);}
+  .s17 .qa .q{font-size:19px; font-weight:400; line-height:1.4; color:var(--ink);}
+  .s17 .qa .a{margin-top:9px; font-size:17px; font-weight:300; color:var(--slate);}
+  .s17 .a b{color:var(--navy); font-weight:600;}
+  .s17 .three{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s17 .three h3{
+    font-family:var(--disp); font-size:19px; font-weight:600;
+    letter-spacing:-.015em; margin-bottom:8px;
   }
-  .s4 .q p{font-size:16px; font-weight:400; line-height:1.45; color:var(--ink); flex:1;}
-  .s4 .q span{
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.11em;
-    text-transform:uppercase; color:var(--mute); flex:none;
-    width:210px; text-align:right; padding-top:3px;
-  }
-  .s4 .foot{
-    margin-top:30px; font-family:var(--mono); font-size:10.5px;
-    letter-spacing:.05em; color:var(--mute);
-  }
+  .s17 .three p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s17 .close{margin-top:38px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s17 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -92,25 +87,37 @@
 </head>
 <body>
 
-<div class="slide s4">
+<div class="slide s17">
 
-  <h1>What is Document Understanding?</h1>
+  <h1>Why Locate the Failure?</h1>
 
   <div class="body">
-    <p class="lead">One broad way to define it: get a system to <b>answer a natural-language question over a document</b>, accurately. The systems range from rule-based lookup, through trained vision-language models, to pipelines built around pretrained general-domain ones.</p>
+    <p class="lead">The survey shows many ways to build these systems. But when a system answers wrongly, <b>different papers give different explanations for why</b>, and those explanations imply different fixes.</p>
 
-    <div class="qs">
-      <div class="q"><b>1</b><p>&ldquo;What year was this report published?&rdquo;</p><span>fact lookup</span></div>
-      <div class="q"><b>2</b><p>&ldquo;According to the table, which region had the highest revenue in 2023?&rdquo;</p><span>read a table</span></div>
-      <div class="q"><b>3</b><p>&ldquo;How much did the leading region's revenue grow between the 2022 and 2023 results tables?&rdquo;</p><span>two tables, then arithmetic</span></div>
-      <div class="q"><b>4</b><p>&ldquo;Does the growth described in the executive summary agree with the figures in the results table?&rdquo;</p><span>prose against numbers</span></div>
-      <div class="q"><b>5</b><p>&ldquo;Across the report and its appendix, what evidence supports the conclusion that the new method improved performance, and what limitation qualifies it?&rdquo;</p><span>gather, then qualify</span></div>
+    <div class="qa">
+      <div class="q">&ldquo;How much did the leading region's revenue grow between the 2022 and 2023 tables?&rdquo;</div>
+      <div class="a">The system answers <b>14%</b>. The correct answer is 23%. What went wrong?</div>
     </div>
 
-    <div class="foot">Illustrative questions, not quoted benchmark items</div>
+    <div class="three">
+      <div>
+        <h3>The page was read badly</h3>
+        <p>The parser garbled a figure in the table, or the page was rendered too small to read it.</p>
+      </div>
+      <div>
+        <h3>The right page was missed</h3>
+        <p>Only one of the two tables was retrieved, so the comparison was never possible.</p>
+      </div>
+      <div>
+        <h3>The model could not use it</h3>
+        <p>Both tables were present and legible, and it still picked the wrong row or did the arithmetic wrong.</p>
+      </div>
+    </div>
+
+    <p class="close">End-to-end accuracy cannot tell these apart, and <b>under a fixed compute budget you have to know which one to spend on</b>.</p>
   </div>
 
-  <div class="corner"><b>04</b> / 33 <span>&middot;</span> Background</div>
+  <div class="corner"><b>17</b> / 33 <span>&middot;</span> Empirical study</div>
 
 </div>
 </body>

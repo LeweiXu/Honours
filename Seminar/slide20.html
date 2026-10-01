@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Document Questions in Consumer Assistants</title>
+<title>Representation Experiments</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -60,28 +60,27 @@
   .corner b{color:var(--navy); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 6 ================= */
-  .s6 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s6 .lead b{font-weight:600; color:var(--ink);}
-  .s6 .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:38px; margin-top:32px;}
-  .s6 .steps h3{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:7px;
+  /* ================= SLIDE 20 ================= */
+  .s20 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s20 .lead b{font-weight:600; color:var(--ink);}
+  .s20 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
+  .s20 .two h3{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:5px;
   }
-  .s6 .when{
+  .s20 .two .mech{
     font-family:var(--mono); font-size:10.5px; font-weight:500;
     letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    margin-bottom:9px;
+    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:17px;
   }
-  .s6 .steps p{font-size:14px; font-weight:300; line-height:1.5; color:var(--slate);}
-  /* placeholder frames, to be swapped for real screenshots */
-  .s6 .shot{
-    margin-top:18px; height:196px; background:var(--wash);
-    border:1.5px dashed #A9BDD1; border-radius:2px;
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
-    color:var(--navy); line-height:1.8; padding:0 18px;
+  .s20 .two p{font-size:15px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:14px;}
+  .s20 .two p:last-child{margin-bottom:0;}
+  .s20 .two p b{font-weight:600; color:var(--ink);}
+  .s20 .held{
+    margin-top:36px; padding-left:24px; border-left:2px solid var(--line);
+    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
   }
+  .s20 .held b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -94,36 +93,32 @@
 </head>
 <body>
 
-<div class="slide s6">
+<div class="slide s20">
 
-  <h1>Document Questions in Consumer Assistants</h1>
+  <h1>Representation Experiments</h1>
 
   <div class="body">
-    <p class="lead">Everyone here has used these. What changed is not the question being asked, but <b>how much of the document the model has to hold at once</b>.</p>
+    <p class="lead">Two questions about the page itself: <b>what can an input express</b>, and <b>how much is lost converting the page into it</b>.</p>
 
-    <div class="steps">
+    <div class="two">
       <div>
-        <div class="when">A year or two ago</div>
-        <h3>The whole document, in context</h3>
-        <p>Parsed text plus an image of every page, all placed in the model's context window. Fine for short documents, and it hits the ceiling fast.</p>
-        <div class="shot">SCREENSHOT<br>&ldquo;cannot upload document,<br>out of context&rdquo; error</div>
+        <h3>Modality ceiling</h3>
+        <div class="mech">What the input can express</div>
+        <p>Four rungs of increasing richness. <b>T</b> is the PDF's embedded text layer. <b>TL</b> is layout-aware parser markdown. <b>TLV</b> adds the rendered page image. <b>V</b> is the page image alone.</p>
+        <p>The comparison asks whether the required evidence is still recoverable once the textual, structural, or visual signal is taken away, rather than assuming one representation is best everywhere.</p>
       </div>
       <div>
-        <div class="when">More recently</div>
-        <h3>On disk, read by tool calls</h3>
-        <p>The upload lands in the model's working environment. It reads what it needs, when it needs it, rather than ingesting everything up front.</p>
-        <div class="shot">SCREENSHOT<br>assistant reading an uploaded<br>file through a tool call</div>
-      </div>
-      <div>
-        <div class="when">And now</div>
-        <h3>Projects, searched by retrieval</h3>
-        <p>Upload many documents at once. Beyond what fits in context, the content is indexed and retrieved against the question instead.</p>
-        <div class="shot">SCREENSHOT<br>a project with several<br>uploaded documents</div>
+        <h3>Conversion fidelity</h3>
+        <div class="mech">How much survives the conversion</div>
+        <p>Hold the rung fixed and vary the quality of each channel instead: <b>the parser</b> for text, across PyMuPDF, MinerU, PaddleOCR-VL and Unlimited-OCR, and <b>the render resolution</b> for the image.</p>
+        <p>This separates what a modality cannot carry in principle from what a bad conversion destroyed in practice.</p>
       </div>
     </div>
+
+    <div class="held">The annotated evidence pages are supplied in both, so <b>retrieval is not a variable here</b>. Whatever changes is the encoding.</div>
   </div>
 
-  <div class="corner"><b>06</b> / 33 <span>&middot;</span> Background</div>
+  <div class="corner"><b>20</b> / 33 <span>&middot;</span> Empirical study</div>
 
 </div>
 </body>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datasets Make Attribution Possible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 23 ================= */
+  .s23 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s23 .lead b{font-weight:600; color:var(--ink);}
+  .s23 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:32px;}
+  .s23 .two h3{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:5px;
+  }
+  .s23 .role{
+    font-family:var(--mono); font-size:10.5px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
+    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:16px;
+  }
+  .s23 .facts{display:flex; gap:30px; margin-bottom:16px;}
+  .s23 .facts div{font-family:var(--mono); font-size:11.5px; color:var(--slate); line-height:1.7;}
+  .s23 .facts b{display:block; font-size:21px; font-family:var(--disp); color:var(--ink); font-weight:600;}
+  .s23 .two p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:12px;}
+  .s23 .two p:last-child{margin-bottom:0;}
+  .s23 .two p b{font-weight:600; color:var(--ink);}
+  .s23 .close{
+    margin-top:32px; padding-left:24px; border-left:2px solid var(--line);
+    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
+  }
+  .s23 .close b{font-weight:600; color:var(--ink);}
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s23">
+
+  <h1>Datasets Make Attribution Possible</h1>
+
+  <div class="body">
+    <p class="lead">None of these experiments are possible without annotation that says <b>which pages support each question</b>. That is what picks the benchmarks.</p>
+
+    <div class="two">
+      <div>
+        <h3>MMLongBench-Doc</h3>
+        <div class="role">Primary diagnostic</div>
+        <div class="facts">
+          <div><b>135</b>documents</div>
+          <div><b>47.5</b>mean pages</div>
+          <div><b>847</b>answerable</div>
+          <div><b>244</b>unanswerable</div>
+        </div>
+        <p>The only multi-page benchmark we know of that annotates, per question, <b>the evidence pages, the kind of evidence it draws on, and the document's domain</b>, while also supplying plausible questions the document cannot answer.</p>
+        <p>Evidence pages make coverage measurable and define the oracle. Evidence source explains representation results by what the question actually needs. The unanswerable pool makes calibration testable rather than inferred.</p>
+      </div>
+      <div>
+        <h3>LongDocURL</h3>
+        <div class="role">Secondary replication</div>
+        <div class="facts">
+          <div><b>396</b>documents</div>
+          <div><b>85.6</b>mean pages</div>
+          <div><b>2,325</b>questions</div>
+          <div><b>8</b>unanswerable</div>
+        </div>
+        <p>Longer documents, used to check whether the findings hold under a <b>less demanding setting</b>. Born-digital throughout, almost no unanswerable questions, and many questions answerable from the text even when the annotated evidence is visual.</p>
+        <p>Its annotated pages are also not a minimal set: several may be redundant or independently sufficient, which we account for when reading its coverage and integration results.</p>
+      </div>
+    </div>
+
+    <div class="close">Answers are scored by an LLM judge rather than exact match, since a correct response can differ in units, rounding, or formatting. The judge sees only the question, gold answer, and model answer, never the condition being tested. It agrees with GPT-4o on <b>96.0%</b> of a stratified sample and with a human annotator on <b>98.3%</b>. We track refusals and wrong answers separately, not just accuracy.</div>
+  </div>
+
+  <div class="corner"><b>23</b> / 33 <span>&middot;</span> Empirical study</div>
+
+</div>
+</body>
+</html>
