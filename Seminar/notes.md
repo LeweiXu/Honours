@@ -193,7 +193,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Transition:** Some evidence is difficult to recover from text alone. That is where page images matter.
 
-**On screen:** A long stack of pages narrowing to either summaries or selected text. Show a paragraph split across two pages and one OCR error as small examples.
+**On screen:** Examples only, no bullets. All 160 pages of the 3M 2018 10-K as a contact sheet (volume), a sentence cut by a page break (continuity), a handwritten form with the raw OCR output under it (noise), and a 75-word page next to a 946-word page from the same report (heterogeneity).
 
 **Source:** Thesis Section 2.4.1, pages 11–12.
 
@@ -210,7 +210,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Transition:** Beyond text and images, a document has relationships that connect its pages.
 
-**On screen:** One page at low resolution beside a detailed crop of its chart or table. Show the trade-off between page coverage and readable detail.
+**On screen:** Examples only, no bullets. One Pew report page with its prose, chart and fine print outlined (signal competition), the same chart cropped from a 340 x 440 px page and a 1275 x 1650 px page (resolution), and the report's 23 pages shown blurred versus three sharp pages with the rest blank (compress or select).
 
 **Source:** Thesis Section 2.4.2, page 12.
 
@@ -222,7 +222,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Transition:** Once the document is represented, how do we find the right evidence for a question?
 
-**On screen:** A document outline with arrows from a passage to a later figure and from a section to an appendix.
+**On screen:** Examples only, no bullets. A table of contents (hierarchy), a sentence on page 4 of a paper pointing to Table 13 on page 19 (cross-page reference), and a syllabus table that runs over pages 15 and 16, with the benchmark question that needs both halves: how many quizzes are in the course (spanning element).
 
 **Source:** Thesis Section 2.4.3, pages 12–13.
 
