@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>A Simple Adaptive Method</title>
+<title>Datasets Make Attribution Possible</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,27 +63,26 @@
   /* ================= SLIDE 30 ================= */
   .s30 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s30 .lead b{font-weight:600; color:var(--ink);}
-  .s30 .maps{margin-top:36px;}
-  .s30 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
-  .s30 .map:last-child{margin-bottom:0;}
-  .s30 .from{
-    font-family:var(--mono); font-size:11px; font-weight:500;
+  .s30 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:32px;}
+  .s30 .two h3{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:5px;
+  }
+  .s30 .role{
+    font-family:var(--mono); font-size:10.5px; font-weight:500;
     letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    text-align:right;
+    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:16px;
   }
-  .s30 .ar{position:relative; height:30px;}
-  .s30 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
-  .s30 .ar::after{
-    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
-    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
-    border-left:8px solid var(--navy);
+  .s30 .facts{display:flex; gap:30px; margin-bottom:16px;}
+  .s30 .facts div{font-family:var(--mono); font-size:11.5px; color:var(--slate); line-height:1.7;}
+  .s30 .facts b{display:block; font-size:21px; font-family:var(--disp); color:var(--ink); font-weight:600;}
+  .s30 .two p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:12px;}
+  .s30 .two p:last-child{margin-bottom:0;}
+  .s30 .two p b{font-weight:600; color:var(--ink);}
+  .s30 .close{
+    margin-top:32px; padding-left:24px; border-left:2px solid var(--line);
+    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
   }
-  .s30 .to h3{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:5px;
-  }
-  .s30 .to p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
-  .s30 .close{margin-top:38px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
   .s30 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -99,42 +98,42 @@
 
 <div class="slide s30">
 
-  <h1>A Simple Adaptive Method</h1>
+  <h1>Datasets Make Attribution Possible</h1>
 
   <div class="body">
-    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
+    <p class="lead">None of these experiments are possible without annotation that says <b>which pages support each question</b>. That is what picks the benchmarks.</p>
 
-    <div class="maps">
-      <div class="map">
-        <div class="from">Representation</div>
-        <div class="ar"></div>
-        <div class="to">
-          <h3>Keep text and images together</h3>
-          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+    <div class="two">
+      <div>
+        <h3>MMLongBench-Doc</h3>
+        <div class="role">Primary diagnostic</div>
+        <div class="facts">
+          <div><b>135</b>documents</div>
+          <div><b>47.5</b>mean pages</div>
+          <div><b>847</b>answerable</div>
+          <div><b>244</b>unanswerable</div>
         </div>
+        <p>The only multi-page benchmark we know of that annotates, per question, <b>the evidence pages, the kind of evidence it draws on, and the document's domain</b>, while also supplying plausible questions the document cannot answer.</p>
+        <p>Evidence pages make coverage measurable and define the oracle. Evidence source explains representation results by what the question actually needs. The unanswerable pool makes calibration testable rather than inferred.</p>
       </div>
-      <div class="map">
-        <div class="from">Selection</div>
-        <div class="ar"></div>
-        <div class="to">
-          <h3>Gather broadly, present selectively</h3>
-          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order, but carry most of it forward as compact records rather than as full pages.</p>
+      <div>
+        <h3>LongDocURL</h3>
+        <div class="role">Secondary replication</div>
+        <div class="facts">
+          <div><b>396</b>documents</div>
+          <div><b>85.6</b>mean pages</div>
+          <div><b>2,325</b>questions</div>
+          <div><b>8</b>unanswerable</div>
         </div>
-      </div>
-      <div class="map">
-        <div class="from">Reasoning</div>
-        <div class="ar"></div>
-        <div class="to">
-          <h3>Check whether the answer is supported</h3>
-          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
-        </div>
+        <p>Longer documents, used to check whether the findings hold under a <b>less demanding setting</b>. Born-digital throughout, almost no unanswerable questions, and many questions answerable from the text even when the annotated evidence is visual.</p>
+        <p>Its annotated pages are also not a minimal set: several may be redundant or independently sufficient, which we account for when reading its coverage and integration results.</p>
       </div>
     </div>
 
-    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
+    <div class="close">Answers are scored by an LLM judge rather than exact match, since a correct response can differ in units, rounding, or formatting. The judge sees only the question, gold answer, and model answer, never the condition being tested. It agrees with GPT-4o on <b>96.0%</b> of a stratified sample and with a human annotator on <b>98.3%</b>. We track refusals and wrong answers separately, not just accuracy.</div>
   </div>
 
-  <div class="corner"><b>30</b> / 33 <span>&middot;</span> Method</div>
+  <div class="corner"><b>30</b> / 40 <span>&middot;</span> Empirical study</div>
 
 </div>
 </body>

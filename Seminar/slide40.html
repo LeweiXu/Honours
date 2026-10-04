@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Conclusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ================= SHARED CHROME =================
+     Identical in every slide file. build.py lifts this block off slide 1, so
+     edit it here and it propagates to the deck on the next build.
+
+     A slide carries three things and nothing else: its title, its content, and
+     a corner marker giving the slide number and the section. */
+  :root{
+    --paper:#FFFFFF;
+    --ink:#14181C;
+    --slate:#5F6A75;
+    --mute:#8C959E;
+    --line:#E2E6EA;
+    --navy:#1F4E79;
+    --wash:#E9EFF5;
+    --disp:'Instrument Sans',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#ccd2d8;
+    font-family:var(--body); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- slide frame: fixed 16:9 ---- */
+  .slide{
+    width:1280px; height:720px; background:var(--paper);
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 64px 62px;
+    box-shadow:0 20px 52px rgba(20,24,28,.20);
+  }
+
+  h1{
+    font-family:var(--disp); font-weight:600; font-size:38px;
+    letter-spacing:-.022em; line-height:1.1;
+  }
+
+  /* ---- the content region: everything below the title ---- */
+  .body{flex:1; padding-top:34px; min-height:0;}
+
+  /* ---- corner marker: slide number and section ---- */
+  .corner{
+    position:absolute; right:64px; bottom:26px;
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:.05em; color:var(--mute);
+  }
+  .corner b{color:var(--navy); font-weight:600;}
+  .corner span{padding:0 7px;}
+
+  /* ================= SLIDE 40 ================= */
+  .s40 .body{display:flex; flex-direction:column;}
+  .s40 .lead{font-size:19px; font-weight:300; line-height:1.5; color:var(--ink); max-width:1130px;}
+  .s40 .lead b{font-weight:600;}
+
+  /* the pipeline: three stages, top rules aligned, arrows between */
+  .s40 .pipe{display:flex; align-items:stretch; margin-top:42px;}
+  .s40 .st{flex:1; border-top:2px solid var(--navy); padding-top:15px;}
+  .s40 .st h3{
+    font-family:var(--disp); font-size:23px; font-weight:600;
+    letter-spacing:-.018em; margin-bottom:7px;
+  }
+  .s40 .st p{font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s40 .ar{flex:none; width:58px; position:relative;}
+  .s40 .ar::before{
+    content:""; position:absolute; left:14px; right:22px; top:38px; height:1px; background:var(--rule);
+  }
+  .s40 .ar::after{
+    content:""; position:absolute; right:14px; top:38px; transform:translateY(-50%);
+    border-top:5px solid transparent; border-bottom:5px solid transparent;
+    border-left:9px solid var(--navy);
+  }
+
+  .s40 .contribs{
+    margin-top:auto; padding-top:26px; border-top:1px solid var(--line);
+    display:grid; grid-template-columns:repeat(3,1fr); gap:46px;
+  }
+  .s40 .contribs > div{display:flex; gap:16px; align-items:baseline;}
+  .s40 .contribs b{
+    font-family:var(--mono); font-size:12px; font-weight:500; color:var(--navy);
+    flex:none; width:20px;
+  }
+  .s40 .contribs p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s40 .contribs p strong{font-weight:600; color:var(--ink); display:block; margin-bottom:3px;}
+  .s40 .thanks{
+    margin-top:34px; font-family:var(--disp); font-size:22px;
+    font-weight:600; letter-spacing:-.015em;
+  }
+
+  /* ---------- PRINT: one landscape page per slide ---------- */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff; display:block;}
+    .slide{box-shadow:none; width:1280px; height:720px; page-break-after:always;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="slide s40">
+
+  <h1>Conclusion</h1>
+
+  <div class="body">
+    <p class="lead">Long-document understanding is, above all, a matter of <b>managing evidence well</b>.</p>
+
+    <div class="pipe">
+      <div class="st">
+        <h3>Preserve</h3>
+        <p>What survives the conversion of a page into text, pixels, and structure.</p>
+      </div>
+      <div class="ar"></div>
+      <div class="st">
+        <h3>Select</h3>
+        <p>Which of it actually reaches the model, out of hundreds of pages.</p>
+      </div>
+      <div class="ar"></div>
+      <div class="st">
+        <h3>Reason</h3>
+        <p>Whether the model combines it, and knows when it is not enough.</p>
+      </div>
+    </div>
+
+    <div class="contribs">
+      <div><b>1</b><p><strong>The survey</strong>maps how systems preserve, find, and use information across pages.</p></div>
+      <div><b>2</b><p><strong>The empirical study</strong>shows where the failures arise, and that each one needs a different fix.</p></div>
+      <div><b>3</b><p><strong>The simple method</strong>shows those lessons can be turned back into a working system.</p></div>
+    </div>
+
+    <p class="thanks">Thank you, and happy to take questions.</p>
+  </div>
+
+  <div class="corner"><b>40</b> / 40 <span>&middot;</span> Conclusion</div>
+
+</div>
+</body>
+</html>

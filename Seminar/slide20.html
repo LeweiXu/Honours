@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Representation Experiments</title>
+<title>Reasoning Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,24 +63,20 @@
   /* ================= SLIDE 20 ================= */
   .s20 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s20 .lead b{font-weight:600; color:var(--ink);}
-  .s20 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
-  .s20 .two h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; margin-bottom:5px;
+  .s20 ul{list-style:none; margin-top:30px;}
+  .s20 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s20 .two .mech{
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:17px;
+  .s20 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s20 .two p{font-size:15px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:14px;}
-  .s20 .two p:last-child{margin-bottom:0;}
-  .s20 .two p b{font-weight:600; color:var(--ink);}
-  .s20 .held{
-    margin-top:36px; padding-left:24px; border-left:2px solid var(--line);
-    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
-  }
-  .s20 .held b{font-weight:600; color:var(--ink);}
+  .s20 ul li b{font-weight:600; color:var(--ink);}
+  .s20 ul li:last-child{margin-bottom:0;}
+  .s20 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s20 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -95,30 +91,21 @@
 
 <div class="slide s20">
 
-  <h1>Representation Experiments</h1>
+  <h1>Reasoning Strategies</h1>
 
   <div class="body">
-    <p class="lead">Two questions about the page itself: <b>what can an input express</b>, and <b>how much is lost converting the page into it</b>.</p>
+    <p class="lead">Reasoning strategies act over a <b>single evidence buffer assembled before the reasoning call</b>: the full document representation, a retrieved subset, or evidence from an agentic step. None updates model parameters.</p>
 
-    <div class="two">
-      <div>
-        <h3>Modality ceiling</h3>
-        <div class="mech">What the input can express</div>
-        <p>Four rungs of increasing richness. <b>T</b> is the PDF's embedded text layer. <b>TL</b> is layout-aware parser markdown. <b>TLV</b> adds the rendered page image. <b>V</b> is the page image alone.</p>
-        <p>The comparison asks whether the required evidence is still recoverable once the textual, structural, or visual signal is taken away, rather than assuming one representation is best everywhere.</p>
-      </div>
-      <div>
-        <h3>Conversion fidelity</h3>
-        <div class="mech">How much survives the conversion</div>
-        <p>Hold the rung fixed and vary the quality of each channel instead: <b>the parser</b> for text, across PyMuPDF, MinerU, PaddleOCR-VL and Unlimited-OCR, and <b>the render resolution</b> for the image.</p>
-        <p>This separates what a modality cannot carry in principle from what a bad conversion destroyed in practice.</p>
-      </div>
-    </div>
+    <ul>
+      <li><b>Sequential reasoning: Chain-of-Thought.</b> Extends a single reasoning thread. CoT binds evidence from different pages into one chain and decomposes multi-hop questions into single-hop steps.</li>
+      <li><b>Sequential reasoning: Self-Reflection.</b> The model evaluates its own draft answer and revises it across rounds, optionally against a verifier or critic.</li>
+      <li><b>Parallel exploration.</b> Several reasoning paths over the same buffer. Self-Consistency samples multiple chains and takes the majority answer; sampling-adjudication replaces the vote with an LLM judge. Cost scales with the number of samples. Tree-of-Thoughts has seen little uptake.</li>
+    </ul>
 
-    <div class="held">The annotated evidence pages are supplied in both, so <b>retrieval is not a variable here</b>. Whatever changes is the encoding.</div>
+    <p class="close">A chain can only reason over the evidence already assembled. It <b>cannot recover what retrieval missed</b>.</p>
   </div>
 
-  <div class="corner"><b>20</b> / 33 <span>&middot;</span> Empirical study</div>
+  <div class="corner"><b>20</b> / 40 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

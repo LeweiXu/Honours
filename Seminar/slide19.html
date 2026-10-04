@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>How We Isolate a Failure</title>
+<title>Retrieval and Navigation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,32 +63,20 @@
   /* ================= SLIDE 19 ================= */
   .s19 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s19 .lead b{font-weight:600; color:var(--ink);}
-  .s19 .pipe{display:flex; align-items:stretch; gap:20px; margin-top:34px;}
-  .s19 .st{flex:1; border-top:2px solid var(--navy); padding-top:15px;}
-  .s19 .st h3{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:8px;
-  }
-  .s19 .st p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
-  .s19 .st .cfg{
-    margin-top:12px; font-family:var(--mono); font-size:11.5px;
-    letter-spacing:.03em; color:var(--navy); line-height:1.7;
-  }
-  .s19 .ar{flex:none; width:40px; height:40px; position:relative; align-self:center;}
-  .s19 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
-  .s19 .ar::after{
-    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
-    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
-    border-left:8px solid var(--navy);
-  }
-  .s19 ul{list-style:none; margin-top:36px;}
+  .s19 ul{list-style:none; margin-top:30px;}
   .s19 ul li{
-    position:relative; padding-left:26px; margin-bottom:15px;
-    font-size:15.5px; font-weight:300; line-height:1.5; color:var(--slate);
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s19 ul li::before{content:""; position:absolute; left:0; top:10px; width:10px; height:2px; background:var(--navy);}
+  .s19 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
+  }
   .s19 ul li b{font-weight:600; color:var(--ink);}
   .s19 ul li:last-child{margin-bottom:0;}
+  .s19 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s19 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -103,39 +91,21 @@
 
 <div class="slide s19">
 
-  <h1>How We Isolate a Failure</h1>
+  <h1>Retrieval and Navigation</h1>
 
   <div class="body">
-    <p class="lead">One simple pipeline throughout, with <b>one condition changed at a time</b> and everything else held fixed.</p>
-
-    <div class="pipe">
-      <div class="st">
-        <h3>Encode</h3>
-        <p>Every page becomes text, an image, or both. Done once per document and cached, so no question changes what a page contains.</p>
-        <div class="cfg">PaddleOCR-VL &middot; 200 DPI</div>
-      </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Retrieve</h3>
-        <p>A retriever scores every encoded page against the question and returns the top <i>k</i>, restored to document order.</p>
-        <div class="cfg">ColQwen3 &middot; page-level</div>
-      </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Answer</h3>
-        <p>A multimodal model receives those pages and the question, and answers in a single pass. Nothing is fed back.</p>
-        <div class="cfg">Qwen3-VL-8B &middot; greedy</div>
-      </div>
-    </div>
+    <p class="lead">Retrieval <b>narrows a long document to compact evidence units</b> (chunks, pages, or graph nodes) for downstream reasoning.</p>
 
     <ul>
-      <li><b>The stages act once, and in order.</b> That is what lets a failure be attributed rather than guessed at.</li>
-      <li><b>Gold pages bypass retrieval.</b> For most tests the annotated evidence pages are supplied directly, so selection is neutralised and whatever remains is representation or reasoning.</li>
-      <li><b>Every reported accuracy carries a confidence interval</b> from a document-level bootstrap, because questions from one document are not independent.</li>
+      <li><b>Similarity-based retrieval.</b> Scores each evidence unit independently against the query and returns the top-ranked subset. Sparse lexical signals such as BM25 are the baseline; dense retrieval uses vision-language late-interaction encoders such as ColPali and ColQwen, often with an LLM reranking stage after.</li>
+      <li><b>Relation-aware retrieval.</b> Retrieves along explicit document structure. Tree-based variants follow section hierarchies and outlines, so chunks keep their parent context; graph-based variants traverse typed edges between headings, entities, and cross-references.</li>
+      <li><b>The trade-off.</b> Independent scoring handles paraphrase and cross-modal queries, but cannot follow cross-page references or multi-hop dependencies. Relation-aware methods can, at the cost of parser dependence and traversal cost.</li>
     </ul>
+
+    <p class="close">Evidence missed or poorly ranked at retrieval is <b>unrecoverable at generation</b>. What is retrieved still has to be reasoned over.</p>
   </div>
 
-  <div class="corner"><b>19</b> / 33 <span>&middot;</span> Empirical study</div>
+  <div class="corner"><b>19</b> / 40 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

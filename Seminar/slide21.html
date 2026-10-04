@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Selection Experiments</title>
+<title>Agentic Methods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,24 +63,20 @@
   /* ================= SLIDE 21 ================= */
   .s21 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s21 .lead b{font-weight:600; color:var(--ink);}
-  .s21 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
-  .s21 .two h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; margin-bottom:5px;
+  .s21 ul{list-style:none; margin-top:30px;}
+  .s21 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s21 .two .mech{
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:17px;
+  .s21 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-  .s21 .two p{font-size:15px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:14px;}
-  .s21 .two p:last-child{margin-bottom:0;}
-  .s21 .two p b{font-weight:600; color:var(--ink);}
-  .s21 .held{
-    margin-top:36px; padding-left:24px; border-left:2px solid var(--line);
-    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
-  }
-  .s21 .held b{font-weight:600; color:var(--ink);}
+  .s21 ul li b{font-weight:600; color:var(--ink);}
+  .s21 ul li:last-child{margin-bottom:0;}
+  .s21 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s21 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -95,30 +91,21 @@
 
 <div class="slide s21">
 
-  <h1>Selection Experiments</h1>
+  <h1>Agentic Methods</h1>
 
   <div class="body">
-    <p class="lead">Selection can fail in two opposite ways, and the point of the experiment is that <b>they are not equally damaging</b>. Both start from the pages known to contain the answer.</p>
+    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
 
-    <div class="two">
-      <div>
-        <h3>Evidence coverage</h3>
-        <div class="mech">Required evidence removed</div>
-        <p>Take questions that cite more than one gold page and <b>withhold one of them</b>. Pages are ranked within the document, so we can remove the highest-ranked gold page, the lowest-ranked, or keep only one.</p>
-        <p>A question that cannot satisfy a condition is excluded and recorded, never quietly satisfied with a different page set.</p>
-      </div>
-      <div>
-        <h3>Distractor exposure</h3>
-        <div class="mech">Irrelevant evidence added</div>
-        <p>Keep the complete gold set and <b>add up to five top-ranked non-gold pages</b> alongside it. Conditions are blocked on the exact gold-page count, so questions needing different amounts of evidence are never pooled.</p>
-        <p>The supplied context stays at six pages or fewer, so distractor count is not confounded with context length.</p>
-      </div>
-    </div>
+    <ul>
+      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
+      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
+      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+    </ul>
 
-    <div class="held">The encoding and the reasoner stay fixed across both, so <b>the two effects can be compared directly</b> against the same oracle baseline.</div>
+    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
   </div>
 
-  <div class="corner"><b>21</b> / 33 <span>&middot;</span> Empirical study</div>
+  <div class="corner"><b>21</b> / 40 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

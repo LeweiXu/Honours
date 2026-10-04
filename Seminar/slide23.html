@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datasets Make Attribution Possible</title>
+<title>Datasets</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,26 +63,19 @@
   /* ================= SLIDE 23 ================= */
   .s23 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s23 .lead b{font-weight:600; color:var(--ink);}
-  .s23 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:32px;}
-  .s23 .two h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; margin-bottom:5px;
+  .s23 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s23 .cards h3{
+    font-family:var(--disp); font-size:20px; font-weight:600;
+    letter-spacing:-.018em; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:18px;
   }
-  .s23 .role{
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:16px;
+  .s23 .cards p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s23 .cards .tag{
+    margin-top:14px; font-family:var(--mono); font-size:11px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--navy);
   }
-  .s23 .facts{display:flex; gap:30px; margin-bottom:16px;}
-  .s23 .facts div{font-family:var(--mono); font-size:11.5px; color:var(--slate); line-height:1.7;}
-  .s23 .facts b{display:block; font-size:21px; font-family:var(--disp); color:var(--ink); font-weight:600;}
-  .s23 .two p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:12px;}
-  .s23 .two p:last-child{margin-bottom:0;}
-  .s23 .two p b{font-weight:600; color:var(--ink);}
-  .s23 .close{
-    margin-top:32px; padding-left:24px; border-left:2px solid var(--line);
-    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
-  }
+
+  .s23 .close{margin-top:40px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
   .s23 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -98,42 +91,33 @@
 
 <div class="slide s23">
 
-  <h1>Datasets Make Attribution Possible</h1>
+  <h1>Datasets</h1>
 
   <div class="body">
-    <p class="lead">None of these experiments are possible without annotation that says <b>which pages support each question</b>. That is what picks the benchmarks.</p>
+    <p class="lead">Datasets serve three roles, and the multi-page setting makes all three harder: <b>per-page annotation does not scale</b> to documents of tens or hundreds of pages, and long PDFs are harder to source and license than single pages.</p>
 
-    <div class="two">
+    <div class="cards">
       <div>
-        <h3>MMLongBench-Doc</h3>
-        <div class="role">Primary diagnostic</div>
-        <div class="facts">
-          <div><b>135</b>documents</div>
-          <div><b>47.5</b>mean pages</div>
-          <div><b>847</b>answerable</div>
-          <div><b>244</b>unanswerable</div>
-        </div>
-        <p>The only multi-page benchmark we know of that annotates, per question, <b>the evidence pages, the kind of evidence it draws on, and the document's domain</b>, while also supplying plausible questions the document cannot answer.</p>
-        <p>Evidence pages make coverage measurable and define the oracle. Evidence source explains representation results by what the question actually needs. The unanswerable pool makes calibration testable rather than inferred.</p>
+        <h3>Pretraining</h3>
+        <p>The exception rather than the norm. Confined to a few page-to-document and MLLM-centric systems that do continued pretraining on an existing backbone, because multi-page corpora are still small.</p>
+        <div class="tag">Rare</div>
       </div>
       <div>
-        <h3>LongDocURL</h3>
-        <div class="role">Secondary replication</div>
-        <div class="facts">
-          <div><b>396</b>documents</div>
-          <div><b>85.6</b>mean pages</div>
-          <div><b>2,325</b>questions</div>
-          <div><b>8</b>unanswerable</div>
-        </div>
-        <p>Longer documents, used to check whether the findings hold under a <b>less demanding setting</b>. Born-digital throughout, almost no unanswerable questions, and many questions answerable from the text even when the annotated evidence is visual.</p>
-        <p>Its annotated pages are also not a minimal set: several may be redundant or independently sufficient, which we account for when reading its coverage and integration results.</p>
+        <h3>Fine-tuning</h3>
+        <p>Has converged on LVLM-synthesised supervision over scraped PDFs, with reinforcement learning increasingly layered on top to shape evidence-grounding and trajectory behaviour.</p>
+        <div class="tag">LVLM-synthesised</div>
+      </div>
+      <div>
+        <h3>Benchmarking</h3>
+        <p>Three tiers: single-page extractive baselines, mid-length multi-page suites, and long-document multimodal benchmarks that need cross-page integration. The same small pool of PDFs gets reused.</p>
+        <div class="tag">Contamination risk</div>
       </div>
     </div>
 
-    <div class="close">Answers are scored by an LLM judge rather than exact match, since a correct response can differ in units, rounding, or formatting. The judge sees only the question, gold answer, and model answer, never the condition being tested. It agrees with GPT-4o on <b>96.0%</b> of a stratified sample and with a human annotator on <b>98.3%</b>. We track refusals and wrong answers separately, not just accuracy.</div>
+    <p class="close"><b>Answer-only accuracy masks retrieval failure</b> and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation as well, but it is not yet standard.</p>
   </div>
 
-  <div class="corner"><b>23</b> / 33 <span>&middot;</span> Empirical study</div>
+  <div class="corner"><b>23</b> / 40 <span>&middot;</span> Survey</div>
 
 </div>
 </body>

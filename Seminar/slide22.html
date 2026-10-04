@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Reasoning Experiments</title>
+<title>Training Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,24 +63,21 @@
   /* ================= SLIDE 22 ================= */
   .s22 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s22 .lead b{font-weight:600; color:var(--ink);}
-  .s22 .two{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:34px;}
-  .s22 .two h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; margin-bottom:5px;
+  .s22 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s22 .cards h3{
+    font-family:var(--disp); font-size:20px; font-weight:600;
+    letter-spacing:-.018em; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:18px;
   }
-  .s22 .two .mech{
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:17px;
+  .s22 .cards p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
+  .s22 .cards p b{font-weight:600; color:var(--ink);}
+  .s22 .cards .tag{
+    margin-top:14px; font-family:var(--mono); font-size:11px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--navy);
   }
-  .s22 .two p{font-size:15px; font-weight:300; line-height:1.55; color:var(--slate); margin-bottom:14px;}
-  .s22 .two p:last-child{margin-bottom:0;}
-  .s22 .two p b{font-weight:600; color:var(--ink);}
-  .s22 .held{
-    margin-top:36px; padding-left:24px; border-left:2px solid var(--line);
-    font-size:15px; font-weight:300; line-height:1.55; color:var(--slate);
-  }
-  .s22 .held b{font-weight:600; color:var(--ink);}
+
+  .s22 .close{margin-top:40px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s22 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -95,30 +92,33 @@
 
 <div class="slide s22">
 
-  <h1>Reasoning Experiments</h1>
+  <h1>Training Strategies</h1>
 
   <div class="body">
-    <p class="lead">With representation and selection controlled, what remains is the reasoner. Two different problems, so <b>they are tested separately</b>.</p>
+    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
 
-    <div class="two">
+    <div class="cards">
       <div>
-        <h3>Evidence integration</h3>
-        <div class="mech">Can it combine what it has?</div>
-        <p>Split the questions by the <b>structure of the evidence</b> they need: one page and one source, several sources on one page, or evidence distributed across pages.</p>
-        <p>Then add a step-by-step reasoning prompt and see which of those groups it actually helps. The annotated pages are supplied throughout, so any deficit arises after the evidence has arrived.</p>
+        <h3>Trained retrieval</h3>
+        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
+        <div class="tag">Retriever</div>
       </div>
       <div>
-        <h3>Response calibration</h3>
-        <div class="mech">Should it answer at all?</div>
-        <p>Vary both whether the evidence supports an answer and whether the model is <b>explicitly permitted to abstain</b>.</p>
-        <p>Answerable questions get their oracle gold pages. Unanswerable ones get the three top-ranked pages by BM25: plausible context that does not support an answer. That measures unsupported answers in one direction and false refusals in the other.</p>
+        <h3>Trained reasoning</h3>
+        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
+        <div class="tag">Reasoner</div>
+      </div>
+      <div>
+        <h3>Trained agentic methods</h3>
+        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
+        <div class="tag">Controller</div>
       </div>
     </div>
 
-    <div class="held">Everything is decoded greedily, so a condition is <b>reproducible from its identity</b> rather than from a seed.</div>
+    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
   </div>
 
-  <div class="corner"><b>22</b> / 33 <span>&middot;</span> Empirical study</div>
+  <div class="corner"><b>22</b> / 40 <span>&middot;</span> Survey</div>
 
 </div>
 </body>
