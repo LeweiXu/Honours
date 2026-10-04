@@ -142,17 +142,38 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Speaking cues**
 
-- In the survey, we found that architectures for long document understanding could be put into 4 clean groups.
-- These groups are roughly 
+- In the survey, we found that architectures for long document understanding could be grouped into these 4 families that we defined.
+- These groups also follow a rough trend for how the field approached long document understanding.
 
-- The survey groups systems by how they manage evidence across pages.
-- One family encodes the pages together into a document representation.
-- Another adapts a multimodal model to take more pages directly.
-- A third retrieves relevant pages before generating an answer.
-- The fourth inspects pages step by step, deciding what to look at next.
-- These designs differ mainly in what reaches the model and when.
+- Around 2023-2024 with the mp-docvqa benchmark, we have these page-to-document models, and this includes the hi-vt5 baseline we discussed earlier.
+- This was a somewhat naive but at the time very sound approach to the multi-page problem.
+- The idea was quite simple, prior to 2023, a lot of research was done on single-page document understanding.
+- These worked by training some form of vision language transformer model end-to-end to do question answering.
+- If we want to scale to multiple pages, we could just combine these single page transformers, use the latent or hidden state of each page, perform some cross-page mechanism to learn cross-page structure or evidence integration, then put this final hidden state into a decoder to answer the question.
+- The problem with these models is that page grows with page count linearly, and these models would struggle as soon as documents got decently long.
 
-**Transition:** Architecture tells us how evidence reaches the model. Next, what information do we preserve from the pages?
+- At the time, with multimodal LLMs emerging, the field quickly pivoted to using pretrained these vision language models
+- The idea was basically to use various techniques to adapt a general domain pretrained MLLM for long document understanding tasks.
+- These techniques range from various document preprocessing before the document even reaches language model
+- To doing continued pretraining on the language model itself on document understanding tasks
+- Or parameter efficient fine tuning, indicated by the snowflake/flame
+- The problem with this approach is the context length cap of the language model itself
+
+- Next is basically just RAG. When RAG became a thing in 2024-2025, the field applied it to document understanding.
+- We realized that answering a question over a document generally doesn't require the whole document.
+- We only need to find the relevant evidence to answer the question.
+- We can use various techniques to retrieve answer relevant evidence to have the language model which is generally frozen to answer the question
+- This successfully avoids the context window problem, but instead shifts the problem to evidence retrieval.
+- Techniques for this architecture can be very sophisticated, such as adaptive reranking and query reformulation to iteratively gather evidence
+- This is why we avoid calling it "RAG pipelines" but rather "retrieval-augmented pipelines"
+
+- Finally, in 2025ish, "agentic" systems became popular. 
+- This is where we augment a langauge model to act iteratively in a loop for whatever task it is trying to complete.
+- For long document understanding, a simple way to understand this is we have an agent that is given the question to answer and some instruction
+- It needs to decide how to gather evidence, if more evidence is required to answer the question, and decide when to stop and answer the question when it deems enough evidence has been gathered.
+
+
+**Transition:**
 
 **On screen:** Simplified thesis Figure 2.1 showing the four architecture families. Keep one pathway per family.
 
@@ -162,11 +183,13 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Speaking cues**
 
+- The rest of the survey does get fairly technical, and theres a lot of content, so for the rest of the survey, i'll just quickly go over it so everyone can gain an appreciation of just how much research has been done in the field.
+
 - Text is useful because we can search and read it efficiently.
-- The problem is that a long document can contain far too much text.
-- A system might compress every page, or select only likely passages.
-- Either choice can lose information that turns out to matter.
-- Text may also continue across page boundaries, and OCR mistakes can disrupt both search and reading.
+- Volume is the problem of having way too much text in a document to process well even for long context language models
+- Continuity between pages is another issue, although this is kind of a layout problem, for example with multi-page tables, or with a two-column format document
+- Noise is mainly an issue with scanned documents where you need some form of OCR to recover text, and errors can propagate downstream
+- Heterogeneity is where density of text various page to page, and training or other techniques need to account for this
 
 **Transition:** Some evidence is difficult to recover from text alone. That is where page images matter.
 
@@ -178,11 +201,12 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Speaking cues**
 
-- Page images preserve information that a text extract may miss.
-- That includes charts, handwriting, fine layout, and visual relationships.
-- But reading every page at high resolution costs many visual tokens.
-- We can compress all pages or inspect only selected ones in detail.
-- So we trade broad coverage against the ability to read small details.
+- Vision is arguably a more superior modality than text
+- In fact, many method papers in field argue we should rely only on high resolution visual reading 
+- Things like charts, handwriting, layout information all require vision, and is very difficult to recover via text.
+- But we generally require high resolution for this to be possible, especially with fine-grained text.
+- Visual reading is expensive compared to text, and again, the issue with heterogeneity, some parts of the document needs high resolution reading, while others don't. 
+- Potential solutions are compression or selection of specific parts of the document
 
 **Transition:** Beyond text and images, a document has relationships that connect its pages.
 
@@ -194,11 +218,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Speaking cues**
 
-- A long document is more than a stack of independent pages.
-- Sections and captions tell us how its parts fit together.
-- A sentence on one page may point to a figure on another.
-- Tables and arguments can also continue across page boundaries.
-- Systems can build outlines or links to preserve these connections, but errors in that structure can mislead later steps.
+- Layout or structure in 
 
 **Transition:** Once the document is represented, how do we find the right evidence for a question?
 
