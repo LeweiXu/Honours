@@ -142,6 +142,9 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Speaking cues**
 
+- In the survey, we found that architectures for long document understanding could be put into 4 clean groups.
+- These groups are roughly 
+
 - The survey groups systems by how they manage evidence across pages.
 - One family encodes the pages together into a document representation.
 - Another adapts a multimodal model to take more pages directly.
