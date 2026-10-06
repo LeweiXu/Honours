@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Why Locate the Failure?</title>
+<title>Training Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   :root{
     --paper:#FFFFFF;
     --ink:#14181C;
-    --slate:#5F6A75;
-    --mute:#8C959E;
+    --slate:#14181C;
+    --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
     --wash:#E9EFF5;
@@ -57,23 +57,26 @@
     font-family:var(--mono); font-size:11px; font-weight:400;
     letter-spacing:.05em; color:var(--mute);
   }
-  .corner b{color:var(--navy); font-weight:600;}
+  .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 24 ================= */
-  .s24 .lead{font-size:17.5px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s24 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s24 .lead b{font-weight:600; color:var(--ink);}
-  .s24 .qa{margin-top:34px; padding-left:24px; border-left:2px solid var(--navy);}
-  .s24 .qa .q{font-size:19px; font-weight:400; line-height:1.4; color:var(--ink);}
-  .s24 .qa .a{margin-top:9px; font-size:17px; font-weight:300; color:var(--slate);}
-  .s24 .a b{color:var(--navy); font-weight:600;}
-  .s24 .three{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s24 .three h3{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:8px;
+  .s24 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s24 .cards h3{
+    font-family:var(--disp); font-size:21px; font-weight:600;
+    letter-spacing:-.018em; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:18px;
   }
-  .s24 .three p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
-  .s24 .close{margin-top:38px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s24 .cards p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s24 .cards p b{font-weight:600; color:var(--ink);}
+  .s24 .cards .tag{
+    margin-top:14px; font-family:var(--mono); font-size:11px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  }
+
+  .s24 .close{margin-top:40px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s24 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -89,35 +92,33 @@
 
 <div class="slide s24">
 
-  <h1>Why Locate the Failure?</h1>
+  <h1>Training Strategies</h1>
 
   <div class="body">
-    <p class="lead">The survey shows many ways to build these systems. But when a system answers wrongly, <b>different papers give different explanations for why</b>, and those explanations imply different fixes.</p>
+    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
 
-    <div class="qa">
-      <div class="q">&ldquo;How much did the leading region's revenue grow between the 2022 and 2023 tables?&rdquo;</div>
-      <div class="a">The system answers <b>14%</b>. The correct answer is 23%. What went wrong?</div>
-    </div>
-
-    <div class="three">
+    <div class="cards">
       <div>
-        <h3>The page was read badly</h3>
-        <p>The parser garbled a figure in the table, or the page was rendered too small to read it.</p>
+        <h3>Trained retrieval</h3>
+        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
+        <div class="tag">Retriever</div>
       </div>
       <div>
-        <h3>The right page was missed</h3>
-        <p>Only one of the two tables was retrieved, so the comparison was never possible.</p>
+        <h3>Trained reasoning</h3>
+        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
+        <div class="tag">Reasoner</div>
       </div>
       <div>
-        <h3>The model could not use it</h3>
-        <p>Both tables were present and legible, and it still picked the wrong row or did the arithmetic wrong.</p>
+        <h3>Trained agentic methods</h3>
+        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
+        <div class="tag">Controller</div>
       </div>
     </div>
 
-    <p class="close">End-to-end accuracy cannot tell these apart, and <b>under a fixed compute budget you have to know which one to spend on</b>.</p>
+    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
   </div>
 
-  <div class="corner"><b>24</b> / 40 <span>&middot;</span> Empirical study</div>
+  <div class="corner">Backup &middot; Survey</div>
 
 </div>
 </body>

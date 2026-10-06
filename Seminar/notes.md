@@ -2,7 +2,7 @@
 
 ## Seminar brief
 
-- **Duration:** 20 minutes.
+- **Duration:** 15 minutes, plus 5 minutes of questions.
 - **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
 - **Thesis:** *Multi-Page Visually Rich Document Understanding: A Survey of System Design and an Empirical Attribution of Failure*, Lewei Xu. Source version: `Honours___Lewei_Xu-1.pdf`, the complete draft submitted for assessment.
 
@@ -21,20 +21,12 @@
 
 **Speaking cues**
 
-- I’ll cover the work done this year in three parts.
-- First, I'll quickly go over some background on document understanding.
-- Then, the main ideas from the survey I wrote in the first semester, which has been accepted into a top-tier conference.
-- Finally, the empirical study I wrote in the second semester which is about how document understanding can fail and how to mitigate these failures.
+- Four parts: some background, then the survey, then the empirical study, then a small proof-of-concept method.
+- The survey has been accepted to the EMNLP 2026 main conference. The empirical study is under review at EACL.
 
 **Transition:** First, what do we mean by document understanding?
 
-**On screen:** Three bullets:
-
-- **Background** — Multi-page, visually rich document understanding.
-- **Survey** — *Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding* (EMNLP 2026 main conference).
-- **Empirical attribution study** — *Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution* (submitted to EACL; under review).
-
-**Source:** Submitted thesis Section 1.2, page 2, for paper titles and status.
+**On screen:** Four points: Background; the survey title in bold with authors and venue; the empirical paper the same way; the proof-of-concept method.
 
 ## Slide 3: Multi-Page Visually Rich Documents
 
@@ -81,45 +73,19 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Source:** Thesis Chapter 1, Introduction, page 1, for the question-answering framing. The five questions above are illustrative seminar examples, not quoted benchmark questions.
 
-## Slide 5: Brief History
+## Slide 5: LLM assistants
 
 **Speaking cues**
 
-- A useful starting point is with the MP-DocVQA paper from 2023.
-- It introduced a benchmark with documents of up to twenty pages with questions answerable from a single page.
-- It also introduced a baseline model called Hi-VT5 to answer natural language questions for this specific setting.
-- This is considering the pivotal starting point for long document understanding research.
-- A lot happened in between, and the field progressed rapidly with more difficult benchmarks and more sophisticated techniques that utilized vision language models as backbones, which we'll discuss in the survey.
-- Newer benchmarks include documents that spand hundreds of pages and include questions that require combining evidence from various locations.
-- Meanwhile, vision language models became better at reading text and page images.
+- Everyone here has used these, so this is what it looks like from the outside.
+- I gave Claude my thesis, which is almost 100 pages, and asked a hard question over it.
+- It plans, works out which pages it needs, renders those pages and reads them as images, then answers.
 
-**Transition:** Next, some motivation or use cases of document understanding.
+**Transition:** That works for a consumer product. A lot of real settings cannot use it.
 
-**On screen:** Two simple parts. **Benchmarks:** MP-DocVQA (2023; up to 20 pages; one answer page) → MMLongBench-Doc and LongDocURL (longer documents; some questions span pages). **Models:** training models end-to-end -> leveraging general domain VLMs with increasing sophisticated training and training-free metods.
+**On screen:** Left: the trajectory for a question over the thesis. Right: a zoomed view of the pages it rendered to read.
 
-**Source:** Submitted thesis Sections 1.3.1–1.3.3, pages 3–5, and Section 3.5, pages 31–34. [MP-DocVQA paper](https://doi.org/10.1016/j.patcog.2023.109834), published in 2023. The later benchmarks contain cross-page questions; not every question in them is multi-hop.
-
-## Slide 6: Document questions in consumer assistants
-
-**Speaking cues**
-
-- Consumer facing products like GPT, Claude and NotebookLM, I'm sure everything here is familiar with these.
-- Just a year or two back, we could upload relatively short documents and the model could answer relatively well.
-- But document understanding using language models was still at its infancy at the time.
-- What would happen is the whole document, including the parsed text output and an image of each page would be placed in the model's context.
-- Which is why very quickly you'll see an error message saying "can't upload document, out of context".
-- More recently, we've begun to see more sophisticated methods.
-- Nowadays, when you upload a document, it actually gets placed on disk in the model's "working environment".
-- The model can access the document using tool calls.
-- Also with the "projects" feature, you can upload a lot of documents, and RAG techniques can be used retrieve information from these documents.
-
-**Transition:** But, this is just a very specific use case for document understanding for the general public.
-
-**On screen:** A familiar assistant answering a question about uploaded files. Show an error message saying "cannot upload document, out of context". Screenshot of current chatbot assistants accessing documents via tool calls, or RAG from projects.
-
-**Source:** Submitted thesis Sections 1.3.2–1.3.3, pages 5–6. [ChatGPT Projects documentation](https://help.openai.com/en/articles/10169521-projects-in-chatgpt) confirms uploaded project files can be used as context; [OpenAI file uploads FAQ](https://help.openai.com/en/articles/8555545-file-uploads-faq) confirms document search use cases. The precise file-handling path varies by product and configuration.
-
-## Slide 7: Document understanding under real-world constraints
+## Slide 6: Document understanding under real-world constraints
 
 **Speaking cues**
 
@@ -137,6 +103,16 @@ For the final slides, confirm that each question is answerable from the chosen d
 **On screen:** A large collection of reports, records, and scanned forms feeding into a local document system. Show two example tasks—classification and information extraction—and label the constraints: privacy, cost, and fixed compute. (just a suggestion, figure something out for this slide, some text as well to motivate the problem, title of slide should also be shorter and concise)
 
 **Source:** Thesis Section 3.1, page 23. The examples motivate the research rather than report experimental findings.
+
+## Slide 7: Survey of MP-VRDU
+
+**Speaking cues**
+
+- This is the survey, accepted to EMNLP 2026.
+- I'll only cover the architecture overview, and mention the inference-time and training strategies in passing.
+- I'm skipping the multimodal representation section, the datasets, and the open challenges.
+
+**On screen:** Top half of the survey first page, with its section list on the right. Bold sections are the ones covered.
 
 ## Slide 8: Multi-page architectural overview
 
@@ -179,454 +155,122 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Source:** Thesis Sections 2.1–2.3, pages 7–11; Figure 2.1.
 
-## Slide 9: Text modality, volume
+## Slide 9: Inference-time and training strategies
 
 **Speaking cues**
 
-- The rest of the survey does get fairly technical, and theres a lot of content, so for the rest of the survey, i'll just quickly go over it so everyone can gain an appreciation of just how much research has been done in the field.
+- The rest of the survey is organised by three decisions: how to find evidence, how to reason over it, and how to go back for more.
+- Each one can be done training-free around a frozen model, or trained into the model.
 
-- Volume: the text across all the pages frequently exceeds the MLLM's context.
-- Systems compress it into a fixed budget, train for a longer context, or index chunks and pass only the selected text to the reader.
+**Transition:** The survey maps the design choices. The second paper asks which of them actually matter.
 
-**On screen:** All 160 pages of the 3M 2018 10-K as a contact sheet, about 89,000 words.
+**On screen:** Three columns: retrieval and navigation, reasoning strategies, agentic methods. Each lists the training-free and the trained variants.
 
-## Slide 10: Text modality, continuity
-
-**Speaking cues**
-
-- Continuity breaks when paragraphs, tables and sections span page boundaries.
-- It is preserved with document-level layers over per-page representations, or with structure-aware chunking and adjacent-page expansion at retrieval time.
-
-**On screen:** A sentence in a paper cut in half by the page 3 to page 4 break.
-
-## Slide 11: Text modality, noise
+## Slide 10: Empirical attribution study
 
 **Speaking cues**
 
-- Noise: OCR errors accumulate across the document, and they also end up in the retrieval index.
-- Layout-aware OCR pipelines dampen it upstream, or low-confidence tokens are treated as soft cues downstream.
+- This is the second paper, under review at EACL.
+- When a system answers wrongly, different papers blame different things. We wanted to test that under controlled conditions.
+- I'll cover the framework and the six findings, and skip the related work, discussion and deployment sections.
 
-**On screen:** A handwritten power of attorney scan, with the raw Tesseract output under it.
+**On screen:** Top half of the paper first page, with its section list on the right. Bold sections are the ones covered.
 
-## Slide 12: Text modality, heterogeneity
-
-**Speaking cues**
-
-- Heterogeneity: text density varies a lot from page to page, but almost every system uses fixed-budget allocation.
-- Adaptive page selection is the rare question-conditioned exception.
-
-**Transition:** Some evidence is difficult to recover from text alone. That is where page images matter.
-
-**On screen:** Two pages from the same 10-K: page 55 with 75 words, page 68 with 946.
-
-**Source:** Thesis Section 2.4.1, pages 11–12. Survey Section 4.1.
-
-## Slide 13: Visual modality, resolution
+## Slide 11: Attribution framework
 
 **Speaking cues**
 
-- Resolution: fine detail is only legible at high resolution, and token cost scales super-linearly with it, so it cannot be maintained at full document length.
+- Three places an answer can go wrong: representation, selection, and reasoning.
+- Each has two mechanisms, which gives six things to test. One finding per mechanism follows.
 
-**On screen:** The same chart cropped from the page rendered at 340 x 440 px and at 1275 x 1650 px.
+**On screen:** The framework figure, with one diagnostic question under each locus.
 
-## Slide 14: Visual modality, resolution trade-off
-
-**Speaking cues**
-
-- Token-reduction modules keep every page available at lower fidelity.
-- The alternatives are thumbnail browsing with selective high-resolution inspection, or high-fidelity reading of only the retrieved pages, which inherits the selector's recall ceiling.
-
-**On screen:** One 23-page Pew report twice: every page blurred, versus three sharp pages with the other twenty blank.
-
-## Slide 15: Visual modality, multi-signal competition
+## Slide 12: Modality ceiling
 
 **Speaking cues**
 
-- Multi-signal competition: text-bearing pixels, non-textual evidence and layout cues share one per-page budget.
-- Visual RAG keeps patch-level granularity, element-level cropping keeps fine structure, and OCR-augmented visual reading delegates the text so the visual budget can go to non-textual evidence.
+- With text only, the model refuses chart and figure questions most. Adding page images brings refusal under 10% for every evidence type.
+- Images alone are still worse than text plus images, 42.6% against 49.5%, because dense text and exact numbers are hard to read at limited resolution.
 
-**Transition:** Beyond text and images, a document has relationships that connect its pages.
+**On screen:** Table of abstention and accuracy by evidence source and representation.
 
-**On screen:** One Pew report page with its body text, chart and source note outlined, and each one zoomed beside it.
-
-**Source:** Thesis Section 2.4.2, page 12. Survey Section 4.2.
-
-## Slide 16: Structure modality, hierarchy
+## Slide 13: Conversion fidelity
 
 **Speaking cues**
 
-- Hierarchy: sections, headings and reading order organise the document as a whole rather than any single page.
-- Explicit parsers recover it as outlines or hierarchical indices, or OCR-free backbones learn it end-to-end from page images.
+- Parser quality matters a lot with text alone: a 15.7-point spread on digital documents. Add the page image and it shrinks to 4.2.
+- Same story the other way round: higher resolution helps images alone, and much less when parser text is there too.
 
-**On screen:** The table of contents of the Pew report.
+**On screen:** Figure: accuracy by parser and scan status, and by image resolution.
 
-## Slide 17: Structure modality, cross-page references
-
-**Speaking cues**
-
-- Cross-page references: a pointer like "see Table 13" has to be resolved to its referent on another page, which ranking by surface similarity cannot do.
-- Graph- and map-based methods represent the references as edges between document elements, with edge quality bounded by the extraction heuristics.
-
-**On screen:** A sentence on page 4 of a paper that points to Table 13, which is on page 19 in an appendix.
-
-## Slide 18: Structure modality, spanning elements
+## Slide 14: Evidence coverage
 
 **Speaking cues**
 
-- Spanning elements such as multi-page tables need a representation that bridges the page boundary without conflating distant content.
-- Hierarchical indexing and context-fused page embeddings preserve the parent context.
+- Take away one gold page and accuracy roughly halves, from 38.6% to 18.4% or 15.9%.
+- It does not matter whether it was the highest or lowest ranked page, so retrieval rank does not tell you which page is safe to drop.
 
-**Transition:** Once the document is represented, how do we find the right evidence for a question?
+**On screen:** Figure: paired verdict transitions after removing or keeping gold pages.
 
-**On screen:** A syllabus table that runs over pages 15 and 16, with the benchmark question that needs both halves: how many quizzes are in the course (six).
-
-**Source:** Thesis Section 2.4.3, pages 12–13. Survey Section 4.3.
-
-## Slide 19: Retrieval and navigation
+## Slide 15: Distractor exposure
 
 **Speaking cues**
 
-- Retrieval narrows a long document to compact evidence units: chunks, pages, or graph nodes.
-- Similarity-based retrieval scores each evidence unit independently against the query. Sparse lexical signals like BM25 are the baseline, and dense retrieval uses late-interaction encoders like ColPali and ColQwen.
-- Relation-aware retrieval goes along explicit document structure instead: tree-based over section hierarchies, or graph-based over cross-references.
-- Independent scoring cannot follow cross-page references or multi-hop dependencies. Relation-aware methods can, but depend on parser quality.
-- Evidence missed at retrieval is unrecoverable at generation.
+- Here every gold page is kept and extra non-gold pages are added.
+- Multi-hop accuracy drops from 43.9% to 35.1% after only three extra pages, then levels off. Single-hop declines slowly.
 
-**Transition:** Finding evidence is only part of the task. The model still has to reason with it.
+**On screen:** Figure: accuracy and step flips as non-gold pages are added.
 
-**On screen:** Question → search or navigate → selected evidence. Use one example showing that two pages may both be needed.
-
-**Source:** Thesis Section 2.5.1, pages 13–14.
-
-## Slide 20: Reasoning strategies
+## Slide 16: Evidence integration
 
 **Speaking cues**
 
-- Reasoning strategies act over a single evidence buffer assembled before the reasoning call.
-- Sequential reasoning extends one thread: Chain-of-Thought binds evidence from different pages into one chain, and Self-Reflection revises a draft answer across rounds.
-- Parallel exploration produces several paths over the same buffer: Self-Consistency takes the majority answer, and sampling-adjudication uses an LLM judge instead of a vote.
-- Cost scales with the number of rounds or samples.
-- None of it can recover what retrieval missed.
+- With the gold pages supplied, a bigger model does better on multi-hop questions: 29.0% at 2B up to 49.9% at 32B.
+- Single-hop improves too, so this is about using evidence in general, not only combining it.
 
-**Transition:** Some systems address missing evidence by letting the model look again.
+**On screen:** Figure: single-hop and multi-hop accuracy across Qwen3-VL sizes.
 
-**On screen:** Two evidence pages feeding into a short reasoning chain and answer. Keep the reasoning example simple.
-
-**Source:** Thesis Section 2.5.2, pages 14–15.
-
-## Slide 21: Agentic methods
+## Slide 17: Response calibration
 
 **Speaking cues**
 
-- Agentic methods put one or more LLM controllers in charge.
-- ReAct and tool-augmented reasoning: one controller interleaves thought, action and observation, calling retrievers, parsers or OCR engines, or navigating a pre-built document representation.
-- Multi-agent orchestration: modality-specialised decomposition splits text and visual evidence, role-specialised decomposition splits planning, execution, verification and synthesis.
-- Because the trajectory is adaptive, compute scales with question difficulty rather than document length, and it lifts the single-step recall ceiling of retrieval-augmented pipelines.
-- The cost is controllability: unbounded inference cost, and a controller can commit early to wrong evidence.
+- Telling the model it may abstain makes it refuse far more unanswerable questions, 13.2% to 76.1%, but it also starts refusing answerable ones.
+- Asking it to reason first recovers most of the lost accuracy.
 
-**Transition:** So far, these choices can happen at inference time. Training can also teach a system to make them.
+**On screen:** Figure: answerable accuracy and the two refusal rates across four prompt modes.
 
-**On screen:** A short loop: inspect → assess → search or inspect again → answer. Optionally show separate reader and checker roles.
-
-**Source:** Thesis Sections 2.3.4 and 2.5.3, pages 10–11 and 15–16.
-
-## Slide 22: Training strategies
+## Slide 18: Conclusion
 
 **Speaking cues**
 
-- Most systems adopt a backbone already pretrained on single-page data, so fine-tuning carries the weight.
-- Trained retrieval components: modality-alignment, cross-page-fusion, and logical-relevance.
-- Trained reasoning methods: trace-imitation first, then reward-driven training with GRPO.
-- Trained agentic methods: trajectory-distillation from a stronger teacher, or reinforcement-learned policies.
-- Parameter-efficient tuning and multi-stage curricula recur across all three.
+- Thank you. Happy to take questions.
 
-**Transition:** That makes the available datasets a central part of the field.
+**On screen:** Thank you, and nothing else.
 
-**On screen:** A pipeline with three trainable stages highlighted: find, combine, decide the next action.
-
-**Source:** Thesis Section 2.6, pages 17–19.
-
-## Slide 23: Datasets
+## Slide 19: Simple method architecture
 
 **Speaking cues**
 
-- Datasets serve three roles: pretraining, fine-tuning, and benchmarking.
-- Per-page annotation does not scale, so pretraining is the exception and fine-tuning has converged on LVLM-synthesised supervision over scraped PDFs.
-- Benchmarks sit in three tiers, from single-page extractive baselines to long-document multimodal benchmarks, and reuse the same small pool of PDFs, which is a contamination risk.
-- Answer-only accuracy masks retrieval failure, so we also want to know whether the right evidence was found and used.
+- A proof of concept that applies the findings in one small system, with one model in three roles.
+- The reader goes through pages in ranked order and records evidence. The synthesizer answers. The arbiter either accepts or sends the reader back for more.
 
-**Transition:** The survey maps the design choices. But when a system gives a wrong answer, which part actually failed?
+**On screen:** The reader, synthesizer, arbiter loop, with one line under each role.
 
-**On screen:** Three roles for datasets: pretrain, fine-tune, benchmark. Add a small answer-and-evidence check beside benchmarking.
-
-**Source:** Thesis Section 2.7, pages 19–21.
-
-## Slide 24: Why locate the failure?
+## Slide 20: Simple method results
 
 **Speaking cues**
 
-- The survey showed many possible ways to build these systems.
-- But different papers give different explanations for why they fail.
-- Maybe the page was read badly, maybe the right page was missed, or maybe the model could not use it.
-- Those failures need different fixes, especially when we have a limited compute budget.
-- That is the motivation for the empirical study.
+- 56.5% on MMLongBench-Doc and 61.3% on LongDocURL, the highest among systems on the same Qwen3-VL-8B backbone, with no training and a 4-bit model.
+- Multi-page questions are still the weak spot, 39.2 against DocTrace's 41.1.
 
-**Transition:** I describe those possibilities as three failure loci.
+**On screen:** The results table under each benchmark's official protocol.
 
-**On screen:** One document question, one wrong answer, and three possible points of failure along a simple pipeline. Emphasize the diagnostic question, not detailed methods.
+## Backup slides (21 onwards, no slide numbers)
 
-**Source:** Submitted thesis Section 3.1, pages 22–23.
+For questions only.
 
-## Slide 25: Three failure loci
-
-**Speaking cues**
-
-- I divide failures into three places in the pipeline.
-- Representation asks whether we preserved the needed information from the page.
-- Selection asks whether that information reached the model.
-- Reasoning asks whether the model used it correctly.
-- The order matters: we cannot reason over evidence that was lost or never selected.
-
-**Transition:** We can test each stage by controlling what happens in the others.
-
-**On screen:** Simplify thesis Figure 3.1 to document → representation → selection → reasoning → answer. Put one plain-language failure question under each of the three stages.
-
-**Source:** Submitted thesis Section 3.3, pages 23–25; Figure 3.1.
-
-## Slide 26: How we isolate a failure
-
-**Speaking cues**
-
-- The experiments use one simple pipeline throughout.
-- First, we turn pages into text, images, or both.
-- Then a retriever chooses pages, and a multimodal model answers from them.
-- To isolate a failure, we change one condition while holding the others fixed.
-- For some tests, we give the model the known evidence pages directly.
-
-**Transition:** The first set of interventions changes what the model can see from a page.
-
-**On screen:** Encoding → page retrieval → answer. Highlight one stage at a time; show “gold pages supplied” as a bypass around retrieval. Use thesis Table 3.1 as the detailed source, not as a full-size slide table.
-
-**Source:** Submitted thesis Section 3.4.1, pages 25–26; Table 3.1.
-
-## Slide 27: Representation experiments
-
-**Speaking cues**
-
-- The representation tests ask two questions.
-- First, what can different inputs express? We compare text, layout, images, and their combinations.
-- Second, how much information is lost when we convert the page?
-- For that, we vary the parser and image resolution.
-- The correct evidence pages are supplied, so retrieval is not the variable here.
-
-**Transition:** Next, we control which of those pages are actually selected.
-
-**On screen:** Two compact experiments: four representation options; then parser quality and image resolution. Label these “modality ceiling” and “conversion fidelity.”
-
-**Source:** Submitted thesis Sections 3.3.1 and 3.4.2, pages 24 and 27–28.
-
-## Slide 28: Selection experiments
-
-**Speaking cues**
-
-- For selection, we separate missing evidence from distracting extra content.
-- We start with the pages known to contain the answer.
-- In one test, we remove a required page.
-- In another, we keep all required pages but add irrelevant ones.
-- The encoding and reasoner stay fixed, so we can compare the two effects.
-
-**Transition:** We then test failures that remain even when the evidence is present.
-
-**On screen:** A complete evidence set branching into two conditions: one required page removed; extra irrelevant pages added. Label “coverage” and “distractor exposure.”
-
-**Source:** Submitted thesis Sections 3.3.2 and 3.4.3, pages 24–25 and 28–29.
-
-## Slide 29: Reasoning experiments
-
-**Speaking cues**
-
-- For reasoning, we again provide the known evidence pages.
-- One test asks whether the model can combine facts from several pages.
-- We compare evidence structures and a step-by-step reasoning prompt.
-- Another test asks whether it should answer or abstain when evidence is insufficient.
-- These are different reasoning problems, so we test them separately.
-
-**Transition:** Two annotated benchmarks let us make these comparisons.
-
-**On screen:** Two experiment cards: cross-page integration; answer versus abstain. Keep prompt text out of the main slide.
-
-**Source:** Submitted thesis Sections 3.3.3 and 3.4.4, pages 25 and 29–30.
-
-## Slide 30: Datasets make attribution possible
-
-**Speaking cues**
-
-- The main benchmark tells us which pages support each question and what kind of evidence is needed.
-- It also includes questions that the document cannot answer.
-- That lets us test coverage, representation, and abstention directly.
-- A second benchmark checks the findings on longer documents.
-- We track refusals and wrong answers as well as overall accuracy.
-
-**Transition:** With the setup in place, let’s look at what fails first: representation.
-
-**On screen:** Two benchmark cards: MMLongBench-Doc as the primary diagnostic dataset; LongDocURL as the secondary replication dataset. Show only the annotations relevant to the experiments.
-
-**Source:** Submitted thesis Section 3.5, pages 31–34.
-
-## Slide 31: Result: text and vision complement each other
-
-**Speaking cues**
-
-- When the correct pages are supplied, text alone still misses many visual questions.
-- Adding the page image makes charts and figures much easier to answer.
-- But images alone are also weaker than the combined input.
-- The text channel helps with fine details that may be hard to read from the image.
-- So text and vision complement each other, although the benefit depends on the document collection.
-
-**Transition:** Preserving both channels helps, but the conversion into those channels can still fail.
-
-**On screen:** Simplified comparison from thesis Table 3.13: overall accuracy 29.0% text only, 42.6% image only, 49.5% text + layout + image on MMLongBench-Doc. If space allows, show chart/figure rows to explain the visual benefit.
-
-**Source:** Submitted thesis Section 3.6.1.1, pages 35–36; Table 3.13 and Figure 3.5. The percentages are condition-specific benchmark results.
-
-## Slide 32: Result: conversion quality matters
-
-**Speaking cues**
-
-- Even a useful input type can fail if the page is converted badly.
-- For scanned pages, the PDF’s embedded text may be absent or sparse.
-- Parsers also differ in how well they recover text and structure.
-- Adding the page image can compensate for some parser mistakes.
-- Higher image resolution matters most when small visual details are essential.
-
-**Transition:** After representation, the next question is whether the right evidence is selected.
-
-**On screen:** One parser comparison for scanned pages, with and without the page image, from Figure 3.6. Optionally include a small high-versus-low resolution crop from Table 3.14.
-
-**Source:** Submitted thesis Section 3.6.1.2, pages 36–37; Figure 3.6 and Table 3.14.
-
-## Slide 33: Result: missing evidence is costly
-
-**Speaking cues**
-
-- Next, we remove one page that the question needs.
-- Many answers that were correct become wrong immediately.
-- This is especially difficult when the answer depends on several pages.
-- The model usually cannot reconstruct a missing fact from the other pages.
-- So finding all the required evidence is a hard constraint on the pipeline.
-
-**Transition:** But what happens if retrieval brings back a few extra pages as well?
-
-**On screen:** Thesis Figure 3.7, simplified to show correct → incorrect transitions when one gold page is removed. For MMLongBench-Doc, emphasize that 24.7–27.0% of previously correct answers break in the one-page-removal conditions.
-
-**Source:** Submitted thesis Section 3.6.2.1, pages 37–38; Figure 3.7.
-
-## Slide 34: Result: moderate distraction is less damaging
-
-**Speaking cues**
-
-- Now consider the opposite error: retrieval includes a few extra pages.
-- Within the range we tested, accuracy changes much less than when required evidence is missing.
-- There is still some decline, especially for questions needing several pages.
-- But the two errors are not equally damaging.
-- This suggests that retrieval should lean toward coverage when the later context can handle it.
-
-**Transition:** Even with all the right pages present, the model can still struggle to combine them.
-
-**On screen:** A compact visual from Table 3.15 comparing a complete gold set with the same set plus one to five distractor pages. Put “tested range” on the slide to bound the claim.
-
-**Source:** Submitted thesis Section 3.6.2.2, pages 38–39; Table 3.15.
-
-## Slide 35: Result: reasoning across pages remains hard
-
-**Speaking cues**
-
-- Even with all the correct pages supplied, cross-page questions remain difficult.
-- Asking the model to reason step by step helps some of them.
-- The benefit is especially noticeable for structured evidence such as tables.
-- But the same prompt does not help every question or every benchmark.
-- More reasoning is useful when it matches the actual task.
-
-**Transition:** Reasoning also includes a decision about whether the evidence supports an answer.
-
-**On screen:** Thesis Figure 3.9, simplified to show the cross-page gain on MMLongBench-Doc and the lack of the same gain on LongDocURL. Avoid presenting the prompt as a universal improvement.
-
-**Source:** Submitted thesis Section 3.6.3.1, pages 39–41; Figure 3.9 and Table 3.16.
-
-## Slide 36: Result: abstention is not well calibrated
-
-**Speaking cues**
-
-- Finally, the model must decide whether the available evidence supports an answer.
-- An abstention instruction reduces unsupported answers by making the model more cautious.
-- But it also makes the model refuse more questions that are answerable.
-- The prompt changes its willingness to answer.
-- It does not reliably improve its judgement of whether the evidence is sufficient.
-
-**Transition:** These results suggest concrete design choices. I tested them together in a simple adaptive method.
-
-**On screen:** Thesis Figure 3.10. Show both sides of the trade-off: refusal on unanswerable questions rises from 45.5% to 74.6%; refusal on answerable questions rises from 6.2% to 27.7%.
-
-**Source:** Submitted thesis Section 3.6.3.2, pages 41–42; Figure 3.10.
-
-## Slide 37: A simple adaptive method
-
-**Speaking cues**
-
-- The survey and experiments suggest several practical design principles.
-- I put them together in a deliberately simple system.
-- It keeps text and images, gathers evidence broadly, and presents selected pages in full when answering.
-- It also checks whether the answer is supported before stopping.
-- The goal is to validate the principles at the system level.
-
-**Transition:** Here is how the evidence moves through the system.
-
-**On screen:** Three principles mapped to the attribution pipeline: complementary text and vision → broad acquisition with selective presentation → reasoning and evidence check.
-
-**Source:** Submitted thesis Chapter 4 introduction and Section 4.1, pages 49–50.
-
-## Slide 38: Reader, synthesizer, arbiter
-
-**Speaking cues**
-
-- The method uses one underlying model in three roles.
-- The reader works through ranked pages and records useful evidence.
-- The synthesizer gets the most important pages in full, plus short records from other pages, and proposes an answer.
-- The arbiter decides whether to accept it or send the reader back for more.
-- That makes the amount of reading adapt to the question.
-
-**Transition:** Does this simple combination actually work on the benchmark?
-
-**On screen:** Thesis Figure 4.1, simplified: ranked pages → reader → synthesizer → arbiter → answer or continue. Label the full pages and compact records separately.
-
-**Source:** Submitted thesis Section 4.1.1, pages 49–50; Figure 4.1.
-
-## Slide 39: System-level validation and its cost
-
-**Speaking cues**
-
-- On the benchmark, the method reaches 54.5 percent under the official scorer.
-- That is above the gold-page baseline using the same model family.
-- It suggests that useful context can come from beyond the annotated answer pages.
-- The gain is not uniform: cross-page questions are still hard.
-- The system fits on one sixteen-gigabyte GPU, but the repeated reading makes it slow.
-
-**Transition:** What should we take away from the thesis as a whole?
-
-**On screen:** From thesis Table 4.1, show the official-score comparison: gold-page baseline **49.5%**, this method **54.5%**, and the strongest same-backbone published comparison **52.9%**. Add a small cost note from Table 4.2: mean peak memory **8.2 GiB**; median total latency about **9.3 minutes per question**. Do not compare scores from different evaluation protocols as though they were the same metric.
-
-**Source:** Submitted thesis Sections 4.1.2–4.1.3, pages 51–53; Tables 4.1–4.2. The 54.5% result uses the official MMLongBench-Doc protocol.
-
-## Slide 40: Conclusion
-
-**Speaking cues**
-
-- The main message is that long-document understanding depends on managing evidence well.
-- The survey maps the ways systems preserve, find, and use information across pages.
-- The empirical study shows where failures arise: representation, selection, or reasoning.
-- The simple method shows these lessons can guide a working system.
-- The same diagnostic view can help future systems improve. Thank you, and I’m happy to take questions.
-
-**On screen:** One final pipeline: preserve → select → reason. Under it, the three thesis contributions: survey, failure attribution, system-level validation.
-
-**Source:** Submitted thesis Section 4.3, page 56.
+- 21 to 25, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
+- 26, 27, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
+- 28 to 30, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
+- 31, 32, deployment: representation cost, reasoner choice under a memory budget.
+- 33, 34, method: how each finding maps to a design choice, and the inference cost.

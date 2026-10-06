@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Agentic Methods</title>
+<title>Retrieval and Navigation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   :root{
     --paper:#FFFFFF;
     --ink:#14181C;
-    --slate:#5F6A75;
-    --mute:#8C959E;
+    --slate:#14181C;
+    --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
     --wash:#E9EFF5;
@@ -57,16 +57,16 @@
     font-family:var(--mono); font-size:11px; font-weight:400;
     letter-spacing:.05em; color:var(--mute);
   }
-  .corner b{color:var(--navy); font-weight:600;}
+  .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 21 ================= */
-  .s21 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s21 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s21 .lead b{font-weight:600; color:var(--ink);}
   .s21 ul{list-style:none; margin-top:30px;}
   .s21 ul li{
     position:relative; padding-left:26px; margin-bottom:19px;
-    font-size:16.5px; font-weight:300; line-height:1.55; color:var(--slate);
+    font-size:17px; font-weight:400; line-height:1.55; color:var(--slate);
     max-width:1110px;
   }
   .s21 ul li::before{
@@ -75,7 +75,7 @@
   }
   .s21 ul li b{font-weight:600; color:var(--ink);}
   .s21 ul li:last-child{margin-bottom:0;}
-  .s21 .close{margin-top:34px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s21 .close{margin-top:34px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s21 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -91,21 +91,21 @@
 
 <div class="slide s21">
 
-  <h1>Agentic Methods</h1>
+  <h1>Retrieval and Navigation</h1>
 
   <div class="body">
-    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
+    <p class="lead">Retrieval <b>narrows a long document to compact evidence units</b> (chunks, pages, or graph nodes) for downstream reasoning.</p>
 
     <ul>
-      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
-      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
-      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+      <li><b>Similarity-based retrieval.</b> Scores each evidence unit independently against the query and returns the top-ranked subset. Sparse lexical signals such as BM25 are the baseline; dense retrieval uses vision-language late-interaction encoders such as ColPali and ColQwen, often with an LLM reranking stage after.</li>
+      <li><b>Relation-aware retrieval.</b> Retrieves along explicit document structure. Tree-based variants follow section hierarchies and outlines, so chunks keep their parent context; graph-based variants traverse typed edges between headings, entities, and cross-references.</li>
+      <li><b>The trade-off.</b> Independent scoring handles paraphrase and cross-modal queries, but cannot follow cross-page references or multi-hop dependencies. Relation-aware methods can, at the cost of parser dependence and traversal cost.</li>
     </ul>
 
-    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
+    <p class="close">Evidence missed or poorly ranked at retrieval is <b>unrecoverable at generation</b>. What is retrieved still has to be reasoned over.</p>
   </div>
 
-  <div class="corner"><b>21</b> / 40 <span>&middot;</span> Survey</div>
+  <div class="corner">Backup &middot; Survey</div>
 
 </div>
 </body>

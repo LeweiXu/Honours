@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datasets</title>
+<title>Agentic Methods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   :root{
     --paper:#FFFFFF;
     --ink:#14181C;
-    --slate:#5F6A75;
-    --mute:#8C959E;
+    --slate:#14181C;
+    --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
     --wash:#E9EFF5;
@@ -57,25 +57,25 @@
     font-family:var(--mono); font-size:11px; font-weight:400;
     letter-spacing:.05em; color:var(--mute);
   }
-  .corner b{color:var(--navy); font-weight:600;}
+  .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 23 ================= */
-  .s23 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s23 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s23 .lead b{font-weight:600; color:var(--ink);}
-  .s23 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s23 .cards h3{
-    font-family:var(--disp); font-size:20px; font-weight:600;
-    letter-spacing:-.018em; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
+  .s23 ul{list-style:none; margin-top:30px;}
+  .s23 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:17px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s23 .cards p{font-size:14.5px; font-weight:300; line-height:1.55; color:var(--slate);}
-  .s23 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:11px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--navy);
+  .s23 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-
-  .s23 .close{margin-top:40px; font-size:16px; font-weight:300; line-height:1.5; color:var(--slate);}
+  .s23 ul li b{font-weight:600; color:var(--ink);}
+  .s23 ul li:last-child{margin-bottom:0;}
+  .s23 .close{margin-top:34px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s23 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -91,33 +91,21 @@
 
 <div class="slide s23">
 
-  <h1>Datasets</h1>
+  <h1>Agentic Methods</h1>
 
   <div class="body">
-    <p class="lead">Datasets serve three roles, and the multi-page setting makes all three harder: <b>per-page annotation does not scale</b> to documents of tens or hundreds of pages, and long PDFs are harder to source and license than single pages.</p>
+    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
 
-    <div class="cards">
-      <div>
-        <h3>Pretraining</h3>
-        <p>The exception rather than the norm. Confined to a few page-to-document and MLLM-centric systems that do continued pretraining on an existing backbone, because multi-page corpora are still small.</p>
-        <div class="tag">Rare</div>
-      </div>
-      <div>
-        <h3>Fine-tuning</h3>
-        <p>Has converged on LVLM-synthesised supervision over scraped PDFs, with reinforcement learning increasingly layered on top to shape evidence-grounding and trajectory behaviour.</p>
-        <div class="tag">LVLM-synthesised</div>
-      </div>
-      <div>
-        <h3>Benchmarking</h3>
-        <p>Three tiers: single-page extractive baselines, mid-length multi-page suites, and long-document multimodal benchmarks that need cross-page integration. The same small pool of PDFs gets reused.</p>
-        <div class="tag">Contamination risk</div>
-      </div>
-    </div>
+    <ul>
+      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
+      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
+      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+    </ul>
 
-    <p class="close"><b>Answer-only accuracy masks retrieval failure</b> and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation as well, but it is not yet standard.</p>
+    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
   </div>
 
-  <div class="corner"><b>23</b> / 40 <span>&middot;</span> Survey</div>
+  <div class="corner">Backup &middot; Survey</div>
 
 </div>
 </body>

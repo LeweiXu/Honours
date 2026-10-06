@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Document Questions in Consumer Assistants</title>
+<title>Real-World Constraints</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   :root{
     --paper:#FFFFFF;
     --ink:#14181C;
-    --slate:#5F6A75;
-    --mute:#8C959E;
+    --slate:#14181C;
+    --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
     --wash:#E9EFF5;
@@ -57,31 +57,30 @@
     font-family:var(--mono); font-size:11px; font-weight:400;
     letter-spacing:.05em; color:var(--mute);
   }
-  .corner b{color:var(--navy); font-weight:600;}
+  .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 6 ================= */
-  .s6 .lead{font-size:17px; font-weight:300; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s6 .lead{font-size:18px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s6 .lead b{font-weight:600; color:var(--ink);}
-  .s6 .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:38px; margin-top:32px;}
-  .s6 .steps h3{
-    font-family:var(--disp); font-size:19px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:7px;
+  .s6 .cols{display:grid; grid-template-columns:1fr 1fr; gap:58px; margin-top:32px;}
+  .s6 .cols h3{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--ink);
+    padding-bottom:11px; border-bottom:1px solid var(--line); margin-bottom:19px;
   }
-  .s6 .when{
-    font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.15em; text-transform:uppercase; color:var(--navy);
-    margin-bottom:9px;
+  .s6 .cols p{
+    position:relative; padding-left:24px; margin-bottom:16px;
+    font-size:15.5px; font-weight:400; line-height:1.5; color:var(--slate);
   }
-  .s6 .steps p{font-size:14px; font-weight:300; line-height:1.5; color:var(--slate);}
-  /* placeholder frames, to be swapped for real screenshots */
-  .s6 .shot{
-    margin-top:18px; height:196px; background:var(--wash);
-    border:1.5px dashed #A9BDD1; border-radius:2px;
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
-    color:var(--navy); line-height:1.8; padding:0 18px;
+  .s6 .cols p::before{
+    content:""; position:absolute; left:0; top:10px;
+    width:9px; height:2px; background:var(--navy);
   }
+  .s6 .cols p:last-child{margin-bottom:0;}
+  .s6 .cols p b{font-weight:600; color:var(--ink);}
+  .s6 .close{margin-top:32px; font-size:17px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s6 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -96,34 +95,30 @@
 
 <div class="slide s6">
 
-  <h1>Document Questions in Consumer Assistants</h1>
+  <h1>Real-World Constraints</h1>
 
   <div class="body">
-    <p class="lead">Everyone here has used these. What changed is not the question being asked, but <b>how much of the document the model has to hold at once</b>.</p>
+    <p class="lead">A hospital, a mining company, or a law firm wants the same thing: <b>classification, summarisation, or structured extraction over tens of thousands of documents</b>. The consumer path is often not available to them.</p>
 
-    <div class="steps">
+    <div class="cols">
       <div>
-        <div class="when">A year or two ago</div>
-        <h3>The whole document, in context</h3>
-        <p>Parsed text plus an image of every page, all placed in the model's context window. Fine for short documents, and it hits the ceiling fast.</p>
-        <div class="shot">SCREENSHOT<br>&ldquo;cannot upload document,<br>out of context&rdquo; error</div>
+        <h3>Why not just call an API</h3>
+        <p><b>The documents cannot leave.</b> Medical records, legal and financial filings, and resources data carry privacy and data-residency requirements that rule out a third party.</p>
+        <p><b>The volume makes it uneconomic.</b> At tens of thousands of documents, per-call pricing stops being worth the benefit even where sending the data is permitted.</p>
+        <p><b>The document type is unusual.</b> A niche form or report may need its own training or fine-tuning rather than whatever a general model already knows.</p>
       </div>
       <div>
-        <div class="when">More recently</div>
-        <h3>On disk, read by tool calls</h3>
-        <p>The upload lands in the model's working environment. It reads what it needs, when it needs it, rather than ingesting everything up front.</p>
-        <div class="shot">SCREENSHOT<br>assistant reading an uploaded<br>file through a tool call</div>
-      </div>
-      <div>
-        <div class="when">And now</div>
-        <h3>Projects, searched by retrieval</h3>
-        <p>Upload many documents at once. Beyond what fits in context, the content is indexed and retrieved against the question instead.</p>
-        <div class="shot">SCREENSHOT<br>a project with several<br>uploaded documents</div>
+        <h3>What that forces</h3>
+        <p><b>Open-weight models, run locally.</b> A pretrained vision-language model on consumer hardware, not a datacentre.</p>
+        <p><b>A fixed compute budget.</b> Which pages are read, at what resolution, and how many times, all have to fit inside it.</p>
+        <p><b>Efficiency as a research problem.</b> Cost and latency are open questions in their own right, not implementation details.</p>
       </div>
     </div>
+
+    <p class="close">This is where the research sits: <b>techniques and architectures for document understanding under a fixed compute budget</b>. The same techniques then flow back into the consumer products, which is why those have moved so quickly.</p>
   </div>
 
-  <div class="corner"><b>06</b> / 40 <span>&middot;</span> Background</div>
+  <div class="corner"><b>06</b> / 18 <span>&middot;</span> Background</div>
 
 </div>
 </body>

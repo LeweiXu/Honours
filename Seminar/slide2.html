@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Roadmap</title>
+<title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   :root{
     --paper:#FFFFFF;
     --ink:#14181C;
-    --slate:#5F6A75;
-    --mute:#8C959E;
+    --slate:#14181C;
+    --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
     --wash:#E9EFF5;
@@ -57,27 +57,25 @@
     font-family:var(--mono); font-size:11px; font-weight:400;
     letter-spacing:.05em; color:var(--mute);
   }
-  .corner b{color:var(--navy); font-weight:600;}
+  .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
   /* ================= SLIDE 2 ================= */
-  .s2 ol{list-style:none; margin-top:6px;}
-  .s2 ol > li{display:flex; gap:26px; align-items:baseline; margin-bottom:46px;}
+  .s2 .lab{font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s2 .sub{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.015em; line-height:1.25;}
+  .s2 ul{list-style:none;}
+  .s2 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:19.5px; line-height:1.45;}
+  .s2 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
+  .s2 ul li:last-child{margin-bottom:0;}
+  .s2 b{font-weight:600;}
+  .s2 img{display:block;}
+  .s2 ol{list-style:none; margin-top:2px;}
+  .s2 ol > li{display:flex; gap:26px; align-items:baseline; margin-bottom:38px;}
   .s2 ol > li:last-child{margin-bottom:0;}
-  .s2 ol > li > b{
-    font-family:var(--mono); font-size:14px; font-weight:500; color:var(--navy);
-    flex:none; width:24px;
-  }
-  .s2 h2{
-    font-family:var(--disp); font-size:25px; font-weight:600;
-    letter-spacing:-.018em; line-height:1.2;
-  }
-  .s2 .paper{margin-top:11px; font-size:16px; font-weight:300; line-height:1.45; color:var(--slate);}
-  .s2 .paper em{font-style:italic;}
-  .s2 .venue{
-    margin-top:9px; font-family:var(--mono); font-size:12.5px;
-    letter-spacing:.03em; color:var(--navy);
-  }
+  .s2 ol > li > i{font-family:var(--mono); font-style:normal; font-size:15px; font-weight:500; flex:none; width:24px;}
+  .s2 h2{font-family:var(--disp); font-size:26px; font-weight:600; letter-spacing:-.018em; line-height:1.25;}
+  .s2 .who{margin-top:9px; font-size:18.5px; line-height:1.4;}
+  .s2 .venue{margin-top:7px; font-family:var(--mono); font-size:14px; letter-spacing:.03em;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -96,33 +94,22 @@
 
   <div class="body">
     <ol>
-      <li>
-        <b>01</b>
-        <div>
-          <h2>Background</h2>
-          <div class="paper">Multi-page, visually rich document understanding: what the documents are, what the task is, and how the field got here.</div>
-        </div>
-      </li>
-      <li>
-        <b>02</b>
-        <div>
-          <h2>Survey</h2>
-          <div class="paper"><em>Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding</em></div>
-          <div class="venue">EMNLP 2026, main conference</div>
-        </div>
-      </li>
-      <li>
-        <b>03</b>
-        <div>
-          <h2>Empirical attribution study</h2>
-          <div class="paper"><em>Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution</em></div>
-          <div class="venue">Submitted to EACL, under review</div>
-        </div>
-      </li>
+      <li><i>01</i><div><h2>Background</h2></div></li>
+      <li><i>02</i><div>
+        <h2>Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding</h2>
+        <div class="who">Lewei Xu, Yihao Ding, Zihan Xu, Siwen Luo, Daochang Liu, Wei Liu</div>
+        <div class="venue">EMNLP 2026, main conference</div>
+      </div></li>
+      <li><i>03</i><div>
+        <h2>Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution</h2>
+        <div class="who">Lewei Xu, Yihao Ding, Zihan Xu, Daniel Yitian Su, Daochang Liu, Siwen Luo, Yifan Peng, Wei Liu</div>
+        <div class="venue">Submitted to EACL, under review</div>
+      </div></li>
+      <li><i>04</i><div><h2>Proof of concept: a simple method for document understanding</h2></div></li>
     </ol>
   </div>
 
-  <div class="corner"><b>02</b> / 40 <span>&middot;</span> Overview</div>
+  <div class="corner"><b>02</b> / 18 <span>&middot;</span> Overview</div>
 
 </div>
 </body>
