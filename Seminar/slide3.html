@@ -20,6 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
+    --red:#B42318;
     --wash:#E9EFF5;
     --disp:'Instrument Sans',sans-serif;
     --body:'Inter',sans-serif;
@@ -59,6 +60,15 @@
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
+
+  /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
+  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .pic{position:relative; flex:none;}
+  .pic img{width:100%; height:100%; display:block;}
+  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .corner i{font-style:normal; margin-right:14px; opacity:.32;}
+  .corner i.on{opacity:1; font-weight:600;}
+  .corner i:last-of-type{margin-right:26px;}
 
   /* ================= SLIDE 3 ================= */
   .s3 .lead{font-size:18.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
@@ -109,7 +119,7 @@
     </div>
   </div>
 
-  <div class="corner"><b>03</b> / 18 <span>&middot;</span> Background</div>
+  <div class="corner"><i class=on>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>03</b> / 24</div>
 
 </div>
 </body>

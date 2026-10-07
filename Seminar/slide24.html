@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Training Strategies</title>
+<title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
+    --red:#B42318;
     --wash:#E9EFF5;
     --disp:'Instrument Sans',sans-serif;
     --body:'Inter',sans-serif;
@@ -60,24 +61,35 @@
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
-  /* ================= SLIDE 24 ================= */
-  .s24 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s24 .lead b{font-weight:600; color:var(--ink);}
-  .s24 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s24 .cards h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
-  }
-  .s24 .cards p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s24 .cards p b{font-weight:600; color:var(--ink);}
-  .s24 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:11px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
-  }
+  /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
+  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .pic{position:relative; flex:none;}
+  .pic img{width:100%; height:100%; display:block;}
+  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .corner i{font-style:normal; margin-right:14px; opacity:.32;}
+  .corner i.on{opacity:1; font-weight:600;}
+  .corner i:last-of-type{margin-right:26px;}
 
-  .s24 .close{margin-top:40px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s24 .close b{font-weight:600; color:var(--ink);}
+  /* ================= SLIDE 24 ================= */
+  .s24 .lab{font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s24 .sub{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.015em; line-height:1.25;}
+  .s24 ul{list-style:none;}
+  .s24 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:19.5px; line-height:1.45;}
+  .s24 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
+  .s24 ul li:last-child{margin-bottom:0;}
+  .s24 b{font-weight:600;}
+  .s24 img{display:block;}
+  .s24 .lead{font-size:20px; line-height:1.45; max-width:1120px;}
+  .s24 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:36px;}
+  .s24 .card{border-top:3px solid var(--navy); padding-top:16px;}
+  .s24 .card .no{font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
+  .s24 .card h3{font-family:var(--disp); font-size:24px; font-weight:600; letter-spacing:-.018em; line-height:1.2; margin:8px 0 12px;}
+  .s24 .card p{font-size:18.5px; line-height:1.45;}
+  .s24 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:12px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
+  .s24 .card p{font-size:18px;}
+  .s24 .end{margin-top:44px; padding-top:28px; border-top:1px solid var(--line); display:flex; align-items:baseline; gap:28px;}
+  .s24 .end b{font-family:var(--disp); font-size:44px; font-weight:600; letter-spacing:-.025em;}
+  .s24 .end span{font-size:22px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -92,33 +104,18 @@
 
 <div class="slide s24">
 
-  <h1>Training Strategies</h1>
+  <h1>Conclusion</h1>
 
   <div class="body">
-    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
-
     <div class="cards">
-      <div>
-        <h3>Trained retrieval</h3>
-        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
-        <div class="tag">Retriever</div>
-      </div>
-      <div>
-        <h3>Trained reasoning</h3>
-        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
-        <div class="tag">Reasoner</div>
-      </div>
-      <div>
-        <h3>Trained agentic methods</h3>
-        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
-        <div class="tag">Controller</div>
-      </div>
+      <div class="card"><div class="no">Survey</div><h3>Organise</h3><p>Multi-page document understanding is a problem of <b class="hi">evidence management</b>.</p></div>
+      <div class="card"><div class="no">Empirical study</div><h3>Locate</h3><p>Failures sit at <b class="hi">representation, selection, or reasoning</b>, and each needs a different fix.</p></div>
+      <div class="card"><div class="no">Proof of concept</div><h3>Validate</h3><p>The findings hold up in a <b class="hi">working, training-free system</b>.</p></div>
     </div>
-
-    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
+    <div class="end"><b>Thank you</b><span>Questions?</span></div>
   </div>
 
-  <div class="corner">Backup &middot; Survey</div>
+  <div class="corner"><i>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>24</b> / 24</div>
 
 </div>
 </body>

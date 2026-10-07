@@ -20,6 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
+    --red:#B42318;
     --wash:#E9EFF5;
     --disp:'Instrument Sans',sans-serif;
     --body:'Inter',sans-serif;
@@ -60,6 +61,15 @@
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
+  /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
+  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .pic{position:relative; flex:none;}
+  .pic img{width:100%; height:100%; display:block;}
+  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .corner i{font-style:normal; margin-right:14px; opacity:.32;}
+  .corner i.on{opacity:1; font-weight:600;}
+  .corner i:last-of-type{margin-right:26px;}
+
   /* ================= SLIDE 2 ================= */
   .s2 .lab{font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
   .s2 .sub{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.015em; line-height:1.25;}
@@ -69,13 +79,14 @@
   .s2 ul li:last-child{margin-bottom:0;}
   .s2 b{font-weight:600;}
   .s2 img{display:block;}
+  .s2 .lead{font-size:20px; line-height:1.45; max-width:1120px;}
   .s2 ol{list-style:none; margin-top:2px;}
-  .s2 ol > li{display:flex; gap:26px; align-items:baseline; margin-bottom:38px;}
+  .s2 ol > li{display:flex; gap:26px; align-items:baseline; margin-bottom:36px;}
   .s2 ol > li:last-child{margin-bottom:0;}
   .s2 ol > li > i{font-family:var(--mono); font-style:normal; font-size:15px; font-weight:500; flex:none; width:24px;}
   .s2 h2{font-family:var(--disp); font-size:26px; font-weight:600; letter-spacing:-.018em; line-height:1.25;}
   .s2 .who{margin-top:9px; font-size:18.5px; line-height:1.4;}
-  .s2 .venue{margin-top:7px; font-family:var(--mono); font-size:14px; letter-spacing:.03em;}
+  .s2 .venue{margin-top:9px; display:inline-block; font-family:var(--mono); font-size:12.5px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -94,7 +105,7 @@
 
   <div class="body">
     <ol>
-      <li><i>01</i><div><h2>Background</h2></div></li>
+      <li><i>01</i><div><h2>Background and motivation</h2></div></li>
       <li><i>02</i><div>
         <h2>Managing Evidence at Document Scale: A Survey of Multi-Page Visually Rich Document Understanding</h2>
         <div class="who">Lewei Xu, Yihao Ding, Zihan Xu, Siwen Luo, Daochang Liu, Wei Liu</div>
@@ -109,7 +120,7 @@
     </ol>
   </div>
 
-  <div class="corner"><b>02</b> / 18 <span>&middot;</span> Overview</div>
+  <div class="corner"><i class=on>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>02</b> / 24</div>
 
 </div>
 </body>

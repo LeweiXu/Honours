@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Multi-Page Visually Rich Document Understanding</title>
+<title>A Simple Adaptive Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -70,31 +70,31 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
-  /* ================= SLIDE 1: title ================= */
-  .s1{justify-content:center;}
-
-  .s1 .eyebrow{
+  /* ================= SLIDE 37 ================= */
+  .s37 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s37 .lead b{font-weight:600; color:var(--ink);}
+  .s37 .maps{margin-top:36px;}
+  .s37 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
+  .s37 .map:last-child{margin-bottom:0;}
+  .s37 .from{
     font-family:var(--mono); font-size:11px; font-weight:500;
-    letter-spacing:.2em; text-transform:uppercase; color:var(--ink);
-    margin-bottom:22px;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--ink);
+    text-align:right;
   }
-  .s1 .ttl{
-    font-family:var(--disp); font-weight:600; font-size:54px;
-    letter-spacing:-.028em; line-height:1.06;
+  .s37 .ar{position:relative; height:30px;}
+  .s37 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
+  .s37 .ar::after{
+    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
+    border-left:8px solid var(--navy);
   }
-  .s1 .sub{
-    margin-top:20px; font-size:20px; font-weight:400; line-height:1.45;
-    color:var(--slate);
+  .s37 .to h3{
+    font-family:var(--disp); font-size:20px; font-weight:600;
+    letter-spacing:-.015em; margin-bottom:5px;
   }
-  .s1 .cut{width:96px; height:2px; background:var(--navy); margin:38px 0 28px;}
-  .s1 .who{
-    font-family:var(--disp); font-size:21px; font-weight:500; letter-spacing:-.01em;
-  }
-  .s1 .sup{
-    margin-top:10px; font-family:var(--mono); font-size:12px;
-    letter-spacing:.04em; color:var(--slate);
-  }
-  .s1 .sup em{font-style:normal; color:var(--ink); padding:0 7px;}
+  .s37 .to p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s37 .close{margin-top:38px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s37 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -107,16 +107,44 @@
 </head>
 <body>
 
-<div class="slide s1">
+<div class="slide s37">
 
-  <div class="eyebrow">Final Seminar &middot; October 2026</div>
-  <div class="ttl">Multi-Page Visually Rich<br>Document Understanding</div>
-  <div class="sub">A survey of system design and an empirical attribution of failure</div>
+  <h1>From Findings to Design</h1>
 
-  <div class="cut"></div>
+  <div class="body">
+    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
 
-  <div class="who">Lewei Xu</div>
-  <div class="sup">Supervised by Dr. Yihao Ding <em>&middot;</em> Dr. Daochang Liu</div>
+    <div class="maps">
+      <div class="map">
+        <div class="from">Representation</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Keep text and images together</h3>
+          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Selection</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Gather broadly, present selectively</h3>
+          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order, but carry most of it forward as compact records rather than as full pages.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Reasoning</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Check whether the answer is supported</h3>
+          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
+  </div>
+
+  <div class="corner">Backup &middot; Method</div>
 
 </div>
 </body>

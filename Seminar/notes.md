@@ -1,11 +1,5 @@
 # Honours thesis seminar notes
 
-## Seminar brief
-
-- **Duration:** 15 minutes, plus 5 minutes of questions.
-- **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
-- **Thesis:** *Multi-Page Visually Rich Document Understanding: A Survey of System Design and an Empirical Attribution of Failure*, Lewei Xu. Source version: `Honours___Lewei_Xu-1.pdf`, the complete draft submitted for assessment.
-
 ## Slide 1: Title Slide
 
 **Speaking cues**
@@ -51,27 +45,15 @@
 
 **Speaking cues**
 
-- Document understanding is a large field, such as research on upstream components like OCR models.
-- But one broad way of defining document understanding is getting model or system to answer a natural language question over a document accurately.
-- These models or systems can range from very simple ones like rule based lookup for information extraction or (as we'll see later) training vision language models, or leveraging pretrained general domain vision language models.
-- Take these examples. The first is a simple fact lookup, and where to look may even be 
-- The second asks us to read a table, including its layout. By the third, we have to compare values from two different tables and calculate the change.
-- The last two go further. They ask us to connect claims with evidence across pages, and sometimes qualify the answer.
-- We can ask all kinds of questions in natural language. The difficulty depends on what we need to find and put together.
+- Document understanding is a large field, but one broad way of defining it is getting a system to answer a natural language question over a document accurately.
+- Here is a real example from the benchmark I use later: a 17-page course syllabus, and the question is how many quizzes there are in the whole course.
+- The answer is six, but the table that lists them runs over two pages: four quizzes on one page, two on the next.
+- So the system has to find those two pages, read a table that crosses the page break, and combine the two halves.
+- I'll come back to this example later.
 
-**Transition:** Next, a brief history on document understanding.
+**Transition:** You have all seen systems that do this.
 
-**On screen:** Show five concrete example questions in increasing difficulty. These are illustrative until matched to specific pages from slide three; choose or adapt pages that contain the evidence before using them in the final deck.
-
-1. What year was this report published?
-2. According to the table, which region had the highest revenue in 2023?
-3. How much did the leading region's revenue grow between the 2022 and 2023 results tables?
-4. Does the growth described in the executive summary agree with the figures in the results table?
-5. Across the report and its appendix, what evidence supports the conclusion that the new method improved performance, and what limitation qualifies that conclusion?
-
-For the final slides, confirm that each question is answerable from the chosen document pages. The last two should visibly point to evidence on different pages.
-
-**Source:** Thesis Chapter 1, Introduction, page 1, for the question-answering framing. The five questions above are illustrative seminar examples, not quoted benchmark questions.
+**On screen:** The two syllabus pages with the quiz lines boxed, the question, the answer, and three short steps: find, read, combine.
 
 ## Slide 5: LLM assistants
 
@@ -104,17 +86,41 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Source:** Thesis Section 3.1, page 23. The examples motivate the research rather than report experimental findings.
 
-## Slide 7: Survey of MP-VRDU
+## Slide 7: Research gaps
 
 **Speaking cues**
 
-- This is the survey, accepted to EMNLP 2026.
-- I'll only cover the architecture overview, and mention the inference-time and training strategies in passing.
-- I'm skipping the multimodal representation section, the datasets, and the open challenges.
+- Three gaps, one for each part of the thesis.
+- First, multi-page systems were built along parallel lines with different terminology, and no survey treated multi-page as its own problem.
+- Second, papers disagree about what matters: vision only or text plus vision, retrieve more or retrieve less. Each claim comes from a different pipeline and dataset, so they cannot be compared.
+- Third, design advice is rarely tested together in one working system.
 
-**On screen:** Top half of the survey first page, with its section list on the right. Bold sections are the ones covered.
+**On screen:** Three cards, one per gap, each with a small diagram.
 
-## Slide 8: Multi-page architectural overview
+## Slide 8: Contributions
+
+**Speaking cues**
+
+- The thesis is a compilation in three parts, and each part answers one of those gaps.
+- The survey gives a taxonomy organised around evidence management. It is accepted at EMNLP 2026.
+- The empirical study gives a framework of three failure loci and tests each one under controlled conditions. It is under review at EACL.
+- The proof of concept puts the findings into one training-free method, which reaches 56.5% on MMLongBench-Doc.
+
+**Transition:** Starting with the survey.
+
+**On screen:** Three numbered cards: survey, empirical attribution, proof of concept.
+
+## Slide 9: Part 1: Survey of MP-VRDU
+
+**Speaking cues**
+
+- This is the survey. The gap was that the field had no shared view of itself.
+- It defines multi-page understanding as a problem of evidence management, gives a taxonomy, and consolidates the datasets and open challenges.
+- I'll only show the architecture overview and mention the strategies in passing.
+
+**On screen:** The paper first page, the gap, and three contributions.
+
+## Slide 10: Multi-page architectural overview
 
 **Speaking cues**
 
@@ -155,7 +161,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **Source:** Thesis Sections 2.1–2.3, pages 7–11; Figure 2.1.
 
-## Slide 9: Inference-time and training strategies
+## Slide 11: Inference-time and training strategies
 
 **Speaking cues**
 
@@ -166,17 +172,30 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Three columns: retrieval and navigation, reasoning strategies, agentic methods. Each lists the training-free and the trained variants.
 
-## Slide 10: Empirical attribution study
+## Slide 12: Part 2: Empirical attribution study
 
 **Speaking cues**
 
-- This is the second paper, under review at EACL.
-- When a system answers wrongly, different papers blame different things. We wanted to test that under controlled conditions.
-- I'll cover the framework and the six findings, and skip the related work, discussion and deployment sections.
+- The second paper. The gap here is the competing claims that cannot be compared.
+- The contribution is a framework of three failure loci, controlled interventions in one pipeline, and a check that the findings transfer.
 
-**On screen:** Top half of the paper first page, with its section list on the right. Bold sections are the ones covered.
+**On screen:** The paper first page, the gap, and three contributions.
 
-## Slide 11: Attribution framework
+## Slide 13: One wrong answer, three possible causes
+
+**Speaking cues**
+
+- Back to the quizzes question. Say the system answers four instead of six.
+- Maybe page 16 was converted badly and the quiz lines were lost. That is a representation failure.
+- Maybe page 16 was never retrieved. That is a selection failure.
+- Or maybe both pages arrived fine and the model still miscounted. That is a reasoning failure.
+- The final accuracy number looks the same in all three cases, but the fix is different each time.
+
+**Transition:** That is the framework.
+
+**On screen:** The two pages and the question on the left. Three rows on the right: representation, selection, reasoning. The wrong answer of four is a hypothetical, the question is real.
+
+## Slide 14: Attribution framework
 
 **Speaking cues**
 
@@ -185,7 +204,18 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** The framework figure, with one diagnostic question under each locus.
 
-## Slide 12: Modality ceiling
+## Slide 15: Attribution by construction
+
+**Speaking cues**
+
+- To separate the three, we use one simple pipeline: encode the pages, retrieve some, and answer in one pass.
+- Each experiment changes one stage and holds the other two fixed.
+- We can also hand the model the annotated gold pages directly, which takes retrieval out of the picture.
+- Each result slide has a small strip at the top right showing which stage is being changed.
+
+**On screen:** Encode, retrieve, answer as three boxes, with two bullets on gold pages and the dataset.
+
+## Slide 16: Modality ceiling
 
 **Speaking cues**
 
@@ -194,7 +224,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Table of abstention and accuracy by evidence source and representation.
 
-## Slide 13: Conversion fidelity
+## Slide 17: Conversion fidelity
 
 **Speaking cues**
 
@@ -203,7 +233,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Figure: accuracy by parser and scan status, and by image resolution.
 
-## Slide 14: Evidence coverage
+## Slide 18: Evidence coverage
 
 **Speaking cues**
 
@@ -212,7 +242,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Figure: paired verdict transitions after removing or keeping gold pages.
 
-## Slide 15: Distractor exposure
+## Slide 19: Distractor exposure
 
 **Speaking cues**
 
@@ -221,7 +251,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Figure: accuracy and step flips as non-gold pages are added.
 
-## Slide 16: Evidence integration
+## Slide 20: Evidence integration
 
 **Speaking cues**
 
@@ -230,7 +260,7 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Figure: single-hop and multi-hop accuracy across Qwen3-VL sizes.
 
-## Slide 17: Response calibration
+## Slide 21: Response calibration
 
 **Speaking cues**
 
@@ -239,24 +269,17 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** Figure: answerable accuracy and the two refusal rates across four prompt modes.
 
-## Slide 18: Conclusion
+## Slide 22: Part 3: From findings to a simple method
 
 **Speaking cues**
 
-- Thank you. Happy to take questions.
+- The last part is a proof of concept: put the findings into one small system and see if they hold up.
+- It is one model in three roles. The reader goes through pages in ranked order and records evidence. The synthesizer answers. The arbiter accepts, or sends the reader back.
+- Each design choice comes from a finding: read text and image together, read broadly but pass on compact records, and have a separate step decide whether the evidence is enough.
 
-**On screen:** Thank you, and nothing else.
+**On screen:** The reader, synthesizer, arbiter loop, with one design choice under each of representation, selection and reasoning.
 
-## Slide 19: Simple method architecture
-
-**Speaking cues**
-
-- A proof of concept that applies the findings in one small system, with one model in three roles.
-- The reader goes through pages in ranked order and records evidence. The synthesizer answers. The arbiter either accepts or sends the reader back for more.
-
-**On screen:** The reader, synthesizer, arbiter loop, with one line under each role.
-
-## Slide 20: Simple method results
+## Slide 23: Simple method results
 
 **Speaking cues**
 
@@ -265,12 +288,21 @@ For the final slides, confirm that each question is answerable from the chosen d
 
 **On screen:** The results table under each benchmark's official protocol.
 
-## Backup slides (21 onwards, no slide numbers)
+## Slide 24: Conclusion
+
+**Speaking cues**
+
+- To sum up: the survey organises the field around evidence management, the empirical study locates where failures come from, and the proof of concept shows the findings hold in a working system.
+- Thank you. Happy to take questions.
+
+**On screen:** Three cards restating the contributions, then thank you.
+
+## Backup slides (25 onwards, no slide numbers)
 
 For questions only.
 
-- 21 to 25, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
-- 26, 27, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
-- 28 to 30, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
-- 31, 32, deployment: representation cost, reasoner choice under a memory budget.
-- 33, 34, method: how each finding maps to a design choice, and the inference cost.
+- 25 to 29, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
+- 30, 31, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
+- 32 to 34, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
+- 35, 36, deployment: representation cost, reasoner choice under a memory budget.
+- 37, 38, method: how each finding maps to a design choice, and the inference cost.

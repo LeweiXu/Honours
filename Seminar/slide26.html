@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>How We Isolate a Failure</title>
+<title>Reasoning Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
+    --red:#B42318;
     --wash:#E9EFF5;
     --disp:'Instrument Sans',sans-serif;
     --body:'Inter',sans-serif;
@@ -60,35 +61,32 @@
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
 
+  /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
+  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .pic{position:relative; flex:none;}
+  .pic img{width:100%; height:100%; display:block;}
+  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .corner i{font-style:normal; margin-right:14px; opacity:.32;}
+  .corner i.on{opacity:1; font-weight:600;}
+  .corner i:last-of-type{margin-right:26px;}
+
   /* ================= SLIDE 26 ================= */
   .s26 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s26 .lead b{font-weight:600; color:var(--ink);}
-  .s26 .pipe{display:flex; align-items:stretch; gap:20px; margin-top:34px;}
-  .s26 .st{flex:1; border-top:2px solid var(--navy); padding-top:15px;}
-  .s26 .st h3{
-    font-family:var(--disp); font-size:20px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:8px;
-  }
-  .s26 .st p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s26 .st .cfg{
-    margin-top:12px; font-family:var(--mono); font-size:11.5px;
-    letter-spacing:.03em; color:var(--ink); line-height:1.7;
-  }
-  .s26 .ar{flex:none; width:40px; height:40px; position:relative; align-self:center;}
-  .s26 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
-  .s26 .ar::after{
-    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
-    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
-    border-left:8px solid var(--navy);
-  }
-  .s26 ul{list-style:none; margin-top:36px;}
+  .s26 ul{list-style:none; margin-top:30px;}
   .s26 ul li{
-    position:relative; padding-left:26px; margin-bottom:15px;
-    font-size:16px; font-weight:400; line-height:1.5; color:var(--slate);
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:17px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s26 ul li::before{content:""; position:absolute; left:0; top:10px; width:10px; height:2px; background:var(--navy);}
+  .s26 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
+  }
   .s26 ul li b{font-weight:600; color:var(--ink);}
   .s26 ul li:last-child{margin-bottom:0;}
+  .s26 .close{margin-top:34px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s26 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -103,39 +101,21 @@
 
 <div class="slide s26">
 
-  <h1>Experimental Setup</h1>
+  <h1>Reasoning Strategies</h1>
 
   <div class="body">
-    <p class="lead">One simple pipeline throughout, with <b>one condition changed at a time</b> and everything else held fixed.</p>
-
-    <div class="pipe">
-      <div class="st">
-        <h3>Encode</h3>
-        <p>Every page becomes text, an image, or both. Done once per document and cached, so no question changes what a page contains.</p>
-        <div class="cfg">PaddleOCR-VL &middot; 200 DPI</div>
-      </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Retrieve</h3>
-        <p>A retriever scores every encoded page against the question and returns the top <i>k</i>, restored to document order.</p>
-        <div class="cfg">ColQwen3 &middot; page-level</div>
-      </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Answer</h3>
-        <p>A multimodal model receives those pages and the question, and answers in a single pass. Nothing is fed back.</p>
-        <div class="cfg">Qwen3-VL-8B &middot; greedy</div>
-      </div>
-    </div>
+    <p class="lead">Reasoning strategies act over a <b>single evidence buffer assembled before the reasoning call</b>: the full document representation, a retrieved subset, or evidence from an agentic step. None updates model parameters.</p>
 
     <ul>
-      <li><b>The stages act once, and in order.</b> That is what lets a failure be attributed rather than guessed at.</li>
-      <li><b>Gold pages bypass retrieval.</b> For most tests the annotated evidence pages are supplied directly, so selection is neutralised and whatever remains is representation or reasoning.</li>
-      <li><b>Answers are scored by an LLM judge</b>, Gemini-2.5-Flash at temperature zero. It agrees with GPT-4o on 96.0% and with a human annotator on 98.3% of validation subsets.</li>
+      <li><b>Sequential reasoning: Chain-of-Thought.</b> Extends a single reasoning thread. CoT binds evidence from different pages into one chain and decomposes multi-hop questions into single-hop steps.</li>
+      <li><b>Sequential reasoning: Self-Reflection.</b> The model evaluates its own draft answer and revises it across rounds, optionally against a verifier or critic.</li>
+      <li><b>Parallel exploration.</b> Several reasoning paths over the same buffer. Self-Consistency samples multiple chains and takes the majority answer; sampling-adjudication replaces the vote with an LLM judge. Cost scales with the number of samples. Tree-of-Thoughts has seen little uptake.</li>
     </ul>
+
+    <p class="close">A chain can only reason over the evidence already assembled. It <b>cannot recover what retrieval missed</b>.</p>
   </div>
 
-  <div class="corner">Backup &middot; Empirical study</div>
+  <div class="corner">Backup &middot; Survey</div>
 
 </div>
 </body>
