@@ -82,12 +82,11 @@
 ## Slide 10: Surveyed systems at a glance
 
 - This is the main table of the survey. Every system we cover is here, grouped by family.
-- I have framed five things worth noticing.
-- One, the backbone. In the adaptive-trajectory family it is a general-purpose multimodal language model, typically used as it is, with no extra training or fine-tuning.
+- I have framed three things worth noticing.
+- One, the names. We call the first two families models, because they are trained end to end, using components built specifically for that architecture.
+- We call the last two families pipelines, because their components are often interchangeable, especially the backbone. You can see that in the backbone column, where many of them are tested with several different models.
 - Two, the modalities. The encoding models combine text, vision and layout. The models in the second family mostly use vision only.
-- Three, search. It only appears once retrieval is separated from answering. Retrieval-augmented pipelines add a single retrieval step.
-- Four, in the adaptive-trajectory family search becomes richer: iterative retrieval, query reformulation and navigation.
-- Five, reasoning techniques such as reason-and-act loops and multiple agents are concentrated in that last family.
+- Three, search. It only appears once retrieval is separated from answering, so only in the two pipeline families.
 - Now one representative system from each family.
 
 ## Slide 11: Page-to-document encoding, Hi-VT5
