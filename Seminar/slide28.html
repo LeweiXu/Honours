@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Training Strategies</title>
+<title>Reasoning Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,23 +70,27 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
-  /* ================= SLIDE 28 ================= */
-  .s28 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s28 .lead b{font-weight:600; color:var(--ink);}
-  .s28 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s28 .cards h3{
-    font-family:var(--disp); font-size:21px; font-weight:600;
-    letter-spacing:-.018em; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
-  }
-  .s28 .cards p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s28 .cards p b{font-weight:600; color:var(--ink);}
-  .s28 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:11px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
-  }
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
 
-  .s28 .close{margin-top:40px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
+  /* ================= SLIDE 28 ================= */
+  .s28 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s28 .lead b{font-weight:600; color:var(--ink);}
+  .s28 ul{list-style:none; margin-top:30px;}
+  .s28 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
+  }
+  .s28 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
+  }
+  .s28 ul li b{font-weight:600; color:var(--ink);}
+  .s28 ul li:last-child{margin-bottom:0;}
+  .s28 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s28 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -102,30 +106,18 @@
 
 <div class="slide s28">
 
-  <h1>Training Strategies</h1>
+  <h1>Reasoning Strategies</h1>
 
   <div class="body">
-    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
+    <p class="lead">Reasoning strategies act over a <b>single evidence buffer assembled before the reasoning call</b>: the full document representation, a retrieved subset, or evidence from an agentic step. None updates model parameters.</p>
 
-    <div class="cards">
-      <div>
-        <h3>Trained retrieval</h3>
-        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
-        <div class="tag">Retriever</div>
-      </div>
-      <div>
-        <h3>Trained reasoning</h3>
-        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
-        <div class="tag">Reasoner</div>
-      </div>
-      <div>
-        <h3>Trained agentic methods</h3>
-        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
-        <div class="tag">Controller</div>
-      </div>
-    </div>
+    <ul>
+      <li><b>Sequential reasoning: Chain-of-Thought.</b> Extends a single reasoning thread. CoT binds evidence from different pages into one chain and decomposes multi-hop questions into single-hop steps.</li>
+      <li><b>Sequential reasoning: Self-Reflection.</b> The model evaluates its own draft answer and revises it across rounds, optionally against a verifier or critic.</li>
+      <li><b>Parallel exploration.</b> Several reasoning paths over the same buffer. Self-Consistency samples multiple chains and takes the majority answer; sampling-adjudication replaces the vote with an LLM judge. Cost scales with the number of samples. Tree-of-Thoughts has seen little uptake.</li>
+    </ul>
 
-    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
+    <p class="close">A chain can only reason over the evidence already assembled. It <b>cannot recover what retrieval missed</b>.</p>
   </div>
 
   <div class="corner">Backup &middot; Survey</div>

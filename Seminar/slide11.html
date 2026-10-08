@@ -5,7 +5,7 @@
 <title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,19 +70,24 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
+
   /* ================= SLIDE 11 ================= */
-  .s11 .lab{font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s11 .sub{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.015em; line-height:1.25;}
+  .s11 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s11 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
   .s11 ul{list-style:none;}
-  .s11 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:19.5px; line-height:1.45;}
+  .s11 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
   .s11 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
   .s11 ul li:last-child{margin-bottom:0;}
   .s11 b{font-weight:600;}
   .s11 img{display:block;}
-  .s11 .lead{font-size:20px; line-height:1.45; max-width:1100px;}
+  .s11 .lead{font-size:22px; line-height:1.45; max-width:1100px;}
   .s11 .cols{display:grid; grid-template-columns:repeat(3,1fr); gap:48px; margin-top:38px;}
-  .s11 h3{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.018em; padding-bottom:13px; border-bottom:2px solid var(--navy); margin-bottom:22px;}
-  .s11 p{font-size:19.5px; line-height:1.45; margin-bottom:24px;}
+  .s11 h3{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; padding-bottom:13px; border-bottom:2px solid var(--navy); margin-bottom:22px;}
+  .s11 p{font-size:21.5px; line-height:1.45; margin-bottom:24px;}
   .s11 .lab{margin-bottom:7px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -109,7 +114,7 @@
     </div>
   </div>
 
-  <div class="corner"><i>Background</i><i class=on>Survey</i><i>Empirical</i><i>Method</i><b>11</b> / 24</div>
+  <div class="corner"><i>Background</i><i class=on>Survey</i><i>Empirical</i><i>Method</i><b>11</b> / 26</div>
 
 </div>
 </body>

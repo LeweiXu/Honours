@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>How We Isolate a Failure</title>
+<title>Training Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,35 +70,29 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
+
   /* ================= SLIDE 30 ================= */
-  .s30 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s30 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s30 .lead b{font-weight:600; color:var(--ink);}
-  .s30 .pipe{display:flex; align-items:stretch; gap:20px; margin-top:34px;}
-  .s30 .st{flex:1; border-top:2px solid var(--navy); padding-top:15px;}
-  .s30 .st h3{
-    font-family:var(--disp); font-size:20px; font-weight:600;
-    letter-spacing:-.015em; margin-bottom:8px;
+  .s30 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s30 .cards h3{
+    font-family:var(--disp); font-size:23px; font-weight:600;
+    letter-spacing:0; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:18px;
   }
-  .s30 .st p{font-size:15px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s30 .st .cfg{
-    margin-top:12px; font-family:var(--mono); font-size:11.5px;
-    letter-spacing:.03em; color:var(--ink); line-height:1.7;
+  .s30 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s30 .cards p b{font-weight:600; color:var(--ink);}
+  .s30 .cards .tag{
+    margin-top:14px; font-family:var(--mono); font-size:12px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
   }
-  .s30 .ar{flex:none; width:40px; height:40px; position:relative; align-self:center;}
-  .s30 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
-  .s30 .ar::after{
-    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
-    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
-    border-left:8px solid var(--navy);
-  }
-  .s30 ul{list-style:none; margin-top:36px;}
-  .s30 ul li{
-    position:relative; padding-left:26px; margin-bottom:15px;
-    font-size:16px; font-weight:400; line-height:1.5; color:var(--slate);
-  }
-  .s30 ul li::before{content:""; position:absolute; left:0; top:10px; width:10px; height:2px; background:var(--navy);}
-  .s30 ul li b{font-weight:600; color:var(--ink);}
-  .s30 ul li:last-child{margin-bottom:0;}
+
+  .s30 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s30 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -113,39 +107,33 @@
 
 <div class="slide s30">
 
-  <h1>Experimental Setup</h1>
+  <h1>Training Strategies</h1>
 
   <div class="body">
-    <p class="lead">One simple pipeline throughout, with <b>one condition changed at a time</b> and everything else held fixed.</p>
+    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
 
-    <div class="pipe">
-      <div class="st">
-        <h3>Encode</h3>
-        <p>Every page becomes text, an image, or both. Done once per document and cached, so no question changes what a page contains.</p>
-        <div class="cfg">PaddleOCR-VL &middot; 200 DPI</div>
+    <div class="cards">
+      <div>
+        <h3>Trained retrieval</h3>
+        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
+        <div class="tag">Retriever</div>
       </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Retrieve</h3>
-        <p>A retriever scores every encoded page against the question and returns the top <i>k</i>, restored to document order.</p>
-        <div class="cfg">ColQwen3 &middot; page-level</div>
+      <div>
+        <h3>Trained reasoning</h3>
+        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
+        <div class="tag">Reasoner</div>
       </div>
-      <div class="ar"></div>
-      <div class="st">
-        <h3>Answer</h3>
-        <p>A multimodal model receives those pages and the question, and answers in a single pass. Nothing is fed back.</p>
-        <div class="cfg">Qwen3-VL-8B &middot; greedy</div>
+      <div>
+        <h3>Trained agentic methods</h3>
+        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
+        <div class="tag">Controller</div>
       </div>
     </div>
 
-    <ul>
-      <li><b>The stages act once, and in order.</b> That is what lets a failure be attributed rather than guessed at.</li>
-      <li><b>Gold pages bypass retrieval.</b> For most tests the annotated evidence pages are supplied directly, so selection is neutralised and whatever remains is representation or reasoning.</li>
-      <li><b>Answers are scored by an LLM judge</b>, Gemini-2.5-Flash at temperature zero. It agrees with GPT-4o on 96.0% and with a human annotator on 98.3% of validation subsets.</li>
-    </ul>
+    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
   </div>
 
-  <div class="corner">Backup &middot; Empirical</div>
+  <div class="corner">Backup &middot; Survey</div>
 
 </div>
 </body>

@@ -68,24 +68,32 @@ check. Those scripts are not kept in the repo.
 Overflow is invisible in source. After any slide edit, screenshot and look:
 
 ```sh
-google-chrome --headless=new --disable-gpu --hide-scrollbars --window-size=1280,900 \
-  --virtual-time-budget=5000 --screenshot=out.png Seminar/slide12.html
+python3 build.py Seminar && pdftoppm -r 96 -png Seminar/deck.pdf /tmp/dk
 ```
 
-The 1280x720 slide sits centred in that window, so crop 720 rows from y=90. Any ink
-below y=658 outside the corner marker has overflowed.
+That gives one 1280x720 PNG per slide. Any ink between y=660 and the gold bar, left of
+the corner marker, has overflowed. A headless Chrome `--screenshot` of a single slide
+file also works for a quick look, but the slide is centred in a viewport shorter than
+the window, so its edges are not where you expect; don't measure from it.
 
 ### Design rules for the deck
 
-- White background, black text. It is a 15-minute talk: keep text minimal, a float plus
-  a one-line claim and one or two short bullets.
-- Red `#B42318` is the only highlight: class `hi` on a key phrase (always with bold),
-  class `box` for annotation boxes over a figure, and the varied stage in the pipeline
-  strip. One or two per slide.
+- Styled after the IJCAI tutorial deck in `Resources/`: Calibri (Carlito as the stand-in,
+  since Calibri is not installed here), bold italic titles, a gold bar top left and
+  bottom right, white background, black text.
+- It is a 15-minute talk: keep text minimal, a float plus a one-line claim and one or
+  two short bullets. Prefer diagrams and annotated real pages over prose.
+- Red `#980000` is the only highlight: class `hi` on a key phrase (always with bold),
+  class `box` for annotation boxes over a figure, the varied stage in the pipeline
+  strip, and the dashed box on the contents slides. One or two per slide.
 - Navy `#1F4E79` is structure only: bullet dashes, rules, arrowheads, card tops.
-- Annotation boxes are positioned in percent inside a `pic` wrapper sized to the image.
+- Annotation boxes are positioned in percent inside a wrapper sized to the image.
+- The table of contents slide repeats at the start of each part with the current entry
+  boxed. Publication details appear only inside that box.
 - Survey slides use the survey paper's own terminology (for example "similarity-based
   retrieval", "adaptive-trajectory pipelines"), even where that is more technical.
+- Changing font or font size shifts every layout. Rebuild and check the printed pages,
+  not only screenshots: `pdftoppm -r 96 -png Seminar/deck.pdf out` gives 1280x720 pages.
 
 ## Where content comes from
 

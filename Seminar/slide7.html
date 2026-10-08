@@ -5,7 +5,7 @@
 <title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,28 +70,28 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
+
   /* ================= SLIDE 7 ================= */
-  .s7 .lab{font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s7 .sub{font-family:var(--disp); font-size:25px; font-weight:600; letter-spacing:-.015em; line-height:1.25;}
+  .s7 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s7 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
   .s7 ul{list-style:none;}
-  .s7 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:19.5px; line-height:1.45;}
+  .s7 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
   .s7 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
   .s7 ul li:last-child{margin-bottom:0;}
   .s7 b{font-weight:600;}
   .s7 img{display:block;}
-  .s7 .lead{font-size:20px; line-height:1.45; max-width:1120px;}
+  .s7 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
   .s7 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:36px;}
   .s7 .card{border-top:3px solid var(--navy); padding-top:16px;}
-  .s7 .card .no{font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
-  .s7 .card h3{font-family:var(--disp); font-size:24px; font-weight:600; letter-spacing:-.018em; line-height:1.2; margin:8px 0 12px;}
-  .s7 .card p{font-size:18.5px; line-height:1.45;}
-  .s7 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:12px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
-  .s7 .dia{height:150px; border:1.5px solid var(--line); margin-bottom:18px; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; padding:14px; align-content:center;}
-  .s7 .tag{font-family:var(--mono); font-size:11.5px; letter-spacing:.03em; border:1.5px solid var(--ink); padding:6px 9px; white-space:nowrap;}
-  .s7 .vs{font-family:var(--mono); font-size:11px; color:var(--red); font-weight:600;}
-  .s7 .row{display:flex; align-items:center; gap:9px; width:100%; justify-content:center;}
-  .s7 .q{font-family:var(--disp); font-size:34px; font-weight:600; color:var(--red); border:2.5px dashed var(--red); width:58px; height:58px; display:flex; align-items:center; justify-content:center;}
-  .s7 .plus{font-family:var(--mono); font-size:15px;}
+  .s7 .card .no{font-family:var(--mono); font-size:14.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
+  .s7 .card h3{font-family:var(--disp); font-size:26.5px; font-weight:600; letter-spacing:0; line-height:1.2; margin:8px 0 12px;}
+  .s7 .card p{font-size:20.5px; line-height:1.45;}
+  .s7 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:13px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
+  .s7 .lead{margin-bottom:34px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -106,27 +106,14 @@
 
 <div class="slide s7">
 
-  <h1>Research Gaps</h1>
+  <h1>Contributions</h1>
 
   <div class="body">
-    <div class="cards">
-      <div class="card"><div class="no">Gap 1</div><h3>No unified view</h3>
-        <div class="dia"><span class="tag">page-to-document</span><span class="tag">MLLM-centric</span><span class="tag">retrieval-augmented</span><span class="tag">adaptive-trajectory</span></div>
-        <p>Multi-page systems grew along <b class="hi">parallel lines</b>. No survey treats multi-page as its own problem.</p></div>
-      <div class="card"><div class="no">Gap 2</div><h3>Competing, untested claims</h3>
-        <div class="dia">
-          <div class="row"><span class="tag">vision only</span><span class="vs">VS</span><span class="tag">text + vision</span></div>
-          <div class="row"><span class="tag">retrieve more</span><span class="vs">VS</span><span class="tag">retrieve less</span></div>
-          <div class="row"><span class="tag">context limit</span><span class="vs">VS</span><span class="tag">integration</span></div>
-        </div>
-        <p>Papers disagree on what matters, each on a <b class="hi">different pipeline and dataset</b>.</p></div>
-      <div class="card"><div class="no">Gap 3</div><h3>Advice not tested together</h3>
-        <div class="dia"><span class="tag">finding</span><span class="plus">+</span><span class="tag">finding</span><span class="plus">+</span><span class="tag">finding</span><span class="plus">&rarr;</span><span class="q">?</span></div>
-        <p>Design guidance is rarely validated in <b class="hi">one working system</b>.</p></div>
-    </div>
+    <p class="lead">A thesis by compilation, in three parts.</p>
+    <div class="cards"><div class="card"><div class="no">Contribution 1</div><h3>A survey</h3><p>A taxonomy of the field through <b class="hi">evidence management</b>: four architectural families, and the strategies built around them.</p></div><div class="card"><div class="no">Contribution 2</div><h3>An empirical attribution</h3><p>A framework of <b class="hi">three failure loci</b>, each tested by changing one thing in one pipeline.</p></div><div class="card"><div class="no">Contribution 3</div><h3>A proof of concept</h3><p>A training-free method built from the findings: <b class="hi">56.5%</b> on MMLongBench-Doc, the highest on its backbone.</p></div></div>
   </div>
 
-  <div class="corner"><i class=on>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>07</b> / 24</div>
+  <div class="corner"><i class=on>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>07</b> / 26</div>
 
 </div>
 </body>

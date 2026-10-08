@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Reasoning Strategies</title>
+<title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,23 +70,31 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
+
   /* ================= SLIDE 26 ================= */
-  .s26 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s26 .lead b{font-weight:600; color:var(--ink);}
-  .s26 ul{list-style:none; margin-top:30px;}
-  .s26 ul li{
-    position:relative; padding-left:26px; margin-bottom:19px;
-    font-size:17px; font-weight:400; line-height:1.55; color:var(--slate);
-    max-width:1110px;
-  }
-  .s26 ul li::before{
-    content:""; position:absolute; left:0; top:11px;
-    width:10px; height:2px; background:var(--navy);
-  }
-  .s26 ul li b{font-weight:600; color:var(--ink);}
+  .s26 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s26 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
+  .s26 ul{list-style:none;}
+  .s26 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
+  .s26 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
   .s26 ul li:last-child{margin-bottom:0;}
-  .s26 .close{margin-top:34px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s26 .close b{font-weight:600; color:var(--ink);}
+  .s26 b{font-weight:600;}
+  .s26 img{display:block;}
+  .s26 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
+  .s26 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:36px;}
+  .s26 .card{border-top:3px solid var(--navy); padding-top:16px;}
+  .s26 .card .no{font-family:var(--mono); font-size:14.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
+  .s26 .card h3{font-family:var(--disp); font-size:26.5px; font-weight:600; letter-spacing:0; line-height:1.2; margin:8px 0 12px;}
+  .s26 .card p{font-size:20.5px; line-height:1.45;}
+  .s26 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:13px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
+  .s26 .card p{font-size:20px;}
+  .s26 .end{margin-top:44px; padding-top:28px; border-top:1px solid var(--line); display:flex; align-items:baseline; gap:28px;}
+  .s26 .end b{font-family:var(--disp); font-size:48.5px; font-weight:600; letter-spacing:0;}
+  .s26 .end span{font-size:24px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -101,21 +109,18 @@
 
 <div class="slide s26">
 
-  <h1>Reasoning Strategies</h1>
+  <h1>Conclusion</h1>
 
   <div class="body">
-    <p class="lead">Reasoning strategies act over a <b>single evidence buffer assembled before the reasoning call</b>: the full document representation, a retrieved subset, or evidence from an agentic step. None updates model parameters.</p>
-
-    <ul>
-      <li><b>Sequential reasoning: Chain-of-Thought.</b> Extends a single reasoning thread. CoT binds evidence from different pages into one chain and decomposes multi-hop questions into single-hop steps.</li>
-      <li><b>Sequential reasoning: Self-Reflection.</b> The model evaluates its own draft answer and revises it across rounds, optionally against a verifier or critic.</li>
-      <li><b>Parallel exploration.</b> Several reasoning paths over the same buffer. Self-Consistency samples multiple chains and takes the majority answer; sampling-adjudication replaces the vote with an LLM judge. Cost scales with the number of samples. Tree-of-Thoughts has seen little uptake.</li>
-    </ul>
-
-    <p class="close">A chain can only reason over the evidence already assembled. It <b>cannot recover what retrieval missed</b>.</p>
+    <div class="cards">
+      <div class="card"><div class="no">Survey</div><h3>Organise</h3><p>Multi-page document understanding is a problem of <b class="hi">evidence management</b>.</p></div>
+      <div class="card"><div class="no">Empirical study</div><h3>Locate</h3><p>Failures sit at <b class="hi">representation, selection, or reasoning</b>, and each needs a different fix.</p></div>
+      <div class="card"><div class="no">Proof of concept</div><h3>Validate</h3><p>The findings hold up in a <b class="hi">working, training-free system</b>.</p></div>
+    </div>
+    <div class="end"><b>Thank you</b><span>Questions?</span></div>
   </div>
 
-  <div class="corner">Backup &middot; Survey</div>
+  <div class="corner"><i>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>26</b> / 26</div>
 
 </div>
 </body>

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Agentic Methods</title>
+<title>Retrieval and Navigation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   /* ================= SHARED CHROME =================
      Identical in every slide file. build.py lifts this block off slide 1, so
@@ -20,11 +20,11 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#B42318;
+    --red:#980000;
     --wash:#E9EFF5;
-    --disp:'Instrument Sans',sans-serif;
-    --body:'Inter',sans-serif;
-    --mono:'JetBrains Mono',monospace;
+    --disp:'Calibri','Carlito',sans-serif;
+    --body:'Calibri','Carlito',sans-serif;
+    --mono:'Calibri','Carlito',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -32,7 +32,7 @@
     background:#ccd2d8;
     font-family:var(--body); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-variant-ligatures:none;
   }
 
   /* ---- slide frame: fixed 16:9 ---- */
@@ -45,8 +45,8 @@
   }
 
   h1{
-    font-family:var(--disp); font-weight:600; font-size:38px;
-    letter-spacing:-.022em; line-height:1.1;
+    font-family:var(--disp); font-weight:700; font-style:italic; font-size:42px;
+    letter-spacing:0; line-height:1.1;
   }
 
   /* ---- the content region: everything below the title ---- */
@@ -55,8 +55,8 @@
   /* ---- corner marker: slide number and section ---- */
   .corner{
     position:absolute; right:64px; bottom:26px;
-    font-family:var(--mono); font-size:11px; font-weight:400;
-    letter-spacing:.05em; color:var(--mute);
+    font-family:var(--mono); font-size:13px; font-weight:400;
+    letter-spacing:.03em; color:var(--mute);
   }
   .corner b{color:var(--ink); font-weight:600;}
   .corner span{padding:0 7px;}
@@ -70,13 +70,18 @@
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
+  /* ---- gold bars, top left and bottom right ---- */
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before{left:0; top:0;}
+  .slide::after{right:0; bottom:0;}
+
   /* ================= SLIDE 27 ================= */
-  .s27 .lead{font-size:17.5px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s27 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s27 .lead b{font-weight:600; color:var(--ink);}
   .s27 ul{list-style:none; margin-top:30px;}
   .s27 ul li{
     position:relative; padding-left:26px; margin-bottom:19px;
-    font-size:17px; font-weight:400; line-height:1.55; color:var(--slate);
+    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
     max-width:1110px;
   }
   .s27 ul li::before{
@@ -85,7 +90,7 @@
   }
   .s27 ul li b{font-weight:600; color:var(--ink);}
   .s27 ul li:last-child{margin-bottom:0;}
-  .s27 .close{margin-top:34px; font-size:16.5px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s27 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s27 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -101,18 +106,18 @@
 
 <div class="slide s27">
 
-  <h1>Agentic Methods</h1>
+  <h1>Retrieval and Navigation</h1>
 
   <div class="body">
-    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
+    <p class="lead">Retrieval <b>narrows a long document to compact evidence units</b> (chunks, pages, or graph nodes) for downstream reasoning.</p>
 
     <ul>
-      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
-      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
-      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+      <li><b>Similarity-based retrieval.</b> Scores each evidence unit independently against the query and returns the top-ranked subset. Sparse lexical signals such as BM25 are the baseline; dense retrieval uses vision-language late-interaction encoders such as ColPali and ColQwen, often with an LLM reranking stage after.</li>
+      <li><b>Relation-aware retrieval.</b> Retrieves along explicit document structure. Tree-based variants follow section hierarchies and outlines, so chunks keep their parent context; graph-based variants traverse typed edges between headings, entities, and cross-references.</li>
+      <li><b>The trade-off.</b> Independent scoring handles paraphrase and cross-modal queries, but cannot follow cross-page references or multi-hop dependencies. Relation-aware methods can, at the cost of parser dependence and traversal cost.</li>
     </ul>
 
-    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
+    <p class="close">Evidence missed or poorly ranked at retrieval is <b>unrecoverable at generation</b>. What is retrieved still has to be reasoned over.</p>
   </div>
 
   <div class="corner">Backup &middot; Survey</div>

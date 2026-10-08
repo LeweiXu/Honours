@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datasets</title>
+<title>A Simple Adaptive Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -75,23 +75,31 @@
   .slide::before{left:0; top:0;}
   .slide::after{right:0; bottom:0;}
 
-  /* ================= SLIDE 31 ================= */
-  .s31 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s31 .lead b{font-weight:600; color:var(--ink);}
-  .s31 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s31 .cards h3{
-    font-family:var(--disp); font-size:23px; font-weight:600;
-    letter-spacing:0; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
+  /* ================= SLIDE 39 ================= */
+  .s39 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s39 .lead b{font-weight:600; color:var(--ink);}
+  .s39 .maps{margin-top:36px;}
+  .s39 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
+  .s39 .map:last-child{margin-bottom:0;}
+  .s39 .from{
+    font-family:var(--mono); font-size:12px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--ink);
+    text-align:right;
   }
-  .s31 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s31 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:12px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  .s39 .ar{position:relative; height:30px;}
+  .s39 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
+  .s39 .ar::after{
+    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
+    border-left:8px solid var(--navy);
   }
-
-  .s31 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s31 .close b{font-weight:600; color:var(--ink);}
+  .s39 .to h3{
+    font-family:var(--disp); font-size:22px; font-weight:600;
+    letter-spacing:0; margin-bottom:5px;
+  }
+  .s39 .to p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s39 .close{margin-top:38px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s39 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -104,35 +112,44 @@
 </head>
 <body>
 
-<div class="slide s31">
+<div class="slide s39">
 
-  <h1>Datasets</h1>
+  <h1>From Findings to Design</h1>
 
   <div class="body">
-    <p class="lead">Datasets serve three roles, and the multi-page setting makes all three harder: <b>per-page annotation does not scale</b> to documents of tens or hundreds of pages, and long PDFs are harder to source and license than single pages.</p>
+    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
 
-    <div class="cards">
-      <div>
-        <h3>Pretraining</h3>
-        <p>The exception rather than the norm. Confined to a few page-to-document and MLLM-centric systems that do continued pretraining on an existing backbone, because multi-page corpora are still small.</p>
-        <div class="tag">Rare</div>
+    <div class="maps">
+      <div class="map">
+        <div class="from">Representation</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Keep text and images together</h3>
+          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+        </div>
       </div>
-      <div>
-        <h3>Fine-tuning</h3>
-        <p>Has converged on LVLM-synthesised supervision over scraped PDFs, with reinforcement learning increasingly layered on top to shape evidence-grounding and trajectory behaviour.</p>
-        <div class="tag">LVLM-synthesised</div>
+      <div class="map">
+        <div class="from">Selection</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Gather broadly, present selectively</h3>
+          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order, but carry most of it forward as compact records rather than as full pages.</p>
+        </div>
       </div>
-      <div>
-        <h3>Benchmarking</h3>
-        <p>Three tiers: single-page extractive baselines, mid-length multi-page suites, and long-document multimodal benchmarks that need cross-page integration. The same small pool of PDFs gets reused.</p>
-        <div class="tag">Contamination risk</div>
+      <div class="map">
+        <div class="from">Reasoning</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Check whether the answer is supported</h3>
+          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
+        </div>
       </div>
     </div>
 
-    <p class="close"><b>Answer-only accuracy masks retrieval failure</b> and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation as well, but it is not yet standard.</p>
+    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
   </div>
 
-  <div class="corner">Backup &middot; Survey</div>
+  <div class="corner">Backup &middot; Method</div>
 
 </div>
 </body>

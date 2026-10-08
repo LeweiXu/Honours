@@ -11,16 +11,15 @@
 
 **On screen:** Thesis title and presenter name, Lewei Xu.
 
-## Slide 2: Roadmap
+## Slide 2: Table of contents
 
 **Speaking cues**
 
-- Four parts: some background, then the survey, then the empirical study, then a small proof-of-concept method.
-- The survey has been accepted to the EMNLP 2026 main conference. The empirical study is under review at EACL.
+- An introduction, then the three parts of the thesis: the survey, the empirical study, and a small proof-of-concept method.
 
 **Transition:** First, what do we mean by document understanding?
 
-**On screen:** Four points: Background; the survey title in bold with authors and venue; the empirical paper the same way; the proof-of-concept method.
+**On screen:** Five entries, with Introduction boxed.
 
 ## Slide 3: Multi-Page Visually Rich Documents
 
@@ -45,15 +44,14 @@
 
 **Speaking cues**
 
-- Document understanding is a large field, but one broad way of defining it is getting a system to answer a natural language question over a document accurately.
-- Here is a real example from the benchmark I use later: a 17-page course syllabus, and the question is how many quizzes there are in the whole course.
-- The answer is six, but the table that lists them runs over two pages: four quizzes on one page, two on the next.
-- So the system has to find those two pages, read a table that crosses the page break, and combine the two halves.
-- I'll come back to this example later.
+- One broad way of defining it is getting a system to answer a question over a document accurately.
+- To do that it has to work out what is on each page: titles, paragraphs, charts, tables, captions.
+- And it has to work out how the whole document is organised: which section a figure belongs to, which caption goes with which table.
+- A person does this without thinking. For a model it is hard, and it gets harder as the document gets longer.
 
 **Transition:** You have all seen systems that do this.
 
-**On screen:** The two syllabus pages with the quiz lines boxed, the question, the answer, and three short steps: find, read, combine.
+**On screen:** Two pages with their layout elements boxed in colour, and an outline tree for the paper page on the right.
 
 ## Slide 5: LLM assistants
 
@@ -86,39 +84,36 @@
 
 **Source:** Thesis Section 3.1, page 23. The examples motivate the research rather than report experimental findings.
 
-## Slide 7: Research gaps
+## Slide 7: Contributions
 
 **Speaking cues**
 
-- Three gaps, one for each part of the thesis.
-- First, multi-page systems were built along parallel lines with different terminology, and no survey treated multi-page as its own problem.
-- Second, papers disagree about what matters: vision only or text plus vision, retrieve more or retrieve less. Each claim comes from a different pipeline and dataset, so they cannot be compared.
-- Third, design advice is rarely tested together in one working system.
-
-**On screen:** Three cards, one per gap, each with a small diagram.
-
-## Slide 8: Contributions
-
-**Speaking cues**
-
-- The thesis is a compilation in three parts, and each part answers one of those gaps.
-- The survey gives a taxonomy organised around evidence management. It is accepted at EMNLP 2026.
-- The empirical study gives a framework of three failure loci and tests each one under controlled conditions. It is under review at EACL.
-- The proof of concept puts the findings into one training-free method, which reaches 56.5% on MMLongBench-Doc.
+- The thesis is a compilation in three parts.
+- A survey that organises the field around evidence management.
+- An empirical study with a framework of three failure loci, each tested under controlled conditions.
+- And a proof of concept that puts the findings into one training-free method, reaching 56.5% on MMLongBench-Doc.
 
 **Transition:** Starting with the survey.
 
 **On screen:** Three numbered cards: survey, empirical attribution, proof of concept.
 
-## Slide 9: Part 1: Survey of MP-VRDU
+## Slide 8: Table of contents: survey
 
 **Speaking cues**
 
-- This is the survey. The gap was that the field had no shared view of itself.
-- It defines multi-page understanding as a problem of evidence management, gives a taxonomy, and consolidates the datasets and open challenges.
+- The first part is the survey, accepted at the EMNLP 2026 main conference.
+
+**On screen:** The contents with the survey boxed, showing the paper title, authors and venue.
+
+## Slide 9: Survey: research gap and contributions
+
+**Speaking cues**
+
+- Multi-page systems were built along parallel lines with different terminology, and no survey treated multi-page as its own problem.
+- The survey defines it as a problem of evidence management, gives a taxonomy, and consolidates the datasets and open challenges.
 - I'll only show the architecture overview and mention the strategies in passing.
 
-**On screen:** The paper first page, the gap, and three contributions.
+**On screen:** The gap on the left with a small diagram, three contributions on the right.
 
 ## Slide 10: Multi-page architectural overview
 
@@ -172,20 +167,30 @@
 
 **On screen:** Three columns: retrieval and navigation, reasoning strategies, agentic methods. Each lists the training-free and the trained variants.
 
-## Slide 12: Part 2: Empirical attribution study
+## Slide 12: Table of contents: empirical study
 
 **Speaking cues**
 
-- The second paper. The gap here is the competing claims that cannot be compared.
+- The second part is the empirical study, under review at EACL.
+
+**On screen:** The contents with the empirical study boxed, showing the paper title, authors and venue.
+
+## Slide 13: Empirical study: research gap and contributions
+
+**Speaking cues**
+
+- Papers disagree about what matters: vision only or text plus vision, retrieve more or retrieve less. Each claim comes from a different pipeline and dataset, so they cannot be compared.
 - The contribution is a framework of three failure loci, controlled interventions in one pipeline, and a check that the findings transfer.
 
-**On screen:** The paper first page, the gap, and three contributions.
+**On screen:** The gap on the left with the three disagreements, three contributions on the right.
 
-## Slide 13: One wrong answer, three possible causes
+## Slide 14: One wrong answer, three possible causes
 
 **Speaking cues**
 
-- Back to the quizzes question. Say the system answers four instead of six.
+- A real question from the benchmark: a 17-page course syllabus, and the question is how many quizzes there are in the whole course.
+- The answer is six, but the table runs over two pages: four quizzes on one, two on the next.
+- Say the system answers four instead of six.
 - Maybe page 16 was converted badly and the quiz lines were lost. That is a representation failure.
 - Maybe page 16 was never retrieved. That is a selection failure.
 - Or maybe both pages arrived fine and the model still miscounted. That is a reasoning failure.
@@ -195,7 +200,7 @@
 
 **On screen:** The two pages and the question on the left. Three rows on the right: representation, selection, reasoning. The wrong answer of four is a hypothetical, the question is real.
 
-## Slide 14: Attribution framework
+## Slide 15: Attribution framework
 
 **Speaking cues**
 
@@ -204,7 +209,7 @@
 
 **On screen:** The framework figure, with one diagnostic question under each locus.
 
-## Slide 15: Attribution by construction
+## Slide 16: Attribution by construction
 
 **Speaking cues**
 
@@ -215,7 +220,7 @@
 
 **On screen:** Encode, retrieve, answer as three boxes, with two bullets on gold pages and the dataset.
 
-## Slide 16: Modality ceiling
+## Slide 17: Modality ceiling
 
 **Speaking cues**
 
@@ -224,7 +229,7 @@
 
 **On screen:** Table of abstention and accuracy by evidence source and representation.
 
-## Slide 17: Conversion fidelity
+## Slide 18: Conversion fidelity
 
 **Speaking cues**
 
@@ -233,7 +238,7 @@
 
 **On screen:** Figure: accuracy by parser and scan status, and by image resolution.
 
-## Slide 18: Evidence coverage
+## Slide 19: Evidence coverage
 
 **Speaking cues**
 
@@ -242,7 +247,7 @@
 
 **On screen:** Figure: paired verdict transitions after removing or keeping gold pages.
 
-## Slide 19: Distractor exposure
+## Slide 20: Distractor exposure
 
 **Speaking cues**
 
@@ -251,7 +256,7 @@
 
 **On screen:** Figure: accuracy and step flips as non-gold pages are added.
 
-## Slide 20: Evidence integration
+## Slide 21: Evidence integration
 
 **Speaking cues**
 
@@ -260,7 +265,7 @@
 
 **On screen:** Figure: single-hop and multi-hop accuracy across Qwen3-VL sizes.
 
-## Slide 21: Response calibration
+## Slide 22: Response calibration
 
 **Speaking cues**
 
@@ -269,7 +274,15 @@
 
 **On screen:** Figure: answerable accuracy and the two refusal rates across four prompt modes.
 
-## Slide 22: Part 3: From findings to a simple method
+## Slide 23: Table of contents: proof of concept
+
+**Speaking cues**
+
+- The last part is a small proof of concept.
+
+**On screen:** The contents with the proof of concept boxed.
+
+## Slide 24: From findings to a simple method
 
 **Speaking cues**
 
@@ -279,7 +292,7 @@
 
 **On screen:** The reader, synthesizer, arbiter loop, with one design choice under each of representation, selection and reasoning.
 
-## Slide 23: Simple method results
+## Slide 25: Simple method results
 
 **Speaking cues**
 
@@ -288,7 +301,7 @@
 
 **On screen:** The results table under each benchmark's official protocol.
 
-## Slide 24: Conclusion
+## Slide 26: Conclusion
 
 **Speaking cues**
 
@@ -297,12 +310,12 @@
 
 **On screen:** Three cards restating the contributions, then thank you.
 
-## Backup slides (25 onwards, no slide numbers)
+## Backup slides (27 onwards, no slide numbers)
 
 For questions only.
 
-- 25 to 29, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
-- 30, 31, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
-- 32 to 34, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
-- 35, 36, deployment: representation cost, reasoner choice under a memory budget.
-- 37, 38, method: how each finding maps to a design choice, and the inference cost.
+- 27 to 31, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
+- 32, 33, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
+- 34 to 36, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
+- 37, 38, deployment: representation cost, reasoner choice under a memory budget.
+- 39, 40, method: how each finding maps to a design choice, and the inference cost.
