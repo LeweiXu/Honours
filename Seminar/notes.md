@@ -47,6 +47,7 @@
 - One broad way of defining it is getting a system to answer a question over a document accurately.
 - To do that it has to work out what is on each page: titles, paragraphs, charts, tables, captions.
 - And it has to work out how the whole document is organised: which section a figure belongs to, which caption goes with which table.
+- Take a question like the one on the right: does the model that humans rated best in Table 6 also have the best citation recall in Table 3? Table 6 is on this page and Table 3 is on the previous one, so neither answers it alone.
 - A person does this without thinking. For a model it is hard, and it gets harder as the document gets longer.
 
 **Transition:** You have all seen systems that do this.
@@ -148,12 +149,13 @@
 **Speaking cues**
 
 - This is the main table of the survey: every system we cover, grouped by the four families.
-- Three things to notice. Modalities: the encoding models fuse text, vision and layout, while the MLLM-centric ones are mostly vision only.
+- First, the backbone. In the adaptive-trajectory family it is a general-domain MLLM, typically used as is, with no extra training or fine-tuning.
+- Then three more things. Modalities: the encoding models fuse text, vision and layout, while the MLLM-centric ones are mostly vision only.
 - Search only shows up once retrieval is separated from generation. Retrieval-augmented pipelines add one dense or joint retrieval step. Adaptive-trajectory pipelines add iterative retrieval, query reformulation and navigation.
 - And reasoning techniques like ReAct and multi-agent designs concentrate in that last family.
 - Next, one representative system from each family.
 
-**On screen:** Table 1 of the survey on the left with four framed regions, numbered notes on the right.
+**On screen:** Table 1 of the survey on the left with five framed regions, numbered notes on the right.
 
 ## Slide 11: Page-to-document encoding: Hi-VT5
 

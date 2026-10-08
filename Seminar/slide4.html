@@ -90,7 +90,14 @@
   .s4 .legend{display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:12px; font-size:16.5px;}
   .s4 .legend span{display:flex; align-items:center; gap:7px; white-space:nowrap;}
   .s4 .legend i{width:15px; height:15px; border:1.5px solid var(--c); background:color-mix(in srgb, var(--c) 22%, transparent);}
-  .s4 .out{padding-left:26px;}
+  .s4 .out{padding-left:20px; display:grid; grid-template-columns:auto 1fr; gap:0 26px; align-items:start;}
+  .s4 .out > .lab{grid-column:1 / -1;}
+  .s4 .ex{border:2.5px dashed var(--accent); padding:14px 16px 16px; margin-top:8px;}
+  .s4 .ex .lab{color:var(--accent); margin-bottom:8px;}
+  .s4 .ex .q{font-size:19.5px; line-height:1.35;}
+  .s4 .ex .need{font-size:15px; margin:14px 0 7px;}
+  .s4 .ex .ev{display:flex; flex-direction:column; gap:7px; align-items:flex-start;}
+  .s4 .ex .why{font-size:15.5px; line-height:1.35; margin-top:14px;}
   .s4 .tree, .s4 .tree ul{list-style:none;}
   .s4 .tree ul{margin-left:13px; padding-left:17px; border-left:1.5px solid var(--ink);}
   .s4 .tree li{position:relative; margin-top:6px;}
@@ -126,6 +133,13 @@
             <li><span class="nd" style="--c:#7C3AED">5.3 Retrieval Analysis</span><ul><li><span class="nd" style="--c:#2563EB">Paragraphs</span></li><li><span class="nd" style="--c:#059669">Figure 5</span> <span class="nd" style="--c:#B45309">Caption</span></li></ul></li>
             <li><span class="nd" style="--c:#7C3AED">5.4 Human Evaluation</span><ul><li><span class="nd" style="--c:#2563EB">Paragraphs</span></li><li><span class="nd" style="--c:#DB2777">Table 6</span> <span class="nd" style="--c:#B45309">Caption</span></li></ul></li>
           </ul></li></ul>
+        <div class="ex">
+          <div class="lab">Example question</div>
+          <p class="q">&ldquo;Does the model rated best by humans in Table 6 also have the best citation recall in Table 3?&rdquo;</p>
+          <p class="need">Evidence needed:</p>
+          <div class="ev"><span class="nd" style="--c:#DB2777">Table 6, this page</span><span class="nd" style="--c:#DB2777">Table 3, previous page</span></div>
+          <p class="why"><b>Cross-page</b>: neither table answers it alone.</p>
+        </div>
       </div>
     </div>
     <div class="legend"><span><i style="--c:#C2410C"></i>Title</span><span><i style="--c:#7C3AED"></i>Section heading</span><span><i style="--c:#2563EB"></i>Text</span><span><i style="--c:#059669"></i>Figure / chart</span><span><i style="--c:#DB2777"></i>Table</span><span><i style="--c:#B45309"></i>Caption / note</span><span><i style="--c:#6B7280"></i>Header / footer</span></div>
