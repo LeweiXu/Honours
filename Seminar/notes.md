@@ -30,6 +30,7 @@
 - It includes tasks such as information extraction and recovering a document’s structure. But for this talk, we’ll focus on answering natural-language questions about a document.
 - To answer a question, a system needs to identify the relevant content and connect the evidence, either within one page or across multiple pages.
 - For example, the question here compares two tables on different pages, so neither table alone is enough.
+- With long documents this becomes very difficult. The evidence is sparse and spread across many pages, and the document is often longer than what a model can read at once.
 
 ## Slide 5: Large language model assistants
 
