@@ -1,351 +1,244 @@
-# Honours thesis seminar notes
+# Honours thesis seminar script
 
-## Slide 1: Title Slide
+- **Duration:** 15 minutes, plus 5 minutes of questions.
+- **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
+- **Length:** slides 1 to 25 come to about 2,580 words, which is about 17 minutes at 150 words a minute. To get nearer 15, shorten the four system slides (11 to 14) to their first two and last bullets.
+- Written to be spoken. Short forms are spelled out. Model, benchmark and conference names are left as they are.
 
-**Speaking cues**
+## Slide 1: Title
 
 - Hello everyone, my name is Lewei.
-- This year, I’ve been working on document understanding.
-
-**Transition:** Let me start with an outline of the seminar.
-
-**On screen:** Thesis title and presenter name, Lewei Xu.
+- This year I have been working on document understanding, and in particular on long documents with many pages.
 
 ## Slide 2: Table of contents
 
-**Speaking cues**
+- I will start with a short introduction to the problem.
+- Then I will go through the two papers that make up the thesis: a survey of the field, and an empirical study of where these systems fail.
+- I will finish with a conclusion, and if there is time, a small proof of concept that puts the findings to work.
 
-- An introduction, then the three parts of the thesis: the survey, the empirical study, and a small proof-of-concept method.
+## Slide 3: Multi-page visually rich documents
 
-**Transition:** First, what do we mean by document understanding?
-
-**On screen:** Five entries, with Introduction boxed.
-
-## Slide 3: Multi-Page Visually Rich Documents
-
-**Speaking cues**
-
-- A document has pages that can contain text, tables, figures, and other visual content.
-- As you can see in these examples, the meaning of a document is carried across content of varying modalities as well as the layout and structure within a page.
-- This mix of prose and visual content is what we mean by *visually rich*.
-- Multi-page simply means two or more pages, but it adds another layer of difficulty in that meaning can be carried between pages, for example a reference to a figure many pages apart.
-- These examples also show how much the difficulty can vary.
-- The born-digital research paper is relatively easy to read, with text we can extract directly.
-- The scanned handwritten document is much harder, because the words are not available as embedded text.
-- The scanned refrigerator manual looks clear to us, but its instructions also depend on the page layout.
-
-**Transition:** So what does it mean to understand a document?
-
-**On screen:** Show examples from thesis Figure 1.1: such as a born-digital research paper, a scanned handwritten document, and a scanned refrigerator technical manual. Keep this slide focused on the documents themselves.
-
-**Source:** Thesis Figure 1.1, “Representative pages from MMLongBench-Doc,” page 3.
+- A document is more than its text.
+- Its pages carry tables, charts, figures, photographs and handwriting, and the way these are laid out on the page also carries meaning.
+- That mix is what we mean by visually rich.
+- Multi-page adds one more layer. Meaning also runs between pages, for example when a sentence points to a figure many pages away.
+- The research paper is born digital, so its text can be read straight from the file.
+- The signed form is a scan with handwriting, so there is no text to read until something recognises it.
 
 ## Slide 4: What is document understanding?
 
-**Speaking cues**
+- One broad definition is that a system can answer a question about the document accurately.
+- To do that it first has to work out what is on each page. On the left, every coloured box is one element: a title, a paragraph, a chart, a table, a caption.
+- Then it has to work out how the whole document is organised: which section a figure belongs to, and which caption goes with which table. That is the outline on the right.
+- Now take the example question. Does the model that humans rated best in Table 6 also have the best citation recall in Table 3?
+- Table 6 is on this page and Table 3 is on the previous one, so neither table answers it alone.
 
-- One broad way of defining it is getting a system to answer a question over a document accurately.
-- To do that it has to work out what is on each page: titles, paragraphs, charts, tables, captions.
-- And it has to work out how the whole document is organised: which section a figure belongs to, which caption goes with which table.
-- Take a question like the one on the right: does the model that humans rated best in Table 6 also have the best citation recall in Table 3? Table 6 is on this page and Table 3 is on the previous one, so neither answers it alone.
-- A person does this without thinking. For a model it is hard, and it gets harder as the document gets longer.
+## Slide 5: Large language model assistants
 
-**Transition:** You have all seen systems that do this.
+- You have all used systems that do this.
+- Here I gave Claude my thesis, which is almost one hundred pages, and asked it a difficult question.
+- On the left you can see what it does. It plans, works out which pages it needs, and then reads them.
+- On the right is the interesting part. It renders those pages and reads them as images, the way we would look at them.
 
-**On screen:** Two pages with their layout elements boxed in colour, and an outline tree for the paper page on the right.
+## Slide 6: Real-world constraints
 
-## Slide 5: LLM assistants
+- But many real settings cannot use that product.
+- Think of a hospital, a mining company or a law firm, with tens of thousands of documents to classify, summarise or extract from.
+- Calling a commercial service fails for three reasons. The documents are private and cannot leave. The cost per call adds up at that volume. And their documents are unusual types the general model was not built for.
+- So they run an open-weight model locally, and that means a fixed compute budget. Which pages we read, at what resolution, and how many times, all have to fit inside it.
+- So the question behind this thesis is how to do document understanding under a fixed compute budget.
 
-**Speaking cues**
+## Slide 7: Table of contents, survey
 
-- Everyone here has used these, so this is what it looks like from the outside.
-- I gave Claude my thesis, which is almost 100 pages, and asked a hard question over it.
-- It plans, works out which pages it needs, renders those pages and reads them as images, then answers.
+- The first part is the survey, which has been accepted at the EMNLP 2026 main conference.
 
-**Transition:** That works for a consumer product. A lot of real settings cannot use it.
+## Slide 8: Survey, research gap and contributions
 
-**On screen:** Left: the trajectory for a question over the thesis. Right: a zoomed view of the pages it rendered to read.
-
-## Slide 6: Document understanding under real-world constraints
-
-**Speaking cues**
-
-- In the industry, such as in the medical field or mining industry, various organisations may want to perform some sort of document understanding task.
-- This could be classification, summarisation or maybe information extraction requiring structured output over tens of thousands of documents.
-- Documents could be highly sensitive and have data-residency requirements, so they can't be sent to a third party API.
-- Sheer volumne of some workloads makes third party APIs simply too costly to be worth the cost (cost outweighs the benefits).
-- And so, the more viable option is to perform these tasks locally using open-weight pre-trained VLMs on consumer hardware, not massive datacenters. 
-- Cost and efficiency are big concerns are still ongoing areas of research for effient document understanding tasks.
-- The specific document type as well could be very unique, so various training or fine-tuning techniques may have to be utilized.
-- Research mainly focuses on this aspect: developing techniques and architectures for document understanding under fixed compute budgets, although all these techniques can be applied to consumer facing products (which is why we've seen so much development in recent years).
-
-**Transition:** Next, let's discuss the survey of the field.
-
-**On screen:** A large collection of reports, records, and scanned forms feeding into a local document system. Show two example tasks—classification and information extraction—and label the constraints: privacy, cost, and fixed compute. (just a suggestion, figure something out for this slide, some text as well to motivate the problem, title of slide should also be shorter and concise)
-
-**Source:** Thesis Section 3.1, page 23. The examples motivate the research rather than report experimental findings.
-
-## Slide 7: Table of contents: survey
-
-**Speaking cues**
-
-- The first part is the survey, accepted at the EMNLP 2026 main conference.
-
-**On screen:** The contents with the survey boxed, showing the paper title, authors and venue.
-
-## Slide 8: Survey: research gap and contributions
-
-**Speaking cues**
-
-- Multi-page systems were built along parallel lines with different terminology, and no survey treated multi-page as its own problem.
-- The survey defines it as a problem of evidence management, gives a taxonomy, and consolidates the datasets and open challenges.
-- I'll only show the architecture overview and mention the strategies in passing.
-
-**On screen:** The gap on the left with a small diagram, three contributions on the right.
+- The gap is simple to state.
+- Systems for multi-page documents were built along parallel lines. Each line used its own terminology, and there was little comparison between them.
+- Our survey does three things.
+- It defines the problem as evidence management: deciding which evidence to select and reason over when the document cannot all be held at once.
+- It gives a taxonomy with four architectural families.
+- And it brings together the datasets and the open challenges.
 
 ## Slide 9: Multi-page architectural overview
 
-**Speaking cues**
-
-- In the survey, we found that architectures for long document understanding could be grouped into these 4 families that we defined.
-- These groups also follow a rough trend for how the field approached long document understanding.
-
-- Around 2023-2024 with the mp-docvqa benchmark, we have these page-to-document models, and this includes the hi-vt5 baseline we discussed earlier.
-- This was a somewhat naive but at the time very sound approach to the multi-page problem.
-- The idea was quite simple, prior to 2023, a lot of research was done on single-page document understanding.
-- These worked by training some form of vision language transformer model end-to-end to do question answering.
-- If we want to scale to multiple pages, we could just combine these single page transformers, use the latent or hidden state of each page, perform some cross-page mechanism to learn cross-page structure or evidence integration, then put this final hidden state into a decoder to answer the question.
-- The problem with these models is that page grows with page count linearly, and these models would struggle as soon as documents got decently long.
-
-- At the time, with multimodal LLMs emerging, the field quickly pivoted to using pretrained these vision language models
-- The idea was basically to use various techniques to adapt a general domain pretrained MLLM for long document understanding tasks.
-- These techniques range from various document preprocessing before the document even reaches language model
-- To doing continued pretraining on the language model itself on document understanding tasks
-- Or parameter efficient fine tuning, indicated by the snowflake/flame
-- The problem with this approach is the context length cap of the language model itself
-
-- Next is basically just RAG. When RAG became a thing in 2024-2025, the field applied it to document understanding.
-- We realized that answering a question over a document generally doesn't require the whole document.
-- We only need to find the relevant evidence to answer the question.
-- We can use various techniques to retrieve answer relevant evidence to have the language model which is generally frozen to answer the question
-- This successfully avoids the context window problem, but instead shifts the problem to evidence retrieval.
-- Techniques for this architecture can be very sophisticated, such as adaptive reranking and query reformulation to iteratively gather evidence
-- This is why we avoid calling it "RAG pipelines" but rather "retrieval-augmented pipelines"
-
-- Finally, in 2025ish, "agentic" systems became popular. 
-- This is where we augment a langauge model to act iteratively in a loop for whatever task it is trying to complete.
-- For long document understanding, a simple way to understand this is we have an agent that is given the question to answer and some instruction
-- It needs to decide how to gather evidence, if more evidence is required to answer the question, and decide when to stop and answer the question when it deems enough evidence has been gathered.
-
-
-**Transition:**
-
-**On screen:** Simplified thesis Figure 2.1 showing the four architecture families. Keep one pathway per family.
-
-**Source:** Thesis Sections 2.1–2.3, pages 7–11; Figure 2.1.
+- These are the four families, and they appeared roughly in this order.
+- Page-to-document encoding models came first, from late 2023. They encode each page separately and then combine the pages inside one model.
+- Then the field moved to large pretrained multimodal language models. The second family adapts such a model so that many pages fit inside its context.
+- The third family is retrieval-augmented pipelines. They retrieve the relevant pages first, and only those pages go to the model.
+- The fourth family, from 2025, is adaptive-trajectory pipelines. Here the model works in a loop. It decides what to look at next, and when it has seen enough to answer.
+- Each family also has a typical weakness, shown in red at the bottom. I will come back to those with one example of each.
 
 ## Slide 10: Surveyed systems at a glance
 
-**Speaking cues**
+- This is the main table of the survey. Every system we cover is here, grouped by family.
+- I have framed five things worth noticing.
+- One, the backbone. In the adaptive-trajectory family it is a general-purpose multimodal language model, typically used as it is, with no extra training or fine-tuning.
+- Two, the modalities. The encoding models combine text, vision and layout. The models in the second family mostly use vision only.
+- Three, search. It only appears once retrieval is separated from answering. Retrieval-augmented pipelines add a single retrieval step.
+- Four, in the adaptive-trajectory family search becomes richer: iterative retrieval, query reformulation and navigation.
+- Five, reasoning techniques such as reason-and-act loops and multiple agents are concentrated in that last family.
+- Now one representative system from each family.
 
-- This is the main table of the survey: every system we cover, grouped by the four families.
-- First, the backbone. In the adaptive-trajectory family it is a general-domain MLLM, typically used as is, with no extra training or fine-tuning.
-- Then three more things. Modalities: the encoding models fuse text, vision and layout, while the MLLM-centric ones are mostly vision only.
-- Search only shows up once retrieval is separated from generation. Retrieval-augmented pipelines add one dense or joint retrieval step. Adaptive-trajectory pipelines add iterative retrieval, query reformulation and navigation.
-- And reasoning techniques like ReAct and multi-agent designs concentrate in that last family.
-- Next, one representative system from each family.
+## Slide 11: Page-to-document encoding, Hi-VT5
 
-**On screen:** Table 1 of the survey on the left with five framed regions, numbered notes on the right.
+- Hi-VT5 was introduced in 2023 together with the first multi-page benchmark, Multi-Page DocVQA. That benchmark has about forty-six thousand questions over six thousand scanned documents of up to twenty pages.
+- The model is built on T5, which is a text encoder and decoder.
+- Each page goes through the encoder separately. The encoder receives the question, the recognised words on that page with their positions, and patches of the page image.
+- It also receives ten learnable page tokens. Their job is to summarise whatever on that page matters for the question.
+- The decoder never sees the full pages. It only reads the page tokens from all the pages, joined together, and writes the answer.
+- The weakness is compression. A whole page is squeezed into ten tokens, so fine detail is lost, and memory still grows with every page added.
 
-## Slide 11: Page-to-document encoding: Hi-VT5
+## Slide 12: Adaptation of multimodal language models, Docopilot
 
-**Speaking cues**
+- Docopilot takes the opposite approach to retrieval. The whole document goes into the model's context and the model reads it directly.
+- Their real contribution is data. Existing models were trained on single images, so they built a dataset called Doc-750K.
+- It has about seven hundred and fifty thousand question and answer pairs and over three million page images, taken from papers on Sci-Hub and arXiv and from reviews on OpenReview. That is the pipeline in the figure.
+- They then fine-tune an existing model, InternVL2, on this data, in two sizes of two billion and eight billion parameters.
+- The weakness is the context window. A document that does not fit cannot be read at all, and accuracy already falls well before that limit.
 
-- Hi-VT5 came with the MP-DocVQA benchmark in 2023.
-- Each page goes through its own encoder with OCR text, layout and image patches. A few learnable page tokens summarise each page, and the decoder only reads those tokens.
-- The limit is that a page gets squeezed into a few tokens, and cost grows with the number of pages.
+## Slide 13: Retrieval-augmented pipelines, MoLoRAG
 
-**On screen:** The Hi-VT5 architecture figure, two bullets on how it works, one line on its limit.
+- MoLoRAG is a retrieval method. Its starting point is that ordinary retrieval only finds pages that look similar to the question.
+- But some pages are needed for the answer without looking similar at all. The authors call this logical relevance.
+- First, every page is embedded with a visual retriever called ColPali. Two pages are linked whenever their embeddings are similar enough, which gives a graph of pages.
+- For a question, the search starts from the few most similar pages.
+- A small vision-language model then looks at each of those pages and scores how logically relevant it is to the question. That score is combined with the similarity score.
+- The search then moves out to the neighbours of the best pages, and repeats for a fixed number of steps.
+- At the end, all visited pages are ranked again and the top few go to a frozen model that writes the answer.
+- The weakness is shared by the whole family. A page the search never reaches cannot be recovered later.
 
-## Slide 12: MLLM-centric adaptation: Docopilot
+## Slide 14: Adaptive-trajectory pipelines, DocLens
 
-**Speaking cues**
+- DocLens is built from four agents arranged in two modules, and it relies on document parsing tools.
+- The first module is the lens. Its page navigator runs optical character recognition on every page, then shows a model the question together with the page images and their text, and asks which pages hold the evidence.
+- It asks several times and keeps every page that was named, which gives ninety-seven percent recall of the evidence pages.
+- Then the element localiser runs layout detection on those pages and crops out each figure, chart and table, so the model can look at them closely.
+- The second module does the reasoning. An answer sampler writes several answers, each with its reasoning.
+- Then an adjudicator compares those lines of reasoning and chooses the most consistent one.
+- Paired with Gemini 2.5 Pro, it scores 67.6 percent on MMLongBench-Doc, the first system above human experts on that benchmark.
+- The weakness is cost. It makes many calls to a large model for every question, which is hard to bound and does not suit the local setting.
 
-- Docopilot is a native multi-page MLLM: the whole document goes into the context and there is no retrieval step.
-- What makes it work is training data. They built Doc-750K from papers on Sci-Hub, arXiv and OpenReview.
-- The limit is the context window, and accuracy already drops well before it is full.
+## Slide 15: Table of contents, empirical study
 
-**On screen:** The Doc-750K data pipeline figure, two bullets, one limit.
+- The second part is the empirical study, which is under review at EACL.
 
-## Slide 13: Retrieval-augmented: MoLoRAG
+## Slide 16: Empirical study, research gaps and contributions
 
-**Speaking cues**
+- The survey leaves two gaps open.
+- First, papers make competing claims about design, each tested on a different pipeline and dataset. Some say vision alone is enough, others want text as well. Some say retrieve more pages, others fewer.
+- Second, nobody had studied empirically, from one end of the pipeline to the other, where document understanding systems actually fail.
+- Our study makes three contributions.
+- A unified view of failure, with three places it can happen that do not depend on the architecture.
+- Controlled experiments in a single pipeline, repeated across two document collections and two independently developed model families.
+- And practical guidance for building and deploying these systems under a compute budget, which is exactly the local setting I described earlier.
 
-- MoLoRAG builds a graph over the pages and has a vision-language model walk it.
-- Each page gets a semantic score and a logical relevance score, so it can reach pages that do not look similar to the question but are needed to answer it.
-- The top pages go to a frozen model. Anything the traversal misses cannot be recovered afterwards.
+## Slide 17: Attribution framework
 
-**On screen:** The MoLoRAG framework figure, two bullets, one limit.
+- This is the framework. There are three places where an answer can go wrong.
+- Representation is how the document is converted into what the model reads. Was the information preserved?
+- Selection is which pages are put in front of the model. Did the information actually reach it?
+- Reasoning is what the model does with those pages. Did it use them correctly?
+- Each one has two mechanisms, which gives six in total. I will show results for each pair, and then a real example of each.
 
-## Slide 14: Adaptive-trajectory: DocLens
+## Slide 18: Attribution by construction
 
-**Speaking cues**
-
-- DocLens has two parts. The lens module finds the relevant pages and then zooms into the figures, tables and text on them.
-- The reasoning module samples several answers and an adjudicator picks one.
-- It is accurate, but it makes many model calls per question, so the cost is hard to bound.
-
-**On screen:** The DocLens workflow figure, two bullets, one limit.
-
-## Slide 15: Table of contents: empirical study
-
-**Speaking cues**
-
-- The second part is the empirical study, under review at EACL.
-
-**On screen:** The contents with the empirical study boxed, showing the paper title, authors and venue.
-
-## Slide 16: Empirical study: research gap and contributions
-
-**Speaking cues**
-
-- Papers disagree about what matters: vision only or text plus vision, retrieve more or retrieve less. Each claim comes from a different pipeline and dataset, so they cannot be compared.
-- The contribution is a framework of three failure loci, controlled interventions in one pipeline, and a check that the findings transfer.
-
-**On screen:** The gap on the left with the three disagreements, three contributions on the right.
-
-## Slide 17: One wrong answer, three possible causes
-
-**Speaking cues**
-
-- A real question from the benchmark: a 17-page course syllabus, and the question is how many quizzes there are in the whole course.
-- The answer is six, but the table runs over two pages: four quizzes on one, two on the next.
-- Say the system answers four instead of six.
-- Maybe page 16 was converted badly and the quiz lines were lost. That is a representation failure.
-- Maybe page 16 was never retrieved. That is a selection failure.
-- Or maybe both pages arrived fine and the model still miscounted. That is a reasoning failure.
-- The final accuracy number looks the same in all three cases, but the fix is different each time.
-
-**Transition:** That is the framework.
-
-**On screen:** The two pages and the question on the left. Three rows on the right: representation, selection, reasoning. The wrong answer of four is a hypothetical, the question is real.
-
-## Slide 18: Attribution framework
-
-**Speaking cues**
-
-- Three places an answer can go wrong: representation, selection, and reasoning.
-- Each has two mechanisms, which gives six things to test. One finding per mechanism follows.
-
-**On screen:** The framework figure, with one diagnostic question under each locus.
-
-## Slide 19: Attribution by construction
-
-**Speaking cues**
-
-- To separate the three, we use one simple pipeline: encode the pages, retrieve some, and answer in one pass.
+- To separate the three, we use one deliberately simple pipeline with three stages: encode the pages, retrieve some of them, and answer in a single pass.
 - Each experiment changes one stage and holds the other two fixed.
 - We can also hand the model the annotated gold pages directly, which takes retrieval out of the picture.
-- Each result slide has a small strip at the top right showing which stage is being changed.
+- The main benchmark is MMLongBench-Doc, with one hundred and thirty-five long documents. It is the only one we know of that marks, for every question, the evidence pages, the type of evidence, and whether the question can be answered at all.
 
-**On screen:** Encode, retrieve, answer as three boxes, with two bullets on gold pages and the dataset.
+## Slide 19: Representation, results
 
-## Slide 20: Modality ceiling
+- First, representation.
+- The table on the left compares four inputs: embedded text, parsed text, parsed text with page images, and images alone.
+- With text only, the model refuses chart and figure questions far more often, because the information is simply not there. Adding page images brings refusal under ten percent for every type of evidence.
+- But images alone are not the best either: 42.6 percent, against 49.5 percent for text and images together. Dense text and exact numbers are hard to read from an image.
+- On the right is conversion quality. With text alone, the choice of parser changes accuracy by 15.7 points on digital documents. Add the page image and that shrinks to 4.2.
 
-**Speaking cues**
+## Slide 20: Representation, design and deployment
 
-- With text only, the model refuses chart and figure questions most. Adding page images brings refusal under 10% for every evidence type.
-- Images alone are still worse than text plus images, 42.6% against 49.5%, because dense text and exact numbers are hard to read at limited resolution.
+- Here are two real examples.
+- On the left, the question asks for the colours of two icons. With text only the model says the document does not specify the colours. Colour exists only in pixels. Add the image and it answers grey and red.
+- On the right, a scanned slide. One parser misreads the company name, another finds nothing. A better parser, or simply adding the image, fixes it.
+- For design, this means text and vision are complementary. Start from reliable embedded text, add the image when the question is about appearance or the text looks wrong, and parse again when the text is not good enough.
+- For deployment, images are expensive. Preparing the input takes about twenty-six seconds per question with images, against under two seconds for text. So the choice of modality and the number of pages have to be set together.
 
-**On screen:** Table of abstention and accuracy by evidence source and representation.
+## Slide 21: Selection, results
 
-## Slide 21: Conversion fidelity
+- Next, selection.
+- On the left we take questions that need several pages and remove just one of them. Accuracy falls from 38.6 percent to 18.4 percent, so about half.
+- It makes almost no difference whether we remove the page the retriever ranked highest or lowest. So the ranking does not tell us which page is safe to lose.
+- On the right we do the opposite. We keep every gold page and add extra pages that look relevant but are not needed.
+- For questions that need several pages, three extra pages are enough to drop accuracy from 43.9 percent to 35.1 percent.
 
-**Speaking cues**
+## Slide 22: Selection, design and deployment
 
-- Parser quality matters a lot with text alone: a 15.7-point spread on digital documents. Add the page image and it shrinks to 4.2.
-- Same story the other way round: higher resolution helps images alone, and much less when parser text is there too.
+- Two examples again.
+- On the left, a question asks how many authors come from Columbia University. The list runs over two pages. Given one page the model says two, given the other it says one. Only with both pages does it say three.
+- On the right, the question is how many bar graphs are in the document. With a few extra pages the model counts twelve or thirteen instead of ten.
+- For design, select evidence as a set, not page by page. Retrieve broadly, then filter or rerank what reaches the model.
+- For deployment, a strong visual retriever raises recall at five pages from 58 percent to 81 percent, but it needs a graphics card and far more time per question. So judge retrieval by the final answers and the total time.
 
-**On screen:** Figure: accuracy by parser and scan status, and by image resolution.
+## Slide 23: Reasoning, results
 
-## Slide 22: Evidence coverage
+- Finally, reasoning. Here the model is given exactly the right pages.
+- On the left we change the size of the model, from two billion to thirty-two billion parameters.
+- Accuracy on questions that need several pieces of evidence rises from 29 percent to almost 50 percent.
+- But questions that need one piece improve just as much, so the gap between the two stays. A bigger model is better at everything. It does not make combining evidence easier.
+- On the right we tell the model it may answer "not answerable".
+- It then correctly refuses far more questions that have no answer, from 45.5 percent to 74.6 percent.
+- But it also starts refusing questions that do have an answer. That goes from 6.2 percent to 27.7 percent.
 
-**Speaking cues**
+## Slide 24: Reasoning, design and deployment
 
-- Take away one gold page and accuracy roughly halves, from 38.6% to 18.4% or 15.9%.
-- It does not matter whether it was the highest or lowest ranked page, so retrieval rank does not tell you which page is safe to drop.
+- The examples.
+- On the left, a question joins a diagram with a table. The smallest model reads the wrong table. The next reads the right table but the wrong row. The next reads the right numbers and then divides when it should subtract. Only the largest model gets it right.
+- On the right, the answer needs two numbers from two tables. Told that it may refuse, the model says not answerable. Told to reason first, it finds both numbers and subtracts them.
+- For design, match the size of the model and the way it reasons to what the task needs, and have it reason before it refuses.
+- For deployment, storing the model at lower precision keeps accuracy and saves memory, but it is not faster. If memory is the limit, prefer a larger model at lower precision. If time is the limit, prefer a faster model.
 
-**On screen:** Figure: paired verdict transitions after removing or keeping gold pages.
+## Slide 25: Conclusion
 
-## Slide 23: Distractor exposure
+- To conclude.
+- The survey organises the field. Understanding multi-page documents is a problem of evidence management, and four families of architecture handle it in different ways.
+- The empirical study locates the failures. They sit at representation, at selection, or at reasoning, and each one needs a different fix.
+- Thank you. I am happy to take questions.
 
-**Speaking cues**
+---
 
-- Here every gold page is kept and extra non-gold pages are added.
-- Multi-hop accuracy drops from 43.9% to 35.1% after only three extra pages, then levels off. Single-hop declines slowly.
+# After the conclusion: proof of concept
 
-**On screen:** Figure: accuracy and step flips as non-gold pages are added.
+Not part of the fifteen minutes. Use if there is time, or if a question asks for it. About 230 words.
 
-## Slide 24: Evidence integration
+## Slide 26: Table of contents, proof of concept
 
-**Speaking cues**
-
-- With the gold pages supplied, a bigger model does better on multi-hop questions: 29.0% at 2B up to 49.9% at 32B.
-- Single-hop improves too, so this is about using evidence in general, not only combining it.
-
-**On screen:** Figure: single-hop and multi-hop accuracy across Qwen3-VL sizes.
-
-## Slide 25: Response calibration
-
-**Speaking cues**
-
-- Telling the model it may abstain makes it refuse far more unanswerable questions, 13.2% to 76.1%, but it also starts refusing answerable ones.
-- Asking it to reason first recovers most of the lost accuracy.
-
-**On screen:** Figure: answerable accuracy and the two refusal rates across four prompt modes.
-
-## Slide 26: Table of contents: proof of concept
-
-**Speaking cues**
-
-- The last part is a small proof of concept.
-
-**On screen:** The contents with the proof of concept boxed.
+- If there is time, I can show a small proof of concept that puts the findings into one system.
 
 ## Slide 27: From findings to a simple method
 
-**Speaking cues**
-
-- The last part is a proof of concept: put the findings into one small system and see if they hold up.
-- It is one model in three roles. The reader goes through pages in ranked order and records evidence. The synthesizer answers. The arbiter accepts, or sends the reader back.
-- Each design choice comes from a finding: read text and image together, read broadly but pass on compact records, and have a separate step decide whether the evidence is enough.
-
-**On screen:** The reader, synthesizer, arbiter loop, with one design choice under each of representation, selection and reasoning.
+- It is one model playing three roles.
+- The reader goes through the pages in ranked order. For each page it sees both the text and the image, writes down any evidence it finds, and flags pages that may hold the answer.
+- The synthesizer answers from the flagged pages in full and the short records of everything else.
+- The arbiter cannot write an answer. It either accepts, or names a missing fact and sends the reader back for more pages.
+- Each choice follows from a finding. Text and image together, for representation. Read broadly but pass on short records, for selection. And a separate step that judges whether the evidence is enough, for reasoning.
 
 ## Slide 28: Simple method results
 
-**Speaking cues**
+- All systems in this table use the same model with eight billion parameters.
+- Ours reaches 56.5 percent on MMLongBench-Doc and 61.3 percent on LongDocURL, the highest in the table, without any training and with the model stored at four-bit precision.
+- It is still behind the trained system DocTrace on questions that need several pages, 39.2 against 41.1.
+- The cost is time: about eleven minutes per question on average, in about eight gigabytes of memory.
 
-- 56.5% on MMLongBench-Doc and 61.3% on LongDocURL, the highest among systems on the same Qwen3-VL-8B backbone, with no training and a 4-bit model.
-- Multi-page questions are still the weak spot, 39.2 against DocTrace's 41.1.
+---
 
-**On screen:** The results table under each benchmark's official protocol.
+# Appendix slides (29 to 44)
 
-## Slide 29: Conclusion
+For questions only. No script.
 
-**Speaking cues**
-
-- To sum up: the survey organises the field around evidence management, the empirical study locates where failures come from, and the proof of concept shows the findings hold in a working system.
-- Thank you. Happy to take questions.
-
-**On screen:** Three cards restating the contributions, then thank you.
-
-## Backup slides (30 onwards, no slide numbers)
-
-For questions only.
-
-- 30 to 35, survey: inference-time and training strategies, retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
-- 36, 37, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
-- 38 to 40, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
-- 41, 42, deployment: representation cost, reasoner choice under a memory budget.
-- 43, 44, method: how each finding maps to a design choice, and the inference cost.
+- 29 to 34, survey: inference-time and training strategies, retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
+- 35, datasets and evaluation for the empirical study, including the judge.
+- 36 to 41, the six quantitative findings one at a time, at full size.
+- 42, the deployment table: accuracy and cost of each representation, retriever and reasoner.
+- 43, 44, the method: how each finding maps to a design choice, and the inference cost.
