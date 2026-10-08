@@ -40,41 +40,41 @@
   \parbox{0.96\linewidth}{\scriptsize\ttfamily\raggedright\sloppy #1}\par\vspace{2pt}}
 \newcommand{\wxread}[1]{\wxsep{\footnotesize\textit{#1}\par}}
 
-This appendix shows individual questions behind the rates of \S\ref{sec:findings}, at least one for each failure mechanism of \S\ref{sec:attribution_framework}. Each box gives the question, the gold answer, and the reasoner's output under every condition shown, marked \wxR{} correct, \wxW{} incorrect or \wxA{} abstained. The reasoner is Qwen3-VL-8B at \textbf{TLV} with no instruction unless a row says otherwise, and verdicts follow the accuracy rubric. Page numbers are zero-based indices into the document.
+This appendix shows individual questions behind the rates of \S\ref{sec:findings}, at least one for each failure mechanism of \S\ref{sec:attribution_framework}. Each box gives the question, the gold answer, and the reasoner's output under every condition shown, marked \wxR{} correct, \wxW{} incorrect or \wxA{} abstained. The reasoner is Qwen3-VL-8B at \textbf{TLV} with no instruction unless a row says otherwise, and verdicts follow the accuracy rubric. Page numbers are zero-based indices into the document. None of these questions is one of the six in Figure~\ref{fig:mechanism_examples}.
 
 %% ---------------------------------------------------------------------------
 \subsection{Representation}
 \label{app:ex_representation}
 
-\begin{wxbox}{R1}{Modality ceiling}{mmlongbench:000085}
-\wxmeta{Smartwatch user guide (Guidebook), born-digital. Gold page 15. Evidence source: text and figure.}
-\wxq{What are the colors of the icons that the users touch to move the app up and remove the app respectively?}
-\wxgold{gray, red}
+\begin{wxbox}{R1}{Modality ceiling}{mmlongbench:000014}
+\wxmeta{Presentation deck (Tutorial/Workshop), born-digital. Gold page 13, a single chart. Evidence source: chart.}
+\wxq{According to the chart on page 14 how much time was spent with family and friends in 2010?}
+\wxgold{21\%}
 \wxsep
-\wxnote{The page's instructions survive the parse intact; the two inline icons do not. PaddleOCR-VL emits:}
-\wxsnip{\#\# NOTE \textbullet{} On the Favorites screen, touch to move the app up to the top of the list. <img src="[\ldots]" width="3\%" /> <img src="[\ldots]" width="3\%" /> - On the Favorites screen, touch to remove the app from the list.}
+\wxnote{The page is one chart, and the parser has nothing to transcribe. PaddleOCR-VL emits only a placeholder:}
+\wxsnip{<div style="text-align: center;"><img src="[\ldots]" alt="Image" width="52\%" /></div>}
 \wxsep
-\wxrow{T}{\wxW}{``The document does not specify the colors of the icons used to move the app up or remove the app. [\ldots] no visual descriptions or color information are provided.''}
-\wxrow{TL}{\wxW}{``[\ldots] While it describes the actions users should take [\ldots], it does not mention any visual details such as icon colors.''}
-\wxrow{V}{\wxR}{``\textbf{To move the app up:} The icon is \textbf{gray}. \textbf{To remove the app:} The icon is \textbf{red}.''}
-\wxrow{TLV}{\wxR}{``\textbf{To move the app up}: The icon is \textbf{gray} (a gray upward arrow). \textbf{To remove the app}: The icon is \textbf{red} [\ldots].''}
-\wxread{Colour is not a linguistic signal, so no parser can carry it. Both text representations decline instead of guessing, which is the refusal pattern of Table~\ref{tab:abstention_rungs}: the evidence is absent from the modality, not misread.}
+\wxrow{T}{\wxA}{``The document does not provide any evidence or chart on page 14, so it is not possible to determine how much time was spent with family and friends in 2010 [\ldots]''}
+\wxrow{TL}{\wxA}{``[\ldots] The image referenced (on page 14) is not described or transcribed, so its content cannot be interpreted. [\ldots]''}
+\wxrow{V}{\wxR}{``According to the chart on page 14, in 2010, 21\% of weekend time was spent with family and friends.''}
+\wxrow{TLV}{\wxR}{``According to the chart on page 14, in 2010, 21\% of weekend time was spent with family and friends.''}
+\wxread{The gold page reaches every representation, so nothing is missing from the context. The value lives in the chart's geometry and no text channel carries it, so both text representations decline instead of guessing, which is the refusal pattern of Table~\ref{tab:abstention_rungs}.}
 \end{wxbox}
 
-\begin{wxbox}{R2}{Conversion fidelity: parser}{mmlongbench:000158}
-\wxmeta{Presentation deck (Tutorial/Workshop), scanned, so no usable embedded text layer. Gold page 0. Evidence source: layout.}
-\wxq{What is the name of the company that created this presentation?}
-\wxgold{AVALAUNCH MEDIA}
+\begin{wxbox}{R2}{Conversion fidelity: parser}{mmlongbench:000513}
+\wxmeta{Guidebook, born-digital. Gold page 9, a numbered list of market names with a code beside each. Evidence source: text and table.}
+\wxq{How many geographic market names are listed under Los Angeles area?}
+\wxgold{13}
 \wxsep
-\wxnote{The three parsers convert the same title slide into three different pages. Only one keeps the banner that carries the answer:}
-\wxsnip{PaddleOCR-VL: \#\# PRESENTATIONS THAT KICK ASTERKS \\[1.5pt] MinerU 2.5: (empty) \\[1.5pt] Unlimited-OCR: AVALAUNCH MEDIA \textbar{} PRESENTATIONS THAT KICK \textbar{} LAST YEAR}
+\wxnote{The list runs from item 14 to item 26. The three parsers keep its text and differ in what they do with the code column:}
+\wxsnip{PaddleOCR-VL: California 14-26 \textbar{} 14. San Fernando Valley (West) CA14 \textbar{} [\ldots] \textbar{} 26. Santa Ana CA26 \\[1.5pt] MinerU 2.5: 14. San Fernando Valley (West) \textbar{} [\ldots] \textbar{} 26. Santa AnaEPS \textbar{} Code \textbar{} 4.14 \textbar{} [\ldots] \textbar{} 4.26 \\[1.5pt] Unlimited-OCR: <table><tr><td>14.</td><td>San Fernando Valley (West)</td><td>CA14</td></tr> [\ldots]}
 \wxsep
-\wxrow{T}{\wxW}{``The document does not provide any evidence or information about the company that created the presentation.''}
-\wxrow{TL, PaddleOCR-VL}{\wxW}{``The name of the company that created this presentation is \textbf{Asterks}.''}
-\wxrow{TL, MinerU 2.5}{\wxW}{``The document does not provide any evidence or information about the company [\ldots]''}
-\wxrow{TL, Unlimited-OCR}{\wxR}{``The name of the company that created this presentation is \textbf{AVALAUNCH MEDIA}.''}
-\wxrow{TLV, PaddleOCR-VL}{\wxR}{``[\ldots] the name of the company [\ldots] is \textbf{Avalaunch Media}. This name is clearly visible in the banner located at the top of the presentation's title slide [\ldots]''}
-\wxread{With text alone, a parser error is indistinguishable from evidence: the corrupted title is returned as a company name. The page image is the redundant channel that absorbs the error, so the same faulty parse yields the right answer under TLV.}
+\wxrow{T}{\wxR}{``The document lists \textbf{13} geographic market names under the Los Angeles area. [\ldots]''}
+\wxrow{TL, PaddleOCR-VL}{\wxW}{``26 The document lists 26 geographic market names under the `Los Angeles Area' section, ranging from CA14 to CA26.''}
+\wxrow{TL, MinerU 2.5}{\wxW}{``26 The document lists 26 geographic market names [\ldots] ranging from `San Fernando Valley (West)' (item 14) to `Santa Ana' (item 26).''}
+\wxrow{TL, Unlimited-OCR}{\wxR}{``There are \textbf{13} geographic market names listed under the Los Angeles area. The list includes entries numbered 14 through 26 [\ldots]''}
+\wxrow{TLV, PaddleOCR-VL}{\wxR}{``[\ldots] there are \textbf{13} geographic market names listed under the Los Angeles area. [\ldots] codes from 14 to 26. Counting these entries [\ldots]''}
+\wxread{Every parser returns all thirteen names, yet two flatten the list so that its last label reads as its length. The parser that keeps the rows as a table gives the right count, as does the same flattened parse once the page image accompanies it: the image is the redundant channel that absorbs the conversion error.}
 \end{wxbox}
 
 \begin{wxbox}{R3}{Conversion fidelity: resolution}{mmlongbench:000065}
@@ -93,15 +93,15 @@ This appendix shows individual questions behind the rates of \S\ref{sec:findings
 \subsection{Selection}
 \label{app:ex_selection}
 
-\begin{wxbox}{S1}{Evidence coverage}{mmlongbench:000141}
-\wxmeta{Climate assessment report (Research report), born-digital. Gold pages 13 and 14, both parts of one author list; \texttt{drop\_top} leaves page 14 and \texttt{drop\_bottom} page 13. Evidence source: text.}
-\wxq{How many chapter authors of this report come from Columbia University?}
-\wxgold{3}
+\begin{wxbox}{S1}{Evidence coverage}{mmlongbench:000082}
+\wxmeta{Survey paper (Academic paper), born-digital. Gold pages 8 and 9: the sentence that answers the question starts on the last line of page 8 and finishes on page 9. \texttt{drop\_top} leaves page 8 and \texttt{drop\_bottom} page 9. Evidence source: text.}
+\wxq{Which method integrates knowledge into white-box models via directive fine-tuning?}
+\wxgold{PKG}
 \wxsep
-\wxrow{gold pages}{\wxR}{``[\ldots] there are \textbf{three} chapter authors from Columbia University: 1. \textbf{Radley Horton} 2. \textbf{Patrick Kinney} 3. \textbf{Carlos Perez Garcia-Pando}''}
-\wxrow{\texttt{drop\_top}}{\wxW}{``[\ldots] there is \textbf{one} chapter author from Columbia University. The author listed is \textbf{Carlos Perez Garcia-Pando} [\ldots] No other chapter authors in the document are listed as being from [\ldots]''}
-\wxrow{\texttt{drop\_bottom}}{\wxW}{``[\ldots] there are \textbf{two} chapter authors from Columbia University: \textbf{Radley Horton}, \textbf{Patrick Kinney} [\ldots]''}
-\wxread{Each reduced context yields a count that is correct for the pages supplied and wrong for the question, stated with the same confidence. Both removals break the answer, so retrieval rank does not identify a page that can safely be omitted.}
+\wxrow{gold pages}{\wxR}{``[\ldots] the method that integrates knowledge into white-box models via directive fine-tuning is \textbf{PKG}. [\ldots] `PKG introduces an innovative method for integrating knowledge into white-box models via directive fine-tuning [75].' [\ldots]''}
+\wxrow{\texttt{drop\_top}}{\wxW}{``[\ldots] the method that integrates knowledge into white-box models via directive fine-tuning is \textbf{Fine-tuning Embedding Model}. [\ldots]''}
+\wxrow{\texttt{drop\_bottom}}{\wxW}{``The method that integrates knowledge into white-box models via directive fine-tuning is \textbf{directive fine-tuning}. The document explicitly states: `introduces an innovative method for integrating knowledge into white-box models via directive fine-tuning [75].' [\ldots]''}
+\wxread{Page 8 ends on the method's name and page 9 opens with what it does, so neither page holds the answer. With one of them withheld the reasoner does not decline: it names a nearby section heading, or repeats the question's own phrase. Both removals break the answer, so retrieval rank does not identify a page that can safely be omitted.}
 \end{wxbox}
 
 \begin{wxbox}{S2}{Distractor exposure: broken}{mmlongbench:000078}
@@ -135,28 +135,28 @@ Table~\ref{tab:app_ldu_distractor} repeats the distractor sweep on LongDocURL wi
 \subsection{Reasoning}
 \label{app:ex_reasoning}
 
-\begin{wxbox}{N1}{Evidence integration}{mmlongbench:000192}
-\wxmeta{Academic paper, born-digital, multi-hop. Gold pages 7 (a system diagram in which the demonstrations are drawn in green) and 8 (the ablation table). Rows are Qwen3-VL sizes. Evidence source: figure and table.}
-\wxq{If I drop the green module shown in Figure 6, what is the absolute percentage drop on 100-shot TACREV setting?}
-\wxgold{0.5\%}
+\begin{wxbox}{N1}{Evidence integration}{mmlongbench:001015}
+\wxmeta{Annual report (Financial report), born-digital, multi-hop. Gold pages 35 (the income statement) and 39 (the cash flow statement). Rows are Qwen3-VL sizes. Evidence source: table.}
+\wxq{what is EBITDA for costco in FY2021?}
+\wxgold{8489}
 \wxsep
-\wxrow{2B}{\wxW}{``[\ldots] is \textbf{2.4\%}. [\ldots] The analysis of the filter-then-rerank system is presented in Table 3 [\ldots]''}
-\wxrow{4B}{\wxW}{``[\ldots] when dropping the green module (demos) is \textbf{-9.6\%}. [\ldots] Table 5 [\ldots] presents the results of this ablation study [\ldots]''}
-\wxrow{8B}{\wxW}{``[\ldots] With demos: The F1 score is \textbf{75.9}. Without demos: The F1 score is \textbf{74.9}. The absolute percentage drop is calculated as: (75.9 $-$ 74.9) / 75.9 [\ldots] $\approx$ \textbf{1.32\%}''}
-\wxrow{32B}{\wxR}{``[\ldots] The baseline [\ldots] for TACREV (100-shot) is \textbf{75.9}. The result when Demo is removed [\ldots] is \textbf{75.4}. [\ldots] 75.9 $-$ 75.4 = \textbf{0.5}''}
-\wxread{Every model receives the same two pages. The smallest uses the wrong table, the next two link the green module to the ablation table but take the wrong row or the wrong operation, and only the largest carries the chain from diagram to row to difference. The evidence was sufficient throughout; what scales is the ability to combine it.}
+\wxrow{2B}{\wxW}{``[\ldots] EBITDA for Costco in FY2021 is \$6,708 million. This is found in the [\ldots] row labeled `Operating income' [\ldots]''}
+\wxrow{4B}{\wxW}{``The EBITDA for Costco in FY2021 is \$6,708 million. [\ldots] EBITDA [\ldots] is typically calculated as Operating Income plus Depreciation and Amortization, but in this document, the `Operating income' row is presented as the direct measure of EBITDA [\ldots]''}
+\wxrow{8B}{\wxW}{``[\ldots] Operating Income + Depreciation and Amortization + Interest Expense + Provision for Income Taxes = \$6,708 + \$1,781 + \$(171) + \$1,601 = \textbf{\$8,469 million}''}
+\wxrow{32B}{\wxR}{``[\ldots] From the Consolidated Statements of Income: Operating Income = \$6,708 million. From the Consolidated Statements of Cash Flows: Depreciation and Amortization = \$1,781 million. [\ldots] \$6,708 + \$1,781 = \textbf{\$8,489 million}''}
+\wxread{Every model receives the same two statements. The two smallest stop at operating income on the first page, one of them after stating the formula that needs the second. The 8B reaches the cash flow statement but adds lines that operating income already excludes, and only the largest joins the two operands. The evidence was sufficient throughout; what scales is the ability to combine it.}
 \end{wxbox}
 
-\begin{wxbox}{N2}{Response calibration: answerable}{mmlongbench:000457}
-\wxmeta{Academic paper, born-digital, multi-hop. Gold pages 4 and 5, one results table on each. Evidence source: table.}
-\wxq{How much lower is the accuracy of GPT-4 on SituatedQA compared to MMLU Chemistry?}
-\wxgold{16.7\%}
+\begin{wxbox}{N2}{Response calibration: answerable}{mmlongbench:000418}
+\wxmeta{E-commerce market deck (Research report), scanned, multi-hop. Gold pages 11 and 14, one bar chart on each. Evidence source: chart.}
+\wxq{How many people in India were using a debit card when the e-commerce sales reached 11 billion?}
+\wxgold{399 million}
 \wxsep
-\wxrow{\texttt{none}}{\wxR}{``[\ldots] the accuracy of GPT-4 on SituatedQA is \textbf{63.2\%}, while its accuracy on MMLU Chemistry is \textbf{79.9\%}. [\ldots] \textbf{16.7 percentage points lower} [\ldots]''}
-\wxrow{\texttt{cot}}{\wxR}{``Step 1: [\ldots] From Table 2, GPT-4's accuracy on SituatedQA is 63.2\%. Step 2: [\ldots] From Table 1, GPT-4's accuracy on MMLU Chemistry is 79.9\%. Step 3: [\ldots] Answer: 16.7\%''}
+\wxrow{\texttt{none}}{\wxR}{``[\ldots] when e-commerce sales reached \$11 billion (in 2014), the number of debit card users in India was \textbf{399 million}. [\ldots]''}
+\wxrow{\texttt{cot}}{\wxR}{``Step 1: [\ldots] the \$11 billion mark is shown for the year 2014. Step 2: [\ldots] the bar chart titled `Number of Debit Card users in India (In millions)' shows the value for 2014 as 399 million. [\ldots] Answer: 399 million''}
 \wxrow{\texttt{abstain}}{\wxA}{``Not answerable''}
-\wxrow{\texttt{abstain\_cot}}{\wxR}{``Step 1: [\ldots] 63.2\%. Step 2: [\ldots] 79.9\%. Step 3: [\ldots] Difference = 79.9\% $-$ 63.2\% = 16.7\%. [\ldots]''}
-\wxread{The answer is not stated anywhere; it has to be assembled from two tables. Under \texttt{abstain} the reasoner refuses a question it answers correctly with no instruction, a false refusal. Asking it to reason before deciding makes it locate both values first, and the refusal disappears.}
+\wxrow{\texttt{abstain\_cot}}{\wxR}{``Step 1: [\ldots] e-commerce sales were \$11 billion in 2014. Step 2: [\ldots] For 2014, the number is 399 million. [\ldots] Answer: 399 million''}
+\wxread{The answer is on neither page alone: one chart gives the year, the other the count for that year. Under \texttt{abstain} the reasoner refuses a question it answers correctly with no instruction, a false refusal. Asking it to reason before deciding makes it locate both values first, and the refusal disappears.}
 \end{wxbox}
 
 \begin{wxbox}{N3}{Response calibration: unanswerable}{mmlongbench:000047}
@@ -170,3 +170,4 @@ Table~\ref{tab:app_ldu_distractor} repeats the distractor sweep on LongDocURL wi
 \wxrow{\texttt{abstain\_cot}}{\wxR}{``[\ldots] Step 3: The document does not mention YouTube at all. [\ldots] Answer: Not answerable''}
 \wxread{One supplied page shows a man holding stacks of money, and with no instruction the reasoner builds a show, a character and an interpretation out of it. Each of the other prompts leads it to check the premise against the pages and decline, which is the correct response here.}
 \end{wxbox}
+z
