@@ -20,7 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#980000;
+    --accent:#1A56B0;
     --wash:#E9EFF5;
     --disp:'Calibri','Carlito',sans-serif;
     --body:'Calibri','Carlito',sans-serif;
@@ -62,39 +62,39 @@
   .corner span{padding:0 7px;}
 
   /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
-  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .hi{color:var(--accent); font-weight:600; font-style:normal;}
+  .body b, .body strong{color:var(--accent) !important;}
   .pic{position:relative; flex:none;}
   .pic img{width:100%; height:100%; display:block;}
-  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .box{position:absolute; border:2.5px solid var(--accent); border-radius:3px;}
   .corner i{font-style:normal; margin-right:14px; opacity:.32;}
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
   /* ---- gold bars, top left and bottom right ---- */
-  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:var(--accent);}
   .slide::before{left:0; top:0;}
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 16 ================= */
   .s16 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s16 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
   .s16 ul{list-style:none;}
-  .s16 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
-  .s16 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
-  .s16 ul li:last-child{margin-bottom:0;}
   .s16 b{font-weight:600;}
   .s16 img{display:block;}
   .s16 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s16 .pipe{display:flex; align-items:stretch; margin-top:30px;}
-  .s16 .st{flex:1; border:1.5px solid var(--ink); padding:18px 20px 20px; position:relative;}
-  .s16 .st + .st{margin-left:44px;}
-  .s16 .st + .st::before{content:""; position:absolute; left:-36px; top:50%; width:22px; height:2px; background:var(--navy);}
-  .s16 .st + .st::after{content:""; position:absolute; left:-17px; top:50%; margin-top:-4px; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:9px solid var(--navy);}
-  .s16 .st h3{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0;}
-  .s16 .st .lab{margin:2px 0 12px;}
-  .s16 .st p{font-size:20.5px; line-height:1.4;}
-  .s16 .st .cfg{margin-top:12px; font-family:var(--mono); font-size:13px; letter-spacing:.03em; line-height:1.6;}
-  .s16 ul{margin-top:34px;}
+  .s16 .cols{display:grid; grid-template-columns:470px 1fr; gap:60px; align-items:start;}
+  .s16 .gapbox{border-top:3px solid var(--accent); padding-top:14px;}
+  .s16 .dia{border:1.5px solid var(--line); margin:6px 0 18px; padding:18px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;}
+  .s16 .tag{font-size:18.5px; border:1.5px solid var(--ink); padding:6px 10px; white-space:nowrap;}
+  .s16 .row{display:flex; align-items:center; gap:10px; width:100%; justify-content:center;}
+  .s16 .vs{font-size:14.5px; font-weight:600; color:var(--accent);}
+  .s16 .lines{display:flex; gap:26px; justify-content:center; width:100%; margin-top:4px;}
+  .s16 .lines i{display:block; width:2px; height:34px; background:var(--navy);}
+  .s16 .gap{font-size:25.5px; line-height:1.42;}
+  .s16 .con{border-top:3px solid var(--navy); padding-top:14px;}
+  .s16 ol{list-style:none; counter-reset:c; margin-top:6px;}
+  .s16 ol li{counter-increment:c; position:relative; padding-left:44px; margin-bottom:24px; font-size:25.5px; line-height:1.4;}
+  .s16 ol li::before{content:counter(c); position:absolute; left:0; top:1px; width:28px; height:28px; border:1.5px solid var(--navy); font-size:16.5px; font-weight:600; display:flex; align-items:center; justify-content:center;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -109,22 +109,23 @@
 
 <div class="slide s16">
 
-  <h1>Attribution by Construction</h1>
+  <h1>Empirical Study: Research Gap and Contributions</h1>
 
   <div class="body">
-    <p class="lead">One simple pipeline. <b class="hi">Change one stage, hold the other two fixed.</b></p>
-    <div class="pipe">
-      <div class="st"><h3>Encode</h3><div class="lab">Representation</div><p>Each page becomes text, an image, or both.</p><div class="cfg">default: parser text + page image</div></div>
-      <div class="st"><h3>Retrieve</h3><div class="lab">Selection</div><p>The top pages for the question reach the model.</p><div class="cfg">or: the annotated gold pages</div></div>
-      <div class="st"><h3>Answer</h3><div class="lab">Reasoning</div><p>One model answers in a single pass.</p><div class="cfg">default: Qwen3-VL-8B</div></div>
+    <div class="cols">
+      <div class="gapbox">
+        <div class="lab">Research gap</div>
+        <div class="dia"><div class="row"><span class="tag">vision only</span><span class="vs">VS</span><span class="tag">text + vision</span></div><div class="row"><span class="tag">retrieve more</span><span class="vs">VS</span><span class="tag">retrieve less</span></div><div class="row"><span class="tag">context limit</span><span class="vs">VS</span><span class="tag">integration</span></div></div>
+        <p class="gap">Papers make <b class="hi">competing claims</b> about what matters, each on a different pipeline and dataset, so none can be compared.</p>
+      </div>
+      <div class="con">
+        <div class="lab">Contributions</div>
+        <ol><li>Three architecture-independent <b class="hi">failure loci</b>, with six mechanisms.</li><li>Controlled interventions in one pipeline: change one locus, hold the others fixed.</li><li>Transfer across datasets and models, with design implications and cost.</li></ol>
+      </div>
     </div>
-    <ul>
-      <li><b>Gold pages</b> bypass retrieval, so selection can be taken out of the picture.</li>
-      <li><b>MMLongBench-Doc</b>: 135 documents, annotated with evidence pages, evidence type and answerability.</li>
-    </ul>
   </div>
 
-  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>16</b> / 26</div>
+  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>16</b> / 29</div>
 
 </div>
 </body>

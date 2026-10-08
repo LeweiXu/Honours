@@ -84,20 +84,7 @@
 
 **Source:** Thesis Section 3.1, page 23. The examples motivate the research rather than report experimental findings.
 
-## Slide 7: Contributions
-
-**Speaking cues**
-
-- The thesis is a compilation in three parts.
-- A survey that organises the field around evidence management.
-- An empirical study with a framework of three failure loci, each tested under controlled conditions.
-- And a proof of concept that puts the findings into one training-free method, reaching 56.5% on MMLongBench-Doc.
-
-**Transition:** Starting with the survey.
-
-**On screen:** Three numbered cards: survey, empirical attribution, proof of concept.
-
-## Slide 8: Table of contents: survey
+## Slide 7: Table of contents: survey
 
 **Speaking cues**
 
@@ -105,7 +92,7 @@
 
 **On screen:** The contents with the survey boxed, showing the paper title, authors and venue.
 
-## Slide 9: Survey: research gap and contributions
+## Slide 8: Survey: research gap and contributions
 
 **Speaking cues**
 
@@ -115,7 +102,7 @@
 
 **On screen:** The gap on the left with a small diagram, three contributions on the right.
 
-## Slide 10: Multi-page architectural overview
+## Slide 9: Multi-page architectural overview
 
 **Speaking cues**
 
@@ -156,18 +143,59 @@
 
 **Source:** Thesis Sections 2.1–2.3, pages 7–11; Figure 2.1.
 
-## Slide 11: Inference-time and training strategies
+## Slide 10: Surveyed systems at a glance
 
 **Speaking cues**
 
-- The rest of the survey is organised by three decisions: how to find evidence, how to reason over it, and how to go back for more.
-- Each one can be done training-free around a frozen model, or trained into the model.
+- This is the main table of the survey: every system we cover, grouped by the four families.
+- Three things to notice. Modalities: the encoding models fuse text, vision and layout, while the MLLM-centric ones are mostly vision only.
+- Search only shows up once retrieval is separated from generation. Retrieval-augmented pipelines add one dense or joint retrieval step. Adaptive-trajectory pipelines add iterative retrieval, query reformulation and navigation.
+- And reasoning techniques like ReAct and multi-agent designs concentrate in that last family.
+- Next, one representative system from each family.
 
-**Transition:** The survey maps the design choices. The second paper asks which of them actually matter.
+**On screen:** Table 1 of the survey on the left with four framed regions, numbered notes on the right.
 
-**On screen:** Three columns: retrieval and navigation, reasoning strategies, agentic methods. Each lists the training-free and the trained variants.
+## Slide 11: Page-to-document encoding: Hi-VT5
 
-## Slide 12: Table of contents: empirical study
+**Speaking cues**
+
+- Hi-VT5 came with the MP-DocVQA benchmark in 2023.
+- Each page goes through its own encoder with OCR text, layout and image patches. A few learnable page tokens summarise each page, and the decoder only reads those tokens.
+- The limit is that a page gets squeezed into a few tokens, and cost grows with the number of pages.
+
+**On screen:** The Hi-VT5 architecture figure, two bullets on how it works, one line on its limit.
+
+## Slide 12: MLLM-centric adaptation: Docopilot
+
+**Speaking cues**
+
+- Docopilot is a native multi-page MLLM: the whole document goes into the context and there is no retrieval step.
+- What makes it work is training data. They built Doc-750K from papers on Sci-Hub, arXiv and OpenReview.
+- The limit is the context window, and accuracy already drops well before it is full.
+
+**On screen:** The Doc-750K data pipeline figure, two bullets, one limit.
+
+## Slide 13: Retrieval-augmented: MoLoRAG
+
+**Speaking cues**
+
+- MoLoRAG builds a graph over the pages and has a vision-language model walk it.
+- Each page gets a semantic score and a logical relevance score, so it can reach pages that do not look similar to the question but are needed to answer it.
+- The top pages go to a frozen model. Anything the traversal misses cannot be recovered afterwards.
+
+**On screen:** The MoLoRAG framework figure, two bullets, one limit.
+
+## Slide 14: Adaptive-trajectory: DocLens
+
+**Speaking cues**
+
+- DocLens has two parts. The lens module finds the relevant pages and then zooms into the figures, tables and text on them.
+- The reasoning module samples several answers and an adjudicator picks one.
+- It is accurate, but it makes many model calls per question, so the cost is hard to bound.
+
+**On screen:** The DocLens workflow figure, two bullets, one limit.
+
+## Slide 15: Table of contents: empirical study
 
 **Speaking cues**
 
@@ -175,7 +203,7 @@
 
 **On screen:** The contents with the empirical study boxed, showing the paper title, authors and venue.
 
-## Slide 13: Empirical study: research gap and contributions
+## Slide 16: Empirical study: research gap and contributions
 
 **Speaking cues**
 
@@ -184,7 +212,7 @@
 
 **On screen:** The gap on the left with the three disagreements, three contributions on the right.
 
-## Slide 14: One wrong answer, three possible causes
+## Slide 17: One wrong answer, three possible causes
 
 **Speaking cues**
 
@@ -200,7 +228,7 @@
 
 **On screen:** The two pages and the question on the left. Three rows on the right: representation, selection, reasoning. The wrong answer of four is a hypothetical, the question is real.
 
-## Slide 15: Attribution framework
+## Slide 18: Attribution framework
 
 **Speaking cues**
 
@@ -209,7 +237,7 @@
 
 **On screen:** The framework figure, with one diagnostic question under each locus.
 
-## Slide 16: Attribution by construction
+## Slide 19: Attribution by construction
 
 **Speaking cues**
 
@@ -220,7 +248,7 @@
 
 **On screen:** Encode, retrieve, answer as three boxes, with two bullets on gold pages and the dataset.
 
-## Slide 17: Modality ceiling
+## Slide 20: Modality ceiling
 
 **Speaking cues**
 
@@ -229,7 +257,7 @@
 
 **On screen:** Table of abstention and accuracy by evidence source and representation.
 
-## Slide 18: Conversion fidelity
+## Slide 21: Conversion fidelity
 
 **Speaking cues**
 
@@ -238,7 +266,7 @@
 
 **On screen:** Figure: accuracy by parser and scan status, and by image resolution.
 
-## Slide 19: Evidence coverage
+## Slide 22: Evidence coverage
 
 **Speaking cues**
 
@@ -247,7 +275,7 @@
 
 **On screen:** Figure: paired verdict transitions after removing or keeping gold pages.
 
-## Slide 20: Distractor exposure
+## Slide 23: Distractor exposure
 
 **Speaking cues**
 
@@ -256,7 +284,7 @@
 
 **On screen:** Figure: accuracy and step flips as non-gold pages are added.
 
-## Slide 21: Evidence integration
+## Slide 24: Evidence integration
 
 **Speaking cues**
 
@@ -265,7 +293,7 @@
 
 **On screen:** Figure: single-hop and multi-hop accuracy across Qwen3-VL sizes.
 
-## Slide 22: Response calibration
+## Slide 25: Response calibration
 
 **Speaking cues**
 
@@ -274,7 +302,7 @@
 
 **On screen:** Figure: answerable accuracy and the two refusal rates across four prompt modes.
 
-## Slide 23: Table of contents: proof of concept
+## Slide 26: Table of contents: proof of concept
 
 **Speaking cues**
 
@@ -282,7 +310,7 @@
 
 **On screen:** The contents with the proof of concept boxed.
 
-## Slide 24: From findings to a simple method
+## Slide 27: From findings to a simple method
 
 **Speaking cues**
 
@@ -292,7 +320,7 @@
 
 **On screen:** The reader, synthesizer, arbiter loop, with one design choice under each of representation, selection and reasoning.
 
-## Slide 25: Simple method results
+## Slide 28: Simple method results
 
 **Speaking cues**
 
@@ -301,7 +329,7 @@
 
 **On screen:** The results table under each benchmark's official protocol.
 
-## Slide 26: Conclusion
+## Slide 29: Conclusion
 
 **Speaking cues**
 
@@ -310,12 +338,12 @@
 
 **On screen:** Three cards restating the contributions, then thank you.
 
-## Backup slides (27 onwards, no slide numbers)
+## Backup slides (30 onwards, no slide numbers)
 
 For questions only.
 
-- 27 to 31, survey: retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
-- 32, 33, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
-- 34 to 36, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
-- 37, 38, deployment: representation cost, reasoner choice under a memory budget.
-- 39, 40, method: how each finding maps to a design choice, and the inference cost.
+- 30 to 35, survey: inference-time and training strategies, retrieval and navigation, reasoning strategies, agentic methods, training strategies, datasets.
+- 36, 37, empirical setup: the pipeline and how a failure is isolated; the two datasets and the LLM judge.
+- 38 to 40, transfer: the modality result on LongDocURL, distractors on Gemma3-12B, calibration on Gemma3-12B.
+- 41, 42, deployment: representation cost, reasoner choice under a memory budget.
+- 43, 44, method: how each finding maps to a design choice, and the inference cost.

@@ -71,7 +71,7 @@ Overflow is invisible in source. After any slide edit, screenshot and look:
 python3 build.py Seminar && pdftoppm -r 96 -png Seminar/deck.pdf /tmp/dk
 ```
 
-That gives one 1280x720 PNG per slide. Any ink between y=660 and the gold bar, left of
+That gives one 1280x720 PNG per slide. Any ink between y=660 and the bottom bar, left of
 the corner marker, has overflowed. A headless Chrome `--screenshot` of a single slide
 file also works for a quick look, but the slide is centred in a viewport shorter than
 the window, so its edges are not where you expect; don't measure from it.
@@ -79,13 +79,14 @@ the window, so its edges are not where you expect; don't measure from it.
 ### Design rules for the deck
 
 - Styled after the IJCAI tutorial deck in `Resources/`: Calibri (Carlito as the stand-in,
-  since Calibri is not installed here), bold italic titles, a gold bar top left and
+  since Calibri is not installed here), bold italic titles, a bar top left and
   bottom right, white background, black text.
 - It is a 15-minute talk: keep text minimal, a float plus a one-line claim and one or
   two short bullets. Prefer diagrams and annotated real pages over prose.
-- Red `#980000` is the only highlight: class `hi` on a key phrase (always with bold),
+- Accent blue `#1A56B0` (`--accent`) does all the emphasis: the bars, every bold word in
+  a slide body (a chrome rule colours `b` and `strong`, so bold means blue), class `hi`,
   class `box` for annotation boxes over a figure, the varied stage in the pipeline
-  strip, and the dashed box on the contents slides. One or two per slide.
+  strip, and the dashed box on the contents slides. There is no red or gold any more.
 - Navy `#1F4E79` is structure only: bullet dashes, rules, arrowheads, card tops.
 - Annotation boxes are positioned in percent inside a wrapper sized to the image.
 - The table of contents slide repeats at the start of each part with the current entry

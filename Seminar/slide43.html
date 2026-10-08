@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Multi-Page Visually Rich Documents</title>
+<title>A Simple Adaptive Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -76,26 +76,31 @@
   .slide::before{left:0; top:0;}
   .slide::after{right:0; bottom:0;}
 
-  /* ================= SLIDE 29 ================= */
-  .s29 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s29 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
-  .s29 ul{list-style:none;}
-  .s29 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
-  .s29 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
-  .s29 ul li:last-child{margin-bottom:0;}
-  .s29 b{font-weight:600;}
-  .s29 img{display:block;}
-  .s29 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s29 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:36px;}
-  .s29 .card{border-top:3px solid var(--navy); padding-top:16px;}
-  .s29 .card .no{font-family:var(--mono); font-size:14.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
-  .s29 .card h3{font-family:var(--disp); font-size:26.5px; font-weight:600; letter-spacing:0; line-height:1.2; margin:8px 0 12px;}
-  .s29 .card p{font-size:20.5px; line-height:1.45;}
-  .s29 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:13px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
-  .s29 .card p{font-size:20px;}
-  .s29 .end{margin-top:44px; padding-top:28px; border-top:1px solid var(--line); display:flex; align-items:baseline; gap:28px;}
-  .s29 .end b{font-family:var(--disp); font-size:48.5px; font-weight:600; letter-spacing:0;}
-  .s29 .end span{font-size:24px;}
+  /* ================= SLIDE 43 ================= */
+  .s43 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s43 .lead b{font-weight:600; color:var(--ink);}
+  .s43 .maps{margin-top:36px;}
+  .s43 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
+  .s43 .map:last-child{margin-bottom:0;}
+  .s43 .from{
+    font-family:var(--mono); font-size:12px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--ink);
+    text-align:right;
+  }
+  .s43 .ar{position:relative; height:30px;}
+  .s43 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
+  .s43 .ar::after{
+    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
+    border-left:8px solid var(--navy);
+  }
+  .s43 .to h3{
+    font-family:var(--disp); font-size:22px; font-weight:600;
+    letter-spacing:0; margin-bottom:5px;
+  }
+  .s43 .to p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s43 .close{margin-top:38px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s43 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -108,20 +113,44 @@
 </head>
 <body>
 
-<div class="slide s29">
+<div class="slide s43">
 
-  <h1>Conclusion</h1>
+  <h1>From Findings to Design</h1>
 
   <div class="body">
-    <div class="cards">
-      <div class="card"><div class="no">Survey</div><h3>Organise</h3><p>Multi-page document understanding is a problem of <b class="hi">evidence management</b>.</p></div>
-      <div class="card"><div class="no">Empirical study</div><h3>Locate</h3><p>Failures sit at <b class="hi">representation, selection, or reasoning</b>, and each needs a different fix.</p></div>
-      <div class="card"><div class="no">Proof of concept</div><h3>Validate</h3><p>The findings hold up in a <b class="hi">working, training-free system</b>.</p></div>
+    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
+
+    <div class="maps">
+      <div class="map">
+        <div class="from">Representation</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Keep text and images together</h3>
+          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Selection</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Gather broadly, present selectively</h3>
+          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order, but carry most of it forward as compact records rather than as full pages.</p>
+        </div>
+      </div>
+      <div class="map">
+        <div class="from">Reasoning</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Check whether the answer is supported</h3>
+          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
+        </div>
+      </div>
     </div>
-    <div class="end"><b>Thank you</b><span>Questions?</span></div>
+
+    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
   </div>
 
-  <div class="corner"><i>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>29</b> / 29</div>
+  <div class="corner">Backup &middot; Method</div>
 
 </div>
 </body>

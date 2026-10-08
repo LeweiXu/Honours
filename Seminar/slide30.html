@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Training Strategies</title>
+<title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
     --mute:#14181C;
     --line:#E2E6EA;
     --navy:#1F4E79;
-    --red:#980000;
+    --accent:#1A56B0;
     --wash:#E9EFF5;
     --disp:'Calibri','Carlito',sans-serif;
     --body:'Calibri','Carlito',sans-serif;
@@ -62,37 +62,34 @@
   .corner span{padding:0 7px;}
 
   /* ---- highlight colour, annotation boxes, and the section tracker in the corner ---- */
-  .hi{color:var(--red); font-weight:600; font-style:normal;}
+  .hi{color:var(--accent); font-weight:600; font-style:normal;}
+  .body b, .body strong{color:var(--accent) !important;}
   .pic{position:relative; flex:none;}
   .pic img{width:100%; height:100%; display:block;}
-  .box{position:absolute; border:2.5px solid var(--red); border-radius:3px;}
+  .box{position:absolute; border:2.5px solid var(--accent); border-radius:3px;}
   .corner i{font-style:normal; margin-right:14px; opacity:.32;}
   .corner i.on{opacity:1; font-weight:600;}
   .corner i:last-of-type{margin-right:26px;}
 
   /* ---- gold bars, top left and bottom right ---- */
-  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:#EDCA76;}
+  .slide::before, .slide::after{content:""; position:absolute; height:11px; width:62%; background:var(--accent);}
   .slide::before{left:0; top:0;}
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 30 ================= */
-  .s30 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s30 .lead b{font-weight:600; color:var(--ink);}
-  .s30 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s30 .cards h3{
-    font-family:var(--disp); font-size:23px; font-weight:600;
-    letter-spacing:0; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
-  }
-  .s30 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s30 .cards p b{font-weight:600; color:var(--ink);}
-  .s30 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:12px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
-  }
-
-  .s30 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s30 .close b{font-weight:600; color:var(--ink);}
+  .s30 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s30 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
+  .s30 ul{list-style:none;}
+  .s30 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
+  .s30 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
+  .s30 ul li:last-child{margin-bottom:0;}
+  .s30 b{font-weight:600;}
+  .s30 img{display:block;}
+  .s30 .lead{font-size:22px; line-height:1.45; max-width:1100px;}
+  .s30 .cols{display:grid; grid-template-columns:repeat(3,1fr); gap:48px; margin-top:38px;}
+  .s30 h3{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; padding-bottom:13px; border-bottom:2px solid var(--navy); margin-bottom:22px;}
+  .s30 p{font-size:21.5px; line-height:1.45; margin-bottom:24px;}
+  .s30 .lab{margin-bottom:7px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -107,30 +104,15 @@
 
 <div class="slide s30">
 
-  <h1>Training Strategies</h1>
+  <h1>Inference-Time and Training Strategies</h1>
 
   <div class="body">
-    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
-
-    <div class="cards">
-      <div>
-        <h3>Trained retrieval</h3>
-        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
-        <div class="tag">Retriever</div>
-      </div>
-      <div>
-        <h3>Trained reasoning</h3>
-        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
-        <div class="tag">Reasoner</div>
-      </div>
-      <div>
-        <h3>Trained agentic methods</h3>
-        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
-        <div class="tag">Controller</div>
-      </div>
+    <p class="lead">Three evidence-management decisions. Each can be <b>prompted around a frozen MLLM</b>, or <b>trained into it</b>.</p>
+    <div class="cols">
+      <div><h3>Retrieval and navigation</h3><div class="lab">Training-free</div><p>Similarity-based or relation-aware retrieval</p><div class="lab">Trained</div><p>Modality-alignment, cross-page-fusion, logical-relevance</p></div>
+      <div><h3>Reasoning strategies</h3><div class="lab">Training-free</div><p>Chain-of-Thought, Self-Reflection, Self-Consistency</p><div class="lab">Trained</div><p>Trace-imitation, then reward-driven (GRPO)</p></div>
+      <div><h3>Agentic methods</h3><div class="lab">Training-free</div><p>ReAct and tool use, multi-agent orchestration</p><div class="lab">Trained</div><p>Trajectory-distillation, reinforcement-learned</p></div>
     </div>
-
-    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
   </div>
 
   <div class="corner">Backup &middot; Survey</div>
