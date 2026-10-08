@@ -98,13 +98,14 @@
 
 <!-- Reference, not spoken: https://arxiv.org/pdf/2212.05935 -->
 
-## Slide 12: Adaptation of multimodal language models, Docopilot
+## Slide 12: Adaptation of multimodal language models, DocSLM
 
-- Docopilot is an example of adapting a pretrained multimodal model to read a multi-page document directly, without retrieval.
-- The main idea is to teach it document-level dependencies through better training data. The authors build Doc-750K, with about 750,000 question-answer pairs from scientific papers and reviews.
-- They fine-tune InternVL2 on a data mixture that includes this dataset. At inference time, page images and the question go into the model together, and it generates the answer directly.
+- DocSLM is an example of the second family. It is a small vision-language model, designed to read long documents under limited memory.
+- The first idea is compression. A hierarchical compressor jointly encodes the visual, text and layout information of each page into a fixed 576 tokens, however much text the page holds.
+- The second idea is streaming. The document is split into segments, which are processed one at a time. Each segment either gives an answer or abstains.
+- An uncertainty calibrator then keeps the answer with the lowest uncertainty. That is what the figure shows.
 
-<!-- Reference, not spoken: https://arxiv.org/html/2507.14675v1 -->
+<!-- Reference, not spoken: https://arxiv.org/abs/2511.11313 -->
 
 ## Slide 13: Retrieval-augmented pipelines, MoLoRAG
 
@@ -115,13 +116,15 @@
 
 <!-- Reference, not spoken: https://aclanthology.org/2025.emnlp-main.708/ -->
 
-## Slide 14: Tool-augmented multi-agent pipelines, DocLens
+## Slide 14: Adaptive-trajectory pipelines, SimpleDoc
 
-- Finally, DocLens is a tool-augmented multi-agent framework from researchers at Google and Peking University.
-- It has two main modules. The lens module first finds the evidence: a page navigator uses page images and OCR text to identify relevant pages, and an element localiser crops figures, charts and tables on those pages for closer inspection.
-- The reasoning module then samples several candidate answers from that evidence. An adjudicator compares their reasoning and synthesises the final answer.
-- So the main idea is to find the pages, zoom in on their elements, and compare candidate answers.
+- Finally, SimpleDoc is an example of an adaptive-trajectory pipeline. It has two stages.
+- In pre-processing, every page is indexed twice: as a visual embedding, and as a short summary written by a vision-language model.
+- To answer a question, pages are first shortlisted by embedding similarity. A language model then re-ranks them using the summaries.
+- A single reasoning agent reads those pages together with a working memory of earlier notes. It either answers, or issues a refined query to retrieve more pages.
+- So the number of retrieval rounds depends on the question, rather than being fixed in advance.
 
+<!-- Reference, not spoken: https://arxiv.org/abs/2506.14035 -->
 
 ## Slide 15: Table of contents, empirical study
 
