@@ -1,0 +1,103 @@
+% PromptingFull.tex — prompting sweep by prompt mode (6 categories) × evidence source (5) + per-mode All.
+% Columns: Answerable acc / False abstention / Unanswerable abstention, four rungs each (decode dropped).
+% HEAT: teal = "good" (answerable accuracy [23,53]; unanswerable abstention [5,82]),
+%       warm = "bad" (false abstention [0,53], an error). All capped 60/55%.
+% FILLED from all_tables.md: per-mode All rows (pooled faithfulness tables), plus all 30 per-source rows
+%   of the two ANSWERABLE blocks from faithfulness_answerable_accuracy_source and
+%   faithfulness_false_abstention_source.
+% STILL BLANK, and not fillable: the 30 per-source rows of the unanswerable-abstention block. An
+%   unanswerable question carries no gold evidence pages, so there is nothing to derive a source from:
+%   234 of the 244 questions are unlabelled, Chart is absent entirely, and the labelled remainder is
+%   1-7 questions per source. Quote the per-mode All row for that block.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+% good-rate shaders (teal), one per range
+\newcommand{\gA}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-23)/(53-23)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\gB}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-5)/(82-5)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+% bad-rate shader (warm): false abstention
+\newcommand{\bF}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(53-0)*55))}\edef\t{recwarm!\s}\expandafter\cellcolor\expandafter{\t}#1}
+% blank cell (keeps column widths; nothing to shade)
+\newcommand{\bl}{}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.05}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{ll@{\hskip 14pt}rrrr@{\hskip 18pt}rrrr@{\hskip 18pt}rrrr}
+\toprule
+& & \multicolumn{4}{c}{\textbf{Answerable acc.}}
+& \multicolumn{4}{c}{\textbf{False abstention (ans.)}}
+& \multicolumn{4}{c}{\textbf{Abstention (unans.)}} \\
+\cmidrule(lr){3-6}\cmidrule(lr){7-10}\cmidrule(lr){11-14}
+\textbf{Prompt} & \textbf{Source}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} \\
+\midrule
+\multirow{6}{*}{none}
+ & Chart            &  \gA{18.5} &  \gA{19.1} &  \gA{45.5} &  \gA{43.3} &  \bF{12.9} &   \bF{8.4} &   \bF{2.8} &   \bF{1.1} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &  \gA{15.5} &  \gA{23.8} &  \gA{44.8} &  \gA{40.3} &  \bF{10.7} &   \bF{2.8} &   \bF{2.8} &   \bF{1.4} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{28.0} &  \gA{37.3} &  \gA{50.8} &  \gA{44.1} &   \bF{2.5} &   \bF{4.2} &   \bF{0.0} &   \bF{0.8} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{39.2} &  \gA{47.8} &  \gA{55.3} &  \gA{44.3} &   \bF{4.5} &   \bF{1.7} &   \bF{1.7} &   \bF{0.3} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{40.6} &  \gA{48.4} &  \gA{48.4} &  \gA{37.8} &   \bF{6.0} &   \bF{1.4} &   \bF{2.3} &   \bF{1.8} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{31.9} &  \gA{38.8} &  \gA{52.5} &  \gA{45.6} &   \bF{7.4} &   \bF{3.3} &   \bF{1.7} &   \bF{1.1} &  \gB{13.1} &  \gB{13.1} &  \gB{14.3} &  \gB{13.5} \\
+\cmidrule(lr){1-14}
+\multirow{6}{*}{grounded}
+ & Chart            &  \gA{16.3} &  \gA{16.3} &  \gA{33.7} &  \gA{31.5} &  \bF{16.9} &   \bF{2.8} &   \bF{1.1} &   \bF{0.6} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &  \gA{12.1} &  \gA{22.4} &  \gA{42.4} &  \gA{39.3} &  \bF{10.3} &   \bF{0.3} &   \bF{0.7} &   \bF{1.0} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{18.6} &  \gA{29.7} &  \gA{42.4} &  \gA{44.9} &   \bF{7.6} &   \bF{0.8} &   \bF{0.0} &   \bF{0.0} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{37.8} &  \gA{45.0} &  \gA{51.2} &  \gA{41.6} &   \bF{6.5} &   \bF{0.7} &   \bF{1.0} &   \bF{0.7} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{29.5} &  \gA{39.2} &  \gA{40.1} &  \gA{30.9} &  \bF{10.1} &   \bF{1.4} &   \bF{0.9} &   \bF{0.0} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{26.8} &  \gA{34.4} &  \gA{45.7} &  \gA{39.9} &   \bF{9.6} &   \bF{1.3} &   \bF{0.8} &   \bF{0.6} &  \gB{22.1} &   \gB{6.6} &   \gB{8.2} &   \gB{5.3} \\
+\cmidrule(lr){1-14}
+\multirow{6}{*}{abstain}
+ & Chart            &  \gA{13.5} &  \gA{12.4} &  \gA{28.7} &  \gA{26.4} &  \bF{52.2} &  \bF{59.0} &  \bF{25.3} &  \bF{27.5} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &   \gA{7.2} &  \gA{14.1} &  \gA{34.5} &  \gA{31.0} &  \bF{76.2} &  \bF{65.2} &  \bF{35.2} &  \bF{38.3} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{19.5} &  \gA{25.4} &  \gA{41.5} &  \gA{37.3} &  \bF{55.9} &  \bF{44.1} &  \bF{19.5} &  \bF{25.4} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{34.0} &  \gA{40.5} &  \gA{45.7} &  \gA{36.1} &  \bF{41.9} &  \bF{35.4} &  \bF{23.7} &  \bF{30.9} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{26.3} &  \gA{38.2} &  \gA{39.2} &  \gA{26.7} &  \bF{42.4} &  \bF{36.4} &  \bF{30.0} &  \bF{39.6} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{23.3} &  \gA{29.3} &  \gA{41.4} &  \gA{33.5} &  \bF{52.2} &  \bF{47.1} &  \bF{27.4} &  \bF{32.5} &  \gB{81.1} &  \gB{79.9} &  \gB{74.6} &  \gB{81.6} \\
+\cmidrule(lr){1-14}
+\multirow{6}{*}{abstain\_bal.}
+ & Chart            &  \gA{14.0} &  \gA{12.9} &  \gA{30.9} &  \gA{25.8} &  \bF{44.9} &  \bF{51.7} &  \bF{18.5} &  \bF{24.2} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &   \gA{7.9} &  \gA{14.5} &  \gA{36.2} &  \gA{33.4} &  \bF{71.7} &  \bF{62.1} &  \bF{31.0} &  \bF{33.1} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{19.5} &  \gA{28.8} &  \gA{41.5} &  \gA{39.0} &  \bF{52.5} &  \bF{41.5} &  \bF{18.6} &  \bF{21.2} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{33.7} &  \gA{39.5} &  \gA{47.4} &  \gA{36.4} &  \bF{39.5} &  \bF{32.6} &  \bF{18.9} &  \bF{25.4} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{26.3} &  \gA{37.8} &  \gA{37.3} &  \gA{30.0} &  \bF{37.8} &  \bF{30.0} &  \bF{25.3} &  \bF{34.6} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{23.8} &  \gA{30.0} &  \gA{42.6} &  \gA{35.2} &  \bF{47.8} &  \bF{42.9} &  \bF{22.9} &  \bF{27.7} &  \gB{75.4} &  \gB{77.0} &  \gB{68.9} &  \gB{76.6} \\
+\cmidrule(lr){1-14}
+\multirow{6}{*}{cot}
+ & Chart            &  \gA{21.3} &  \gA{16.9} &  \gA{45.5} &  \gA{44.4} &   \bF{3.9} &  \bF{13.5} &   \bF{1.1} &   \bF{1.1} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &  \gA{11.7} &  \gA{18.3} &  \gA{45.2} &  \gA{44.8} &   \bF{1.7} &   \bF{2.4} &   \bF{0.3} &   \bF{0.0} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{24.6} &  \gA{37.3} &  \gA{50.0} &  \gA{55.9} &   \bF{0.0} &   \bF{3.4} &   \bF{0.8} &   \bF{0.0} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{34.7} &  \gA{45.0} &  \gA{54.6} &  \gA{48.1} &   \bF{4.1} &   \bF{3.1} &   \bF{1.0} &   \bF{0.7} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{40.6} &  \gA{51.2} &  \gA{55.3} &  \gA{47.5} &   \bF{3.2} &   \bF{2.8} &   \bF{2.3} &   \bF{0.0} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{29.5} &  \gA{36.0} &  \gA{53.1} &  \gA{49.7} &   \bF{2.8} &   \bF{4.3} &   \bF{1.1} &   \bF{0.4} &   \gB{8.6} &  \gB{13.9} &  \gB{11.9} &   \gB{5.7} \\
+\cmidrule(lr){1-14}
+\multirow{6}{*}{extract\_cot}
+ & Chart            &  \gA{13.5} &  \gA{17.4} &  \gA{39.3} &  \gA{38.8} &   \bF{5.6} &  \bF{14.0} &   \bF{2.2} &   \bF{2.2} &        \bl &        \bl &        \bl &        \bl \\
+ & Figure           &  \gA{10.7} &  \gA{21.0} &  \gA{44.1} &  \gA{41.7} &   \bF{2.1} &   \bF{4.1} &   \bF{1.0} &   \bF{1.4} &        \bl &        \bl &        \bl &        \bl \\
+ & Generalized-text &  \gA{20.3} &  \gA{37.3} &  \gA{50.8} &  \gA{52.5} &   \bF{1.7} &   \bF{3.4} &   \bF{0.8} &   \bF{1.7} &        \bl &        \bl &        \bl &        \bl \\
+ & Pure-text        &  \gA{37.5} &  \gA{45.0} &  \gA{51.7} &  \gA{44.3} &   \bF{1.4} &   \bF{3.4} &   \bF{2.4} &   \bF{3.1} &        \bl &        \bl &        \bl &        \bl \\
+ & Table            &  \gA{41.5} &  \gA{49.8} &  \gA{52.5} &  \gA{39.6} &   \bF{1.8} &   \bF{4.1} &   \bF{4.6} &   \bF{5.1} &        \bl &        \bl &        \bl &        \bl \\
+ & \textbf{All}     &  \gA{28.0} &  \gA{36.5} &  \gA{50.2} &  \gA{44.4} &   \bF{2.5} &   \bF{5.7} &   \bF{2.1} &   \bF{2.4} &   \gB{8.6} &  \gB{18.0} &  \gB{18.4} &  \gB{18.4} \\
+\bottomrule
+\end{tabular}%
+}
+
+% {\footnotesize\raggedright
+% Judge-scored rates (\%) across six prompt modes, five evidence sources, and four rungs. Teal marks the
+% ``good'' direction (answerable accuracy and correct unanswerable abstention, higher is better); warm marks
+% false abstention (an error on the answerable pool, lower is better). Answerable accuracy and false abstention
+% run on oracle pages over the answerable pool; unanswerable abstention runs on the bm25 $k{=}3$ page set over
+% the unanswerable pool. Per-mode \textbf{All} rows pool every question once; source rows overlap (a question
+% citing several sources appears in each), so their $n$ do not sum. The unanswerable block has no per-source
+% rows: an unanswerable question carries no gold evidence pages, so the pool cannot be split by source at
+% all, and only its \textbf{All} row is defined. The abstain prompt
+% lifts correct refusal to about three-quarters while driving false abstention above a quarter at TLV, and no
+% prompt separates the two rates; the chain-of-thought modes leave both abstention rates near baseline.\par}
+
+\caption{Faithfulness across six prompt modes by evidence source. Teal deepens with the good-direction rate, warm with false abstention; the abstention instruction couples correct refusal to false refusal, and no prompt separates them.}
+\label{tab:prompting_full}
+\end{table*}

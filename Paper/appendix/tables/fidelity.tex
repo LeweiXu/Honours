@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}l l r@{}}
+\toprule
+\textbf{Channel} & \textbf{Setting} & \textbf{Detail} \\
+\midrule
+Text  & PaddleOCR-VL (default) & 0.9B \\
+Text  & MinerU 2.5             & 1.2B \\
+Text  & Unlimited-OCR          & 3.3B \\
+\midrule
+Image & \texttt{low}           & 285 tok/page \\
+Image & \texttt{med} (default) & 456 tok/page \\
+Image & \texttt{high}          & 744 tok/page \\
+\bottomrule
+\end{tabular*}
+\caption{Conversion-fidelity settings.}
+\label{tab:app_fidelity}
+\end{table}

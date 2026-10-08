@@ -1,0 +1,66 @@
+% Integration.tex — accuracy by gold evidence-page count, per rung and per lever. Single-column.
+%
+% POOL: the 838 answerable questions that carry gold evidence pages, MINUS 12 whose gold
+% pages never reach the model (7 on mi_phone.pdf resolve to an empty page set; 4 on
+% san-francisco-11-contents.pdf and 1 on PS_2018.01.09_STEM_FINAL.pdf cite pages past the
+% end of the staged PDF and fall back to page 0). All 12 are answered incorrectly under
+% every condition, so keeping them only dilutes every cell by a fixed amount. The rule is
+% "no gold page reached the model" (fed ∩ gold = empty), which independently reproduces the
+% exclusions the g5 page-set runs made, so THIS TABLE AND figures/selection_overall_nogold3
+% NOW SHARE A POOL: 1 gold 64.6 (n=474), 2 gold 38.6 (n=241), multi 38.6 (n=352) appear
+% identically in both. Do not change the pool of one without the other.
+%
+% SOURCES (each row read within its own run, since no single run has every condition):
+%   T / TL / TLV / V   g1-representation-full, oracle, prompt_mode=none (8B)
+%   TLV + CoT          g4-faithfulness-full, prompt_mode=cot
+%   TLVi               g1-interleaved-tlv, interleaved page ordering
+%   TLV, 32B           g1-reasoner-32b-matched, qwen3vl-32b-local
+%                      (results/tables/reasoner_hop.csv, row 32B/TLV; its 3+ bucket
+%                      holds 110 questions rather than 111, one TLV cell short)
+% Because the lever rows come from other runs, their gap movement is quoted against their
+% OWN run's baseline in the note, not against the T/TL/TLV/V block above them.
+%
+% "3+" pools every question citing three or more gold pages (n=111): split out, the 3,
+% 4-5 and 6+ buckets hold 40/35/36, too thin to read one at a time. Rates are computed
+% over the pooled questions, not averaged across the sub-buckets.
+% Multi = pooled two-or-more bucket; M-S = Multi - Single.
+\definecolor{hdrbg}{HTML}{E9EEF4} \definecolor{leverbg}{HTML}{F2EEFA} \definecolor{gapred}{HTML}{B03A2E} \definecolor{ngray}{HTML}{7A8494}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Gold evidence pages}} & \multicolumn{2}{c}{\textbf{Pooled}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}
+\rowcolor{hdrbg}
+\textbf{Rung} & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{Multi} & \textbf{M$-$S} \\
+\rowcolor{hdrbg}
+\textcolor{ngray}{\scriptsize$n$}
+  & \textcolor{ngray}{\scriptsize474}
+  & \textcolor{ngray}{\scriptsize241}
+  & \textcolor{ngray}{\scriptsize111}
+  & \textcolor{ngray}{\scriptsize352}
+  & \\
+\midrule
+T   & 37.6 & 29.5 & 18.0 & 25.9 & \cellcolor{gapred!12}$-$11.7 \\
+TL  & 45.1 & 34.0 & 25.2 & 31.2 & \cellcolor{gapred!17}$-$13.9 \\
+TLV & 64.6 & 38.6 & 38.7 & 38.6 & \cellcolor{gapred!42}$-$25.9 \\
+V   & 55.7 & 35.3 & 31.5 & 34.1 & \cellcolor{gapred!33}$-$21.6 \\
+\midrule
+\rowcolor{leverbg}
+TLV\,$+$\,CoT & 61.4 & 46.9 & 40.5 & 44.9 & \cellcolor{gapred!22}$-$16.5 \\
+% \rowcolor{leverbg}
+% TLVi          & 66.2 & 44.0 & 39.6 & 42.6 & \cellcolor{gapred!37}$-$23.6 \\
+\rowcolor{leverbg}
+TLV, 32B      & 71.5 & 49.0 & 40.9 & 46.4 & \cellcolor{gapred!40}$-$25.1 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages at medium resolution, Qwen3-VL-8B bf16. The pool is the answerable questions carrying gold evidence pages, less twelve whose gold pages never reach the model (an empty page set on one document, and pages cited past the end of the staged PDF on two others); all twelve are answered incorrectly under every condition. Figure~\ref{fig:selection} is measured on this same pool, so its oracle values read identically ($64.6$ at one gold page, $38.6$ at two). The three shaded lever rows come from different runs and are read against their own run's baseline rather than against the block above: chain-of-thought moves M$-$S from $-25.1$ to $-16.5$ within its run, a narrowing of $8.6$ points, and interleaving from $-25.6$ to $-23.6$, a narrowing of $2.0$. The 32B row is the only one that changes the reasoner rather than the input, and it is the one that does not narrow the gap: it lifts single-page accuracy from $64.6$ to $71.5$ and multi-page from $38.6$ to $46.4$, leaving a deficit of $25.1$ against the 8B's $25.9$, so four times the parameters buys accuracy on both hop classes and returns nothing on combining evidence across pages (Table~\ref{tab:reasoner_hop}). Its 3+ bucket holds one question fewer than the rows above, the single TLV cell the 32B run is missing. The 3+ column pools every question citing three or more gold pages, since the individual tail buckets are too thin to read alone.\par}
+\caption{Accuracy by gold evidence-page count across the representations.}
+\label{tab:integration}
+\end{table}

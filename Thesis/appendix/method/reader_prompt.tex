@@ -1,45 +1,40 @@
-\begin{figure}[h]
+\begin{figure*}[h]
 \centering
-\fbox{%
-\begin{minipage}{0.94\linewidth}
-\small
-\textbf{\texttt{READER} prompt (abridged)}
-\vspace{0.5em}
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+You are reading a long document one page at a time to answer a question.
+Pages arrive in retrieval-ranked order, not document order. You have no
+memory of earlier turns beyond NOTES. A later turn will not see the current
+page, so record any relevant evidence it contains.\\[0.5em]
 
-\ttfamily
-You are reading a long document to answer a question.
+Think step by step. Then output these markers on separate lines:\\
+REASONING: <your assessment of the page and notes>\\
+RECORD: <evidence from this page, or exactly ``none''>\\
+ANSWER PAGE: <true or false>\\
+DECISION: <CONTINUE or STOP>\\[0.5em]
 
-You see one page this turn. Pages are ordered by retrieval relevance rather than document order. Previous pages are available only through NOTES.
+Record only what the CURRENT PAGE adds. Preserve names, numbers, units,
+table headers, and the details needed to interpret visual evidence. For a
+count or list, identify matching items on this page and where each appears;
+end the record with COUNT ON THIS PAGE: <number> (<what was counted>).
+Do not copy evidence already in NOTES.\\[0.5em]
 
-\vspace{0.5em}
-\textbf{WHAT TO RECORD}
+Mark ANSWER PAGE: true whenever the answer may depend on this page,
+including when it supplies only part of a multi-page answer or you are
+uncertain of its relevance. Flagged pages will be shown to the synthesizer
+in full.\\[0.5em]
 
-Record what is on the CURRENT PAGE, and only evidence that bears on the QUESTION.
+Before the applicable reading floor, write DECISION: CONTINUE. After that
+floor, write DECISION: STOP only when the accumulated evidence appears
+sufficient to answer the question completely. A later ranked page may
+still contribute to a count or list.\\[0.5em]
 
-\begin{itemize}
-    \item Preserve exact numbers, names, dates, identifiers, units, and relevant table structure.
-    \item Describe relevant charts, figures, diagrams, and images in sufficient detail for later reasoning.
-    \item Do not repeat evidence already present in NOTES.
-    \item If the page adds nothing relevant, write \texttt{none}.
-    \item If the QUESTION asks for a count or list, enumerate each matching item on this page and finish with:
-\end{itemize}
-
-\texttt{COUNT ON THIS PAGE: <number> (<what was counted>)}
-
-Only items matching the QUESTION's exact definition should be counted.
-
-\vspace{0.5em}
-\textbf{OUTPUT}
-
-\texttt{REASONING: <reasoning>}\\
-\texttt{RECORD: <page evidence or none>}\\
-\texttt{ANSWER PAGE: <true/false>}\\
-\texttt{DECISION: <CONTINUE/STOP>}
-
-\vspace{0.5em}
-Write \texttt{STOP} only when the accumulated evidence appears sufficient to answer the QUESTION completely. Otherwise continue reading.
-\end{minipage}%
-}
-\caption{Abridged prompt for the \texttt{reader} role. The production prompt additionally specifies formatting and output-recovery rules.}
-\label{fig:method_reader_prompt}
-\end{figure}
+QUESTION: \{question\}\\
+NOTES: \{reader records from earlier pages\}\\
+CURRENT PAGE: \{document page number, parser text, page image\}
+\end{tcolorbox}
+\caption{Reader prompt structure for iteration 7. The stopping instruction uses the initial floor $k$ or the resumed floor $m$, as appropriate.}
+\label{fig:app_reader_prompt}
+\end{figure*}

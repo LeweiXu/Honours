@@ -1,0 +1,38 @@
+\begin{figure*}[t]
+\centering
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+You are answering a question about a long document. You cannot see the
+whole document. EVIDENCE is arranged one document page at a time, in
+document order. A block may contain a READER'S RECORD, PARSED TEXT, and a
+PAGE IMAGE. Reader records may be incomplete or mistaken. Use the parsed
+text to check words, names, and numbers, and the image to check visual
+and spatial details.\\[0.5em]
+
+Use only the EVIDENCE. Think step by step, write that thinking after
+REASONING:, and give a concise final answer after ANSWER:.\\[0.5em]
+
+Check the question's premises before answering: verify the particular
+entities, dates, locations, figures, groups, and measurements it assumes.
+Do not substitute a nearby fact when a required detail conflicts with
+the evidence. Combine relevant facts across page blocks. For a count
+or list, identify matching items page by page, exclude duplicates and
+irrelevant items, and then aggregate them.\\[0.5em]
+
+Answer when the evidence supports an answer. Write ``Not answerable''
+only when a required fact is genuinely absent or contradicted. Before
+doing so, inspect the available parsed text and images and write:
+MISSING: <the specific unsupported fact>.\\[0.5em]
+
+REASONING: <premise checks and evidence integration>\\
+ANSWER: <concise answer or exactly ``Not answerable''>\\[0.5em]
+
+QUESTION: \{question\}\\
+EVIDENCE: \{page blocks containing records and, for flagged pages,
+parser text and images\}
+\end{tcolorbox}
+\caption{Synthesizer prompt structure for iteration 7. If the reader flags no page, the evidence includes the two highest-ranked inspected pages in full.}
+\label{fig:app_synthesizer_prompt}
+\end{figure*}

@@ -53,6 +53,53 @@ Table~\ref{tab:model_components} lists the concrete components of each surveyed 
 \clearpage
 \chapter{Additional Attribution Details}
 
+\section{Error Analysis}
+\label{app:error_analysis}
+\label{sec:emp_error_analysis}
+
+The error categories give a finer view of how the reasoner fails once representation and evidence selection are controlled. Unlike the main-text analyses, each category is reported as a share of the full question pool for its condition, so categories can be compared directly across prompt modes and evidence sources.
+
+\subsection{Error Categories}
+\label{app:error_categories}
+
+Error categories are assigned by an extension of the judge rubric (Figure~\ref{fig:judge_prompt}) that adds one step after the verdict (Figure~\ref{fig:judge_prompt_errcat}). The judge first reaches its verdict under the unchanged rubric and only then explains an incorrect verdict with a category, so the categories never change accuracy or abstention rates. Each incorrect response receives exactly one category from Table~\ref{tab:error_taxonomy}, the first that applies in the listed priority order. Correct and abstained responses receive none. Categories are assigned from the question, gold answer and response alone. The judge does not see the document pages, representation or retriever, so it cannot attribute an error to a pipeline stage it cannot observe; attribution to a locus comes from the controlled conditions, not from the judge. In practice the taxonomy is nearly exhaustive: only one of the 1,853 incorrect responses on the representation ladder is assigned \texttt{other}.
+
+\input{appendix/empirical/judge_prompt_2}
+\input{appendix/empirical/judge_error_cats}
+
+\subsection{Error Analysis Results}
+\label{app:error_analysis_results}
+
+The error taxonomy provides a finer view of how the reasoner fails once representation and evidence selection are controlled. Unlike the preceding analyses, each category is reported as a share of the full question pool for that condition, allowing direct comparison across prompt modes and evidence sources.
+
+% \input{empirical/analysis/error_profile}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_profile.pdf}
+  \caption[Error profile by prompt mode]{Error profile by prompt mode on answerable and unanswerable questions.}% Answerable errors are decomposed by failure type, while the unanswerable pool reports unsupported answers. Grounding primarily shifts non-commitment into explicit errors, while chain-of-thought leaves answerable accuracy largely unchanged and increases unsupported answering on unanswerable questions.}
+  \label{fig:error_profile}
+\end{figure}
+
+\paragraph{Prompt Mode.} The error distribution changes substantially with the reasoning instruction, showing that prompting alters the form of failure rather than uniformly removing it. Grounding largely eliminates cases where the model fails to reach an answer, but this is offset by committed errors such as incorrect counts, values, and entities. The abstention instruction shifts the distribution more strongly toward \texttt{insufficient\_evidence}, consistent with the calibration results above: it prevents some unsupported answers but also introduces refusals on answerable questions. The \texttt{abstain\_balanced} variant produces a very similar profile despite explicitly encouraging the model to answer when evidence is sufficient, suggesting that this trade-off is not easily removed through wording alone. Chain-of-thought produces a different redistribution, changing the mix of substantive answer errors without the same increase in abstention, while \texttt{extract\_cot} remains close to ordinary \texttt{cot} despite adding an explicit evidence-extraction step. Prompting therefore changes how the reasoner fails, but no mode removes the underlying reasoning errors across the board.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_sources.pdf}
+  \caption[Error profile by evidence source]{Error profile by evidence source on the answerable pool with oracle pages and no prompt instruction.}% Different evidence types produce distinct failure patterns: layout and figure questions are dominated by wrong-count errors, while tables and charts more often produce wrong-value errors.}
+  \label{fig:error_sources}
+\end{figure}
+
+\paragraph{Evidence Source.} Error type also varies substantially with the evidence a question requires. Under the uninstructed oracle-page condition, 50.5\% of answerable questions are incorrect overall, but the dominant failure differs by source. Layout and figure questions are particularly prone to \texttt{wrong\_count} errors, which account for 28.8\% and 24.1\% of their respective pools, compared with 14.4\% overall. Tables and charts instead show the highest \texttt{wrong\_value} rates, at 15.4\% and 15.7\%, suggesting that structured quantitative evidence more often fails during value extraction, comparison, or combination. Tables also stand out for \texttt{no\_answer\_reached}, which occurs on 14.4\% of questions, more than twice the pooled rate of 6.8\%. These differences indicate that providing the required multimodal evidence does not make downstream reasoning uniform: spatial and visual content more often fails during identification or aggregation, while quantitative structures produce a different mixture of extraction and comparison errors. The remaining failures are distributed across entity, list, abstention, and other categories, reinforcing that MP-VRDU difficulty depends not only on whether the evidence is available, but also on the operations required to interpret its particular form.
+
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=0.8\columnwidth]{empirical/analysis/error_integration.pdf}
+%   \caption[Error profile by evidence-page count]{Error profile by evidence-page count on the answerable pool with oracle pages and no prompt instruction. Moving from single-page to multi-page questions sharply increases non-commitment, wrong-count, and wrong-value errors, while insufficient-evidence errors do not increase.}
+%   \label{fig:error_integration}
+% \end{figure}
+
+% \paragraph{Cross-Page Integration Amplifies Reasoning Errors.} Moving from one page to multiple pages produces a clear shift in the error profile. Relative to single-page questions, the pooled multi-page set shows a 10.4-point increase in no-answer-reached errors, a 9.9-point increase in wrong-count errors, and a 4.0-point increase in wrong-value errors. By contrast, insufficient-evidence errors decrease slightly. Since every oracle page is supplied, these failures are not caused by missing evidence, but by difficulty combining and operating over evidence that is already present. The largest change also occurs when moving from one page to two pages, with total incorrect rising from 40.5\% to 62.8\%, while 3+ pages reach 64.0\%. This suggests that crossing the page boundary itself introduces much of the reasoning burden, rather than error increasing proportionally with each additional page.
+
 \section{Extended Result Tables}
 \label{app:extended_findings}
 
@@ -71,16 +118,15 @@ Table~\ref{tab:parser_source_scan} splits each parser's text and text-plus-image
 Table~\ref{tab:retrieval_depth} reports page-level precision, recall, and F1 for all six retrievers at five depths on both corpora, which is the complete sweep behind the operating-point comparison in the main text. Vision retrieval leads text retrieval at every depth on both datasets, and ColQwen3 is the strongest arm on each. F1 peaks at $k{=}1$ for every retriever, since precision falls faster than recall climbs, so a system optimising a single retrieval score should read shallowly while one optimising evidence coverage should read deeply. The gap between the modalities is not an artefact of a weak text arm, since Qwen3-Embedding leads the text arm at every depth beyond the first and still trails ColQwen3 by 22.9 recall points at $k{=}10$ on MMLongBench-Doc. The two corpora are separate pools, so the table is read for the ordering of retrievers within a corpus and for the direction of the depth trend across both.
 \input{appendix/empirical/retrieval_depth}
 
-\subsection{Prompting by Evidence Source}
-\label{app:prompting_source}
-Table~\ref{tab:prompting_source} opens the prompting sweep up by evidence source, reporting answerable accuracy, abstention on the answerable pool, and abstention on the unanswerable pool for six prompt modes at four rungs. The abstention instruction is the only prompt that materially raises correct refusal, lifting unanswerable abstention from roughly 13\% uninstructed to between 75 and 82\% across the four rungs, but it does so indiscriminately: abstention on the answerable pool rises with it at every rung, and the per-source rows show that the coupling is not confined to the harder evidence types. The two chain-of-thought modes leave both abstention rates near the uninstructed baseline, and \texttt{cot} is the only mode that matches \texttt{none} on answerable accuracy at TLV. Evidence-source ordering is stable across prompt modes, with pure-text and table questions strongest and chart and figure questions weakest, and adding the page image closes most of that spread. The unanswerable block carries no per-source rows, an unanswerable question having no gold evidence pages from which a source could be read, and it is scored under the original judge rather than the error-taxonomy judge used for the two answerable blocks, so levels are compared within a block rather than across the table.
-\input{appendix/empirical/prompting_source}
-
 \subsection{Reasoner Scale by Evidence-Page Count}
 \label{app:reasoner_hop}
 Table~\ref{tab:reasoner_hop} reports accuracy by the number of gold evidence pages a question cites, for four Qwen3-VL sizes at the two rungs that carry the page image. Scale buys multi-page accuracy steadily, and buys most where the image carries the evidence, with the 32B gaining 7.8 points over the 8B at TLV and 12.5 at V. What scale does not buy is integration, since single-page accuracy rises just as fast and the deficit between multi-page and single-page questions is essentially unchanged across the size ladder. Read alongside Table~\ref{tab:reasoner}, this supports treating cross-page integration as a distinct failure mode rather than a capability that additional parameters resolve. The 3+ bucket is thin at every size and is read for trend rather than for level.
 \input{appendix/empirical/reasoner_hop}
 
+\subsection{Prompting by Evidence Source}
+\label{app:prompting_source}
+Table~\ref{tab:prompting_source} opens the prompting sweep up by evidence source, reporting answerable accuracy, abstention on the answerable pool, and abstention on the unanswerable pool for six prompt modes at four rungs. The abstention instruction is the only prompt that materially raises correct refusal, lifting unanswerable abstention from roughly 13\% uninstructed to between 75 and 82\% across the four rungs, but it does so indiscriminately: abstention on the answerable pool rises with it at every rung, and the per-source rows show that the coupling is not confined to the harder evidence types. The two chain-of-thought modes leave both abstention rates near the uninstructed baseline, and \texttt{cot} is the only mode that matches \texttt{none} on answerable accuracy at TLV. Evidence-source ordering is stable across prompt modes, with pure-text and table questions strongest and chart and figure questions weakest, and adding the page image closes most of that spread. The unanswerable block carries no per-source rows, an unanswerable question having no gold evidence pages from which a source could be read, and it is scored under the original judge rather than the error-taxonomy judge used for the two answerable blocks, so levels are compared within a block rather than across the table.
+\input{appendix/empirical/prompting_source}
 
 % \clearpage
 % \section{Extended Error Analysis Tables}
@@ -106,7 +152,6 @@ Table~\ref{tab:reasoner_hop} reports accuracy by the number of gold evidence pag
 \label{app:simple_method_details}
 
 \section{Implementation Details}
-\label{app:simple_method_details}
 
 This appendix provides the main implementation details for the evidence-management pipeline introduced in \S\ref{sec:simple_method}. We report the role-specific prompts and the configuration used for the MMLongBench-Doc experiments. Lower-level implementation details, including caching, batching, and output recovery, are omitted.
 
@@ -129,6 +174,6 @@ The \texttt{reader} maintains an append-only evidence record containing only inf
 \subsection{Configuration}
 \label{app:method_configuration}
 
-Table~\ref{tab:method_configuration} details specific pipeline configurations. The \texttt{reader} traverses the fixed retrieval ranking until it proposes stopping or exhausts the page budget. A stopping proposal is ignored before \(k\) pages have been inspected. If the \texttt{arbiter} requests further evidence, at least \(m\) additional pages are read before another stopping proposal is accepted. At most \(C\) synthesis attempts are permitted. These controls bound evidence coverage and trajectory depth independently of the underlying model.
+Table~\ref{tab:app_validation_config} details specific pipeline configurations. The \texttt{reader} traverses the fixed retrieval ranking until it proposes stopping or exhausts the page budget. A stopping proposal is ignored before \(k\) pages have been inspected. If the \texttt{arbiter} requests further evidence, at least \(m\) additional pages are read before another stopping proposal is accepted. At most \(C\) synthesis attempts are permitted. These controls bound evidence coverage and trajectory depth independently of the underlying model.
 
 \input{appendix/method/configuration}

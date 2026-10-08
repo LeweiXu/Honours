@@ -1,0 +1,56 @@
+% R1 — ladder by domain and evidence source (T/TL/TLV/V @ med) + resolution wings (TLV/V @ low/high),
+% with heat-shaded accuracy. Same design as tab:ladder: teal = accuracy (fixed [14,74] scale, capped 60%),
+% warm = |ΔV| (text recovery over vision alone, fixed [2,13] scale, capped 55%). Bold = winning rung.
+% Accuracy (%), oracle pages, Qwen3-VL-8B bf16, PaddleOCR-VL, full pool (n=847). Source blocks overlap.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+% \newcommand{\hshade}[1]{%
+%   \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(74-14)*65))}%
+%   \edef\tmpcol{accteal!\shadeval}%
+%   \expandafter\cellcolor\expandafter{\tmpcol}%
+% }
+% \newcommand{\hcell}[1]{\hshade{#1}#1}
+% \newcommand{\hbest}[1]{\hshade{#1}\textbf{#1}}
+% \newcommand{\dcell}[1]{%
+%   \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1-2)/(13-2)*55))}%
+%   \edef\tmpcol{recwarm!\shadeval}%
+%   \expandafter\cellcolor\expandafter{\tmpcol}$-$#1%
+% }
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.12}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} l rrrr @{\hskip 12pt} rr @{\hskip 6pt} rr @{\hskip 14pt} r @{}}
+\toprule
+ & \multicolumn{4}{c}{\textbf{Ladder @ med (\%)}} & \multicolumn{2}{c}{\textbf{TLV}} & \multicolumn{2}{c}{\textbf{V}} & \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+ & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} & \textbf{low} & \textbf{high} & \textbf{low} & \textbf{high} & \textbf{$\Delta$V} \\
+\midrule
+\multicolumn{10}{@{}l}{\emph{By document domain}} \\
+Academic paper       & \hcell{36.4} & \hcell{33.1} & \hbest{42.9} & \hcell{33.8} & \hcell{37.0} & \hcell{46.8} & \hcell{19.5} & \hcell{38.3} & \dcell{9.1} \\
+Admin / Industry     & \hcell{50.0} & \hcell{56.2} & \hbest{67.2} & \hcell{54.7} & \hcell{64.1} & \hcell{70.3} & \hcell{42.2} & \hcell{64.1} & \dcell{12.5} \\
+Brochure             & \hcell{28.6} & \hcell{32.5} & \hbest{45.5} & \hcell{40.3} & \hcell{40.3} & \hcell{48.1} & \hcell{39.0} & \hcell{49.4} & \dcell{5.2} \\
+Financial report     & \hcell{49.1} & \hbest{52.8} & \hcell{51.9} & \hcell{38.9} & \hcell{54.6} & \hcell{53.7} & \hcell{21.3} & \hcell{46.3} & \dcell{13.0} \\
+Guidebook            & \hcell{35.8} & \hcell{40.0} & \hbest{51.7} & \hcell{45.0} & \hcell{48.3} & \hcell{51.7} & \hcell{38.3} & \hcell{47.5} & \dcell{6.7} \\
+Research / Intro     & \hcell{22.6} & \hcell{27.4} & \hbest{47.6} & \hcell{45.3} & \hcell{42.9} & \hcell{50.0} & \hcell{38.2} & \hcell{47.6} & \dcell{2.3} \\
+Tutorial / Workshop  & \hcell{14.3} & \hcell{48.2} & \hbest{73.2} & \hcell{67.9} & \hcell{71.4} & \hcell{74.1} & \hcell{74.1} & \hcell{70.5} & \dcell{5.3} \\
+\addlinespace
+\multicolumn{10}{@{}l}{\emph{By evidence source}} \\
+Chart                & \hcell{18.5} & \hcell{19.1} & \hbest{45.5} & \hcell{43.3} & \hcell{38.2} & \hcell{48.3} & \hcell{34.3} & \hcell{48.3} & \dcell{2.2} \\
+Figure               & \hcell{15.5} & \hcell{23.8} & \hbest{44.8} & \hcell{40.3} & \hcell{39.7} & \hcell{48.3} & \hcell{38.3} & \hcell{43.8} & \dcell{4.5} \\
+Generalized-text     & \hcell{28.0} & \hcell{37.3} & \hbest{50.8} & \hcell{44.1} & \hcell{46.6} & \hcell{54.2} & \hcell{47.5} & \hcell{53.4} & \dcell{6.7} \\
+Pure-text            & \hcell{39.2} & \hcell{47.8} & \hbest{55.3} & \hcell{44.3} & \hcell{52.9} & \hcell{55.0} & \hcell{38.8} & \hcell{51.5} & \dcell{11.0} \\
+Table                & \hcell{40.6} & \hbest{48.4} & \hbest{48.4} & \hcell{37.8} & \hcell{48.8} & \hcell{48.8} & \hcell{25.3} & \hcell{42.4} & \dcell{10.6} \\
+\midrule
+\textbf{All}         & \hcell{31.9} & \hcell{38.8} & \hbest{52.5} & \hcell{45.6} & \hcell{49.2} & \hcell{54.7} & \hcell{37.8} & \hcell{50.2} & \dcell{6.9} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages, Qwen3-VL-8B bf16, PaddleOCR-VL, full answerable pool ($n=847$). Teal deepens with accuracy on a fixed scale, and bold marks each row's winning rung within the med-resolution ladder. The \textbf{Ladder @ med} block is the four rungs at medium resolution: text alone (T), parser layout (TL), parser layout with the page image (TLV), and the image alone (V). The \textbf{TLV} and \textbf{V} blocks give those two rungs at low and high resolution; the medium value for each is the corresponding Ladder column. The \textbf{$\Delta$V} column ($\Delta$V = TLV$-$V at med) is a point difference, not an accuracy, so it carries its own warm shading, deepening with the accuracy the text channel recovers over vision alone. Domain rows partition the pool; evidence-source rows overlap, since a question citing several sources appears under each, so their counts do not sum and the \textbf{All} row pools each question once. Resolution lifts the pixel-limited sources most: on V, Table climbs $25.3\rightarrow42.4$ and Chart $34.3\rightarrow48.3$ from low to high, while Pure-text moves little.\par}
+\caption{Representation ladder by domain and evidence source at medium resolution, with the TLV and V rungs swept across low and high resolution. Teal deepens with accuracy; bold marks each row's winning rung; the warm strip deepens with the text channel's recovery over vision alone ($\Delta$V = V$-$TLV).}
+\label{tab:ladder_source_res}
+\end{table*}

@@ -1,52 +1,38 @@
-\begin{figure}[h]
+\begin{figure*}[h]
 \centering
-\fbox{%
-\begin{minipage}{0.94\linewidth}
-\small
-\textbf{\texttt{SYNTHESIZER} prompt (abridged)}
-\vspace{0.5em}
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+You are answering a question about a long document. You cannot see the
+whole document. EVIDENCE is arranged one document page at a time, in
+document order. A block may contain a READER'S RECORD, PARSED TEXT, and a
+PAGE IMAGE. Reader records may be incomplete or mistaken. Use the parsed
+text to check words, names, and numbers, and the image to check visual
+and spatial details.\\[0.5em]
 
-\ttfamily
-You are answering a question about a long document. You cannot see all of it. A reader went through it page by page.
+Use only the EVIDENCE. Think step by step, write that thinking after
+REASONING:, and give a concise final answer after ANSWER:.\\[0.5em]
 
-The EVIDENCE is organised by document page. A page may contain:
+Check the question's premises before answering: verify the particular
+entities, dates, locations, figures, groups, and measurements it assumes.
+Do not substitute a nearby fact when a required detail conflicts with
+the evidence. Combine relevant facts across page blocks. For a count
+or list, identify matching items page by page, exclude duplicates and
+irrelevant items, and then aggregate them.\\[0.5em]
 
-\begin{itemize}
-    \item \texttt{READER'S RECORD}: a summary that may be incomplete;
-    \item \texttt{PARSED TEXT}: the extracted text, preferred for exact words, numbers, names, and identifiers;
-    \item \texttt{PAGE IMAGE}: the original visual evidence, preferred for charts, figures, layout, colour, and other visual information.
-\end{itemize}
+Answer when the evidence supports an answer. Write ``Not answerable''
+only when a required fact is genuinely absent or contradicted. Before
+doing so, inspect the available parsed text and images and write:
+MISSING: <the specific unsupported fact>.\\[0.5em]
 
-Use only the supplied EVIDENCE. Where sources disagree, prefer parsed text for textual content and the page image for visual content.
+REASONING: <premise checks and evidence integration>\\
+ANSWER: <concise answer or exactly ``Not answerable''>\\[0.5em]
 
-Think step by step before answering.
-
-\vspace{0.5em}
-\textbf{CHECK THE QUESTION}
-
-Verify the specific premises assumed by the QUESTION, including names, dates, pages, figures, tables, groups, metrics, and whether the requested object exists.
-
-If a required premise is contradicted or absent where it would have to appear, do not substitute the nearest matching fact.
-
-\vspace{0.5em}
-\textbf{ABSTENTION}
-
-Answer \texttt{Not answerable} only when the supplied evidence genuinely does not contain what is required. Before abstaining, inspect the full parsed text and page images and write:
-
-\texttt{MISSING: <specific unsupported fact>}
-
-\vspace{0.5em}
-\textbf{COUNTS AND LISTS}
-
-For counting or list questions, construct a page-wise tally. Verify items against the full page evidence where available, exclude non-matching and duplicate items, and then aggregate across pages.
-
-\vspace{0.5em}
-\textbf{OUTPUT}
-
-\texttt{REASONING: <step-by-step reasoning>}\\
-\texttt{ANSWER: <concise final answer>}
-\end{minipage}%
-}
-\caption{Abridged prompt for the \texttt{synthesizer} role. The prompt combines explicit reasoning, premise verification, calibrated abstention, and structured aggregation.}
-\label{fig:method_synthesizer_prompt}
-\end{figure}
+QUESTION: \{question\}\\
+EVIDENCE: \{page blocks containing records and, for flagged pages,
+parser text and images\}
+\end{tcolorbox}
+\caption{Synthesizer prompt structure for iteration 7. If the reader flags no page, the evidence includes the two highest-ranked inspected pages in full.}
+\label{fig:app_synthesizer_prompt}
+\end{figure*}

@@ -1,0 +1,107 @@
+% ---- Float packing, appendix only -------------------------------------------------
+% The appendix is almost entirely tables, and LaTeX's defaults are tuned for the
+% opposite case. Three of them cost us the space:
+%   \floatpagefraction 0.5   a float-only page is released once it is half full, which
+%                            is why a page can hold two table*'s and a lot of white;
+%   \textfraction      0.2   every text page must keep a fifth of its height as text,
+%                            so a page with one big table cannot take a second;
+%   \dbltopnumber      2     at most two double-column floats at the top of a page.
+% Raising them lets a float page keep filling before it is emitted. Set after
+% \appendix so the body's layout is untouched; \floatpagefraction must stay below
+% \topfraction or LaTeX warns and ignores it.
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}
+\setcounter{dbltopnumber}{4}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\dblfloatpagefraction}{0.85}
+% -----------------------------------------------------------------------------------
+
+\newpage
+\section{Full Pipeline Configuration}
+\label{app:config}
+
+This appendix gives the exact models, prompts, decoding, retrieval, dataset, and scoring settings the runs used. Section~\ref{subsec:config} states the main configuration; everything here is the full detail behind it.
+
+\subsection{Reasoner}
+\label{app:cfg_reasoner}
+The baseline reasoner is Qwen3-VL-8B-Instruct \cite{bai2025qwen3vl}, loaded in bfloat16. Decoding is greedy (\texttt{do\_sample=False}; no temperature, top-$p$, top-$k$, or repetition penalty), with a decode budget of 256 new tokens for the terse-answer modes and 2048 for the reasoning-bearing modes, which must emit both reasoning and a final answer. The full text context is passed with no input-token cap. The scale sweep runs Qwen3-VL at 2B, 4B, 8B, and 32B; the cross-family comparison runs InternVL3-8B \cite{zhu2025internvl3} at the same 8B scale. Both backends share one prompt template. Quantization comparisons apply 8-bit and 4-bit bitsandbytes quantization to the 8B reasoner, each cached as its own condition.
+
+\subsection{Representation Ladder}
+\label{app:cfg_ladder}
+The representation is built at render DPI 200 (PyMuPDF, \texttt{zoom}${}={}$DPI$/72$) and takes the cost-ordered forms in Table~\ref{tab:app_rungs}. The forms are not cumulative: parser markdown and the page image are competing representations of one page, so TL and V are alternative channels rather than additive layers. The four canonical representations are T, TL, TLV, and V; TV and TLVi are additional representations a run requests explicitly. TV is the parser-free counterpart of TLV, pairing the cheap embedded text with the page image and skipping the parser pass, so the TLV-minus-TV contrast isolates what the parser layer adds once the model can already see the page. TLVi is TLV's interleaved variant, the same text and images at the same cost but ordered per page (page text, that page's image, next page) rather than one merged text block followed by every image.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lll}
+\toprule
+Rep. & Text channel & Image \\
+\midrule
+T    & embedded text          & -- \\
+TL   & parser markdown        & -- \\
+TV   & embedded text          & page image \\
+TLV  & parser markdown        & page image \\
+TLVi & parser markdown (interleaved) & page image \\
+V    & --                     & page image \\
+\bottomrule
+\end{tabular}
+\caption{The representation ladder. ``Embedded text'' is the PyMuPDF text layer; ``parser markdown'' is a parser's structural output.}
+\label{tab:app_rungs}
+\end{table}
+
+\subsection{Parsers}
+\label{app:cfg_parsers}
+The baseline parser is PaddleOCR-VL (0.9B) \cite{cui2025paddleocrvl}, run through the \texttt{paddleocr} 3.7 pipeline (PP-DocLayoutV2 layout, PP-OCRv5 detection and recognition, orientation and unwarping). The parser ablation adds MinerU~2.5 (1.2B) \cite{niu2025mineru25}, a Qwen2-VL-based parser prompted to convert the page to Markdown, and Unlimited-OCR, a DeepSeek-OCR-style full-page extractor. The T representation bypasses all three and reads the PyMuPDF embedded text layer directly, which is what makes it the acquisition floor rather than a fourth parser. T and V never invoke a parser; only TL and TLV do.
+
+\subsection{Visual Resolution}
+\label{app:cfg_resolution}
+Each page image is capped at a per-page pixel budget equal to $\text{tokens/page} \times 28 \times 28$, since the reasoner packs one vision token per $28\times28$ patch. The three presets are low ($400$ tokens, $313{,}600$ px), med ($640$ tokens, $501{,}760$ px), and high ($960$ tokens, $752{,}640$ px). Pages are rasterised at 200 DPI, then downsampled to the budget. Every table uses med except the resolution sweep, which runs low, med, and high on the TLV and V representations.
+
+\subsection{Retrieval}
+\label{app:cfg_retrieval}
+The retrieval unit is the page; there is no sub-page chunking, so a retrieved unit and an annotated evidence unit are the same object. Retrieval depth is $k \in \{1,3,5,7,10\}$. Lexical retrieval is BM25 (one index per document). Dense-text retrieval uses BGE-M3 and Qwen3-Embedding-4B (sequence cap 4096, encode batch 1). Late-interaction visual retrieval uses ColModernVBERT, ColQwen2.5, and ColQwen3, embedding page images rendered at 200 DPI. Joint retrieval is the deduplicated union of a matched text and vision arm, scored at $k \in \{1,3\}$. The generation stage feeds one text arm, one vision arm, and their joint union to the reasoner at the TLV and V representations.
+
+\subsection{Prompt Modes}
+\label{app:cfg_prompts}
+The reasoner prompt is a fixed header and body, with an optional instruction preamble that defines the mode:
+
+\begin{quote}\small\ttfamily
+You are answering a question about a document.\\
+\{instruction\}\\[4pt]
+Question:\\
+\{question\}\\[4pt]
+Document evidence:\\
+\{context\}\\[4pt]
+Answer:
+\end{quote}
+
+The answerable ladder runs with no instruction (\texttt{none}: header and question only). The faithfulness sweeps run six modes over the same questions, composed from named fragments so each mode isolates one mechanism:
+
+\begin{quote}\small
+\begin{description}
+\item[none] (empty).
+\item[grounded] \texttt{Use only the provided document evidence and keep the answer concise.}
+\item[abstain] grounded, plus \texttt{If the evidence does not contain the answer, answer exactly: Not answerable.}
+\item[abstain\_balanced] abstain, plus \texttt{If the evidence does contain the answer, give it: do not decline a question the evidence supports.}
+\item[cot] grounded, plus \texttt{Think step by step before answering}, with the final answer on a line beginning \texttt{Answer:}.
+\item[extract\_cot] grounded, plus a verbatim-evidence extraction step, then reasoning constrained to the extracted evidence, then the \texttt{Answer:} line.
+\end{description}
+\end{quote}
+
+For the \texttt{cot} and \texttt{extract\_cot} modes the text after the last \texttt{Answer:} marker is taken as the final answer before judging.
+
+\subsection{Dataset}
+\label{app:cfg_dataset}
+We use MMLongBench-Doc \cite{ma2024mmlongbench}: 1091 questions over 135 documents, split into 847 answerable and 244 unanswerable (a question is unanswerable when its gold answer is exactly ``Not answerable''). Each question carries a native document type (Research report 293, Academic paper 204, Guidebook 156, Tutorial/Workshop 139, Financial report 117, Brochure 101, Administration/Industry file 81), a typed evidence source, and an evidence-hop label derived from its gold-page count (Table~\ref{tab:mmlongbench}). Answer formats are Int 290, Str 250, None 244, Float 160, and List 147. Evidence pages are annotated per document, converted from 1-based to 0-based indices, de-duplicated, and used directly as the oracle set. A per-document born-digital or scanned label is auto-detected (a page counts as text with at least 20 extracted characters; a document is scanned when none of its first sampled pages carries a text layer), giving 672 digital and 189 scanned questions with the remainder unlabelled. A hand-labelled modality bin (text-dominant, mixed-modality, visual-dominant) is joined per document where available.
+
+\subsection{Judging}
+\label{app:cfg_judging}
+Answers are scored by an LLM judge rather than exact match, since a correct answer may differ from the gold string in units or formatting. Two judges of different families, GPT-4o-mini and Gemini-2.5-flash, run at temperature 0 with JSON-only output. The judge sees the question, the gold answer, the unanswerable flag, and the model answer, and returns one of correct, incorrect, or abstained; for an unanswerable question, abstaining is scored correct. The rubric marks an answer correct when it is semantically equivalent to the gold answer. Abstention is additionally detected by matching a fixed set of refusal surface forms against the casefolded answer (``not answerable'', ``cannot be answered'', ``insufficient information'', ``not mentioned'', ``not provided'', and related phrasings).
+
+\subsection{Evaluation}
+\label{app:cfg_evaluation}
+Accuracy is judge-scored correctness. Confidence intervals are 95\% document-level bootstrap intervals, resampling documents (not questions) over 1000 resamples with the $2.5$ and $97.5$ percentiles. Resampling documents rather than questions makes the interval reflect document-level variation, since questions from one document are not independent. The sufficiency comparisons use a pre-registered margin of 3 accuracy points. Every reported run uses the whole pool rather than a sample, so the bootstrap resamples the full 847 answerable or 244 unanswerable questions and no sampling stage enters the interval.

@@ -1,0 +1,69 @@
+% ReasonerHop.tex — does reasoner scale recover multi-page accuracy, or lift every hop
+% bucket together? Accuracy by gold evidence-page bucket, per rung, per Qwen3-VL size.
+% Source: results/tables/reasoner_hop.csv (builder reporting/tables/reasoner_hop.py).
+%
+% Pool is the integration table's: answerable questions carrying gold pages, less the
+% twelve whose gold pages never reach the model. The 8B row therefore reproduces
+% Table~\ref{tab:integration} cell for cell (TLV 64.6 / 38.6 / 38.6), and that table's
+% "TLV, 32B" lever row is this table's 32B/TLV row.
+% `M` is CUMULATIVE (two or more gold pages), so it pools the 2 and 3+ columns rather
+% than being a fifth disjoint bucket.
+% The 32B is missing one TLV cell, in the 4+ bucket (n=825 there against 826 elsewhere).
+%
+% Two-column (table*): at 21 columns this does not fit \columnwidth legibly.
+% Accuracy cells take the SAME fixed teal [14,74] scale capped 60% as Ladder.tex and
+% Reasoner.tex, so a cell here reads against a cell there.
+% The last column of each rung is NOT an accuracy: it is multi-page accuracy read against
+% the 8B at the same rung, which is the question the table exists to answer (does buying
+% parameters buy multi-page accuracy). It gets its own diverging pair -- green above the
+% 8B, warm below it -- so it cannot be mistaken for the teal accuracy ramp.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\definecolor{gainmoss}{HTML}{16805F}
+% \hpacc{v} : teal by accuracy, on the shared ladder scale.
+\newcommand{\hpacc}[1]{%
+  \pgfmathtruncatemacro{\hpshade}{max(0,min(60,(#1-14)/(74-14)*65))}%
+  \edef\hpcol{accteal!\hpshade}%
+  \expandafter\cellcolor\expandafter{\hpcol}#1%
+}
+% \hpup / \hpdn : signed multi-page delta against the 8B, on a shared magnitude scale.
+\newcommand{\hpup}[1]{%
+  \pgfmathtruncatemacro{\hpshade}{max(0,min(55,(#1-0)/(13-0)*60))}%
+  \edef\hpcol{gainmoss!\hpshade}%
+  \expandafter\cellcolor\expandafter{\hpcol}$+$#1%
+}
+\newcommand{\hpdn}[1]{%
+  \pgfmathtruncatemacro{\hpshade}{max(0,min(55,(#1-0)/(13-0)*60))}%
+  \edef\hpcol{recwarm!\hpshade}%
+  \expandafter\cellcolor\expandafter{\hpcol}$-$#1%
+}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{}l rrrrr @{\hskip 12pt} rrrrr @{\hskip 12pt} rrrrr @{\hskip 12pt} rrrrr@{}}
+\toprule
+ & \multicolumn{5}{c}{\textbf{T}} & \multicolumn{5}{c}{\textbf{TL}}
+ & \multicolumn{5}{c}{\textbf{TLV}} & \multicolumn{5}{c}{\textbf{V}} \\
+\cmidrule(lr){2-6}\cmidrule(lr){7-11}\cmidrule(lr){12-16}\cmidrule(lr){17-21}
+\textbf{Size}
+ & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{M} & \textbf{$\Delta$M}
+ & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{M} & \textbf{$\Delta$M}
+ & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{M} & \textbf{$\Delta$M}
+ & \textbf{1} & \textbf{2} & \textbf{3+} & \textbf{M} & \textbf{$\Delta$M} \\
+\midrule
+2B  & \hpacc{31.4} & \hpacc{20.7} & \hpacc{8.1}  & \hpacc{16.8} & \hpdn{9.1} & \hpacc{38.2} & \hpacc{25.7} & \hpacc{23.4} & \hpacc{25.0} & \hpdn{6.2} & \hpacc{48.1} & \hpacc{27.4} & \hpacc{25.2} & \hpacc{26.7} & \hpdn{11.9} & \hpacc{40.7} & \hpacc{20.7} & \hpacc{22.5} & \hpacc{21.3} & \hpdn{12.8} \\
+4B  & \hpacc{40.1} & \hpacc{26.1} & \hpacc{18.0} & \hpacc{23.6} & \hpdn{2.3} & \hpacc{43.9} & \hpacc{36.1} & \hpacc{27.0} & \hpacc{33.2} & \hpup{2.0} & \hpacc{60.5} & \hpacc{42.3} & \hpacc{32.4} & \hpacc{39.2} & \hpup{0.6}  & \hpacc{50.4} & \hpacc{34.9} & \hpacc{31.5} & \hpacc{33.8} & \hpdn{0.3}  \\
+8B  & \hpacc{37.6} & \hpacc{29.5} & \hpacc{18.0} & \hpacc{25.9} & --         & \hpacc{45.1} & \hpacc{34.0} & \hpacc{25.2} & \hpacc{31.2} & --         & \hpacc{64.6} & \hpacc{38.6} & \hpacc{38.7} & \hpacc{38.6} & --          & \hpacc{55.7} & \hpacc{35.3} & \hpacc{31.5} & \hpacc{34.1} & --          \\
+32B & \hpacc{42.2} & \hpacc{34.0} & \hpacc{16.2} & \hpacc{28.4} & \hpup{2.6} & \hpacc{50.6} & \hpacc{39.4} & \hpacc{32.4} & \hpacc{37.2} & \hpup{6.0} & \hpacc{71.5} & \hpacc{49.0} & \hpacc{40.9} & \hpacc{46.4} & \hpup{7.8}  & \hpacc{66.0} & \hpacc{48.5} & \hpacc{42.3} & \hpacc{46.6} & \hpup{12.5} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages at medium resolution, by the number of gold evidence pages the question cites, for each Qwen3-VL size ($n=826$ per cell; $825$ for the 32B at TLV, in the 4+ bucket). Teal deepens with accuracy on the same fixed scale as Table~\ref{tab:ladder} and Table~\ref{tab:reasoner}. \textbf{M} is cumulative multi-page evidence, two or more gold pages, so it pools the 2 and 3+ columns. $\Delta$\textbf{M} is that column read against the 8B at the same rung, green above it and warm below, and is a point difference rather than an accuracy, which is why it carries its own scale. The pool matches Table~\ref{tab:integration}, whose rung rows the 8B row reproduces exactly and whose \emph{TLV, 32B} lever row is the 32B row here. Scale buys multi-page accuracy steadily: the 32B gains $2.6$, $6.0$, $7.8$ and $12.5$ points of multi-page accuracy over the 8B across the four encodings, and the gain is largest where the image carries the evidence. What it does not buy is integration, since single-page accuracy rises just as fast and the deficit between them is no smaller at 32B than at 2B (Table~\ref{tab:integration}). The tail buckets are thin and should be read for trend.\par}
+\caption{Accuracy by gold evidence-page count for each Qwen3-VL size, per rung. \textbf{M} pools all multi-page questions and $\Delta$\textbf{M} reads it against the 8B at the same encoding. Scale buys multi-page accuracy, most of it on the image encodings, but it raises single-page accuracy just as fast, so the multi-page deficit does not close.}
+\label{tab:reasoner_hop}
+\end{table*}

@@ -1,0 +1,29 @@
+% Parser.tex — parser fidelity converges once the page image is added, on digital and scanned pages.
+% Oracle pages, Qwen3-VL-8B bf16, med resolution, answerable pool, prompt_mode=none. Full pool split by scan (digital n=646, scanned n=201).
+% Layout parsers: text-only=TL, +vision=TLV. PyMuPDF: text-only=T (raw embedded text), +vision=TV.
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\columnwidth}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Digital}} & \multicolumn{3}{c}{\textbf{Scanned}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Text source} & \textbf{Text} & \textbf{+Vis.} & \textbf{$\Delta$} & \textbf{Text} & \textbf{+Vis.} & \textbf{$\Delta$} \\
+\midrule
+PaddleOCR-VL  & 40.1 & 49.7 & +9.6  & 32.8 & 61.2 & +28.4 \\
+MinerU        & 26.6 & 46.0 & +19.3 & 27.4 & 55.7 & +28.4 \\
+Unlimited-OCR & 42.3 & 50.2 & +7.9  & 34.3 & 63.7 & +29.4 \\
+PyMuPDF       & 40.6 & 49.7 & +9.1  & \phantom{0}4.0 & 57.7 & +53.7 \\
+\cmidrule(lr){1-7}
+\emph{Spread (max$-$min)} & 15.6 & \phantom{0}4.2 & 11.5 & 30.3 & \phantom{0}8.0 & 25.4 \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages at medium resolution, Qwen3-VL-8B bf16, answerable pool, full pool split by scan status (digital $n=646$, scanned $n=201$). \textbf{Text} is the text channel alone, \textbf{+Vis.}\ adds the page image, and $\Delta$ is their paired difference in points. The three layout parsers report parsed layout (TL) as their text channel; PyMuPDF emits only raw embedded text (T), not parsed layout, so its text channel is T and its +Vis.\ column is the parser-free image rung (TV). The four sources span 15.6 points on digital text alone but only 4.2 once the image is added, and 30.3 against 8.0 on scanned pages: parser choice drives text-only accuracy and is nearly washed out by vision. PyMuPDF on scanned pages is the limiting case, where raw embedded text is almost absent (4.0) and the image supplies essentially the whole answer (+53.7).\par}
+\caption{\small Text-channel fidelity matters far less once the page image is present. Four text sources span 15.6 points on digital text alone and 30.3 on scanned text, but converge to 4.2 and 8.0 respectively once vision is added; the weakest source on scanned input (PyMuPDF, 4.0) is almost entirely rescued by the image.}
+\label{tab:parser}
+\end{table}

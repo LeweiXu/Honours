@@ -1,0 +1,20 @@
+\begin{figure}[t]
+\centering
+\begin{tcolorbox}[
+  colback=gray!5,
+  colframe=gray!50,
+  boxrule=0.4pt,
+  fontupper=\small\ttfamily,
+  left=5pt,right=5pt
+]
+You are answering a question about a document.\\[0.4em]
+\{instruction\}\\[0.4em]
+Question:\\
+\{question\}\\[0.4em]
+Document evidence:\\
+\{context\}\\[0.4em]
+Answer:
+\end{tcolorbox}
+\caption{Common single-pass reasoner template. The instruction comes from Table~\ref{tab:app_reasoning_prompts}; the context contains the selected pages in document order and in the representation specified by the condition.}
+\label{fig:app_reasoner_template}
+\end{figure}

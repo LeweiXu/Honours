@@ -1,0 +1,64 @@
+% Worked-example box machinery for appendix/additional_discussion.tex.
+%
+% Every example printed with these macros is emitted by
+% reporting/tables/worked_examples.py into results/tables/worked_examples.csv,
+% one row per (example label, cell). The label in \wxbox's first argument is the
+% `example` column there, and the row labels are the `cell` column, so an audit is
+% a straight join. A blank verdict in that CSV means the cell no longer resolves
+% and the text below has gone stale.
+%
+% Macro namespace: \wx* only. It does not collide with the shading macros the data
+% tables define (\hcell/\rcell/\pP/\fRW/\cPre/\hpacc/\iacc/\scell/\gA/\lacc/\pacc).
+
+\definecolor{wxright}{HTML}{1BAF7A}   % the accuracy teal used by the data tables
+\definecolor{wxwrong}{HTML}{D95926}   % the warm tone the data tables use for deficits
+\definecolor{wxhold}{HTML}{C8891B}    % amber, for abstentions (neither right nor wrong)
+\definecolor{wxrule}{HTML}{BFBFBF}
+\definecolor{wxtitle}{HTML}{EFEFEF}
+
+% Verdict marks. Right / wrong / abstained, on the same rule the accuracy tables
+% use: an abstention is not a correct answer.
+\newcommand{\wxR}{\textcolor{wxright}{$\checkmark$}}
+\newcommand{\wxW}{\textcolor{wxwrong}{$\times$}}
+\newcommand{\wxA}{\textcolor{wxhold}{$\circ$}}
+
+\newtcolorbox{wxbox}[3]{%
+  breakable, enhanced, sharp corners, boxrule=0.4pt,
+  colback=white, colframe=wxrule,
+  left=4pt, right=4pt, top=3pt, bottom=3pt,
+  toptitle=1pt, bottomtitle=1pt,
+  colbacktitle=wxtitle, coltitle=black, titlerule=0pt,
+  fonttitle=\footnotesize, halign title=flush left,
+  title={\textbf{#1}\hspace{0.6em}\textbf{#2}\hfill\texttt{\scriptsize #3}},
+}
+
+% Provenance line: document, page indices, and any pool caveat.
+\newcommand{\wxmeta}[1]{{\scriptsize\textcolor{black!62}{#1}}\par\vspace{1.5pt}}
+\newcommand{\wxq}[1]{{\footnotesize\textbf{Q}\hspace{0.5em}#1}\par}
+\newcommand{\wxgold}[1]{{\footnotesize\textbf{Gold}\hspace{0.5em}#1}\par}
+\newcommand{\wxsep}{\vspace{2.5pt}{\color{wxrule}\hrule height 0.4pt}\vspace{2.5pt}}
+
+% One condition row: label, verdict mark, output. All three are \parboxes so a long
+% label wraps inside its column instead of running into the mark.
+\newcommand{\wxrow}[3]{%
+  \par\vspace{1.5pt}%
+  \noindent%
+  \parbox[t]{0.270\linewidth}{\footnotesize\raggedright #1}%
+  \hspace{1pt}%
+  \parbox[t]{0.045\linewidth}{\footnotesize #2}%
+  \hspace{1pt}%
+  \parbox[t]{0.650\linewidth}{\footnotesize\raggedright #3}\par}
+
+% An interstitial sentence inside a box (what the encoder did with the page),
+% set at the box's own size rather than the body size.
+\newcommand{\wxnote}[1]{{\footnotesize #1}\par}
+
+% A verbatim-ish encoder output, for showing what the parser actually emitted.
+% \raggedright plus a permissive \sloppy keeps long unbreakable tokens from
+% overflowing the box.
+\newcommand{\wxsnip}[1]{%
+  \par\vspace{2pt}\noindent\hspace{0.02\linewidth}%
+  \parbox{0.96\linewidth}{\scriptsize\ttfamily\raggedright\sloppy #1}\par\vspace{2pt}}
+
+% The one-sentence reading of the example.
+\newcommand{\wxread}[1]{\wxsep{\footnotesize\textit{#1}}\par}

@@ -1,0 +1,43 @@
+% Hand-maintained (not generated): the official-protocol block of
+% tables/include/ldu_method_results.tex, laid out for one ACL column. Method names carry
+% no citation; cite them where the baselines are introduced:
+%   MDocAgent han2025mdocagent, M3DocRAG cho2024m3docrag, CoR guo2026end,
+%   DocSeeker yan2026docseeker, MoLoRAG wu2025molorag, URaG shi2026urag,
+%   Doc-V* zheng2026doc, DocTrace xiang2026doctrace, SLEUTH liu2025resolving.
+% The Ours row is empty until the seqread-ldu-it7 run is scored.
+\begin{table}[t]
+\centering
+\small
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{$\times$}
+\newcommand{\bbgroup}[1]{\multicolumn{7}{@{}l}{\textit{#1}} \\}
+\resizebox{\columnwidth}{!}{%
+% \setlength{\tabcolsep}{4pt}%
+\begin{tabular}{@{}lcc ccc c@{}}
+\toprule
+\textbf{Method} & \textbf{OCR} & \textbf{Tr.} & UND & REA & LOC & \textbf{ACC} \\
+\midrule
+\bbgroup{\textbf{Qwen2.5-VL-7B}}
+MDocAgent$^{\dagger}$ (via MoLoRAG) & \yes & \no & -- & -- & -- & 46.9 \\
+M3DocRAG (via MoLoRAG) & \no & \no & -- & -- & -- & 49.0 \\
+CoR & \no & \yes & 56.3 & 41.2 & 48.6 & 51.5 \\
+DocSeeker & \no & \yes & -- & -- & -- & 51.7 \\
+MoLoRAG & \no & \no & -- & -- & -- & 51.7 \\
+MoLoRAG+ & \no & \yes$^{a}$ & -- & -- & -- & 51.9 \\
+URaG & \no & \yes & -- & -- & -- & 52.2 \\
+Doc-V$^{*}$ & \no & \yes & -- & -- & -- & 56.3 \\
+\addlinespace
+\bbgroup{\textbf{Qwen3-VL-8B}}
+Whole document (via DocTrace) & \no & \no & -- & -- & -- & 45.1 \\
+MDocAgent (via SLEUTH) & \yes & \no & 57.5 & 51.5 & 44.7 & 53.1 \\
+M3DocRAG (via SLEUTH) & \no & \no & 60.1 & 52.4 & 45.5 & 54.6 \\
+DocTrace & \yes & \yes & -- & -- & -- & 56.4 \\
+MoLoRAG (via SLEUTH) & \no & \no & 63.4 & 52.7 & 49.3 & 57.6 \\
+SLEUTH & \no & \no & \textbf{65.7} & \textbf{53.0} & \textbf{53.6} & \textbf{60.0} \\
+\textbf{Ours} (4-bit) & \yes & \no & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}%
+}
+\caption{LongDocURL accuracy (\%) under the official protocol by task type (UND: understanding, REA: reasoning, LOC: locating). Values are as each paper reports them, on the full 2,325 questions; ``via'' marks a result reproduced by another study. \textbf{OCR}: parser or OCR text is an input. \textbf{Tr.}: task-specific fine-tuning or RL in the pipeline. $^{\dagger}$A text LLM runs alongside the VLM. $^{a}$Retriever only.}
+\label{tab:ldu_method_results}
+\end{table}

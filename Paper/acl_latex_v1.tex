@@ -1,0 +1,404 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[preprint]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+    \usepackage[T1]{fontenc}
+    % For Vietnamese characters
+    % \usepackage[T5]{fontenc}
+    % See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+    
+    % This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{stfloats}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{caption}
+\usepackage{adjustbox}   % for \begin{adjustbox}
+\usepackage{natbib}      % for \citeyear  (or use biblatex)
+\usepackage{lscape}      % optional: landscape
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{forest}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{colortbl}
+\usepackage[table]{xcolor} 
+\usepackage{booktabs} 
+\usepackage[most]{tcolorbox}  % worked-example boxes in appendix/additional_discussion
+
+% ------------------------------------------------------------------------------------
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Locating Failure in Multi-Page Visually Rich Document Understanding: An Empirical Attribution}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{Lewei Xu$^{1}$ \quad Yihao Ding$^{1*}$ \quad Zihan Xu$^{2}$ \quad Daniel Yitian Su$^{1}$ \\ \textbf{Daochang Liu}$^{1}$ \quad \textbf{Siwen Luo}$^{1}$ \quad \textbf{Yifan Peng}$^{3}$ \quad \textbf{Wei Liu}$^{1}$ \\ $^{1}$The University of Western Australia \quad $^{2}$The University of Melbourne \quad $^{3}$Weill Cornell Medicine \\
+  $^*$\textit{Correspondence:}
+  \texttt{yihao.ding@uwa.edu.au}
+} 
+
+%\author{
+%  \textbf{First Author\textsuperscript{1}},
+%  \textbf{Second Author\textsuperscript{1,2}},
+%  \textbf{Third T. Author\textsuperscript{1}},
+%  \textbf{Fourth Author\textsuperscript{1}},
+%\\
+%  \textbf{Fifth Author\textsuperscript{1,2}},
+%  \textbf{Sixth Author\textsuperscript{1}},
+%  \textbf{Seventh Author\textsuperscript{1}},
+%  \textbf{Eighth Author \textsuperscript{1,2,3,4}},
+%\\
+%  \textbf{Ninth Author\textsuperscript{1}},
+%  \textbf{Tenth Author\textsuperscript{1}},
+%  \textbf{Eleventh E. Author\textsuperscript{1,2,3,4,5}},
+%  \textbf{Twelfth Author\textsuperscript{1}},
+%\\
+%  \textbf{Thirteenth Author\textsuperscript{3}},
+%  \textbf{Fourteenth F. Author\textsuperscript{2,4}},
+%  \textbf{Fifteenth Author\textsuperscript{1}},
+%  \textbf{Sixteenth Author\textsuperscript{1}},
+%\\
+%  \textbf{Seventeenth S. Author\textsuperscript{4,5}},
+%  \textbf{Eighteenth Author\textsuperscript{3,4}},
+%  \textbf{Nineteenth N. Author\textsuperscript{2,5}},
+%  \textbf{Twentieth Author\textsuperscript{1}}
+%\\
+%\\
+%  \textsuperscript{1}Affiliation 1,
+%  \textsuperscript{2}Affiliation 2,
+%  \textsuperscript{3}Affiliation 3,
+%  \textsuperscript{4}Affiliation 4,
+%  \textsuperscript{5}Affiliation 5
+%\\
+%  \small{
+%    \textbf{Correspondence:} \href{mailto:email@domain}{email@domain}
+%  }
+%}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Multi-page visually-rich document understanding (MP-VRDU) requires managing evidence that is sparse, spread across pages, and often exceeds a model's context window. Prior work has produced competing, largely untested claims about how these systems should be built. We attribute incorrect answers to three failure modes, representation, selection, and reasoning, and isolate each over a multi-page document understanding dataset by intervening on one while holding the others fixed. We find that vision is necessary but does not replace text extraction, that missing pages bound accuracy while distractors cost little, and that reasoners fail to integrate evidence across pages even when it is fully supplied. Prompting can shift reasoning behaviour substantially, improving some outcomes at the expense of others. We translate these findings into guidance for building such systems under a fixed compute budget.
+\end{abstract}
+
+\section{Introduction}
+
+Answering a question over a long visually-rich document is at its core an evidence-management problem. The evidence bearing on a question is sparse, spread across many pages, and often larger than the reasoner's context window, so a system cannot simply read the whole document and answer. It must instead decide what to acquire, encode, select, and reason over under a fixed compute budget \citep{xu2026managing}. Multi-page visually-rich document understanding (MP-VRDU) is therefore distinct from the single-page setting, defined by how a system manages evidence it cannot hold all at once.
+
+The field has explored this problem from many directions, but its conclusions remain unsettled. One disagreement concerns \textbf{representation}. Recent OCR-free approaches argue that image input avoids text extraction errors \citep{tanaka2025vdocrag,zheng2026docvstar}, while other work finds that text-free reasoners struggle on dense passages \citep{hannan2025docslm} and that combining text and vision outperforms either modality alone \citep{han2025mdocagent,suri2025visdom}. 
+%
+A second disagreement concerns \textbf{selection}. Fixed-depth retrieval is brittle because a question can require more evidence pages than a fixed depth returns, while too many introduce distractors that dilute attention \citep{yan2025docseeker,li2025avir}. At the same time, other work identifies retrieval coverage as the main factor of accuracy \citep{liu2025sleuth,zhu2025doclens}. 
+%
+A third disagreement concerns \textbf{reasoning}. Performance drops on long inputs are attributed to context-length limits \citep{wang2024mmniah,liu2024lost}, or to failures of evidence integration that persist even when the context is short enough to fit \citep{zheng2026docvstar,guo2026end}. 
+% Across all of these settings, the tendency to answer questions that the evidence cannot support remains a widely noted and largely open failure \citep{van2023dude,zhang2025dream}.
+
+These claims shape system design, but they are difficult to test and compare because they are reported across different pipelines, datasets, and operating points. As a result, the field has gathered design intuitions without a corresponding account of which ones actually hold.
+
+In this paper, we argue that these disagreements can be organized around three operations that every MP-VRDU system must perform: \textbf{encode} the document, \textbf{select} the evidence shown to the reasoner, and \textbf{reason} over that evidence. 
+%
+This yields three corresponding loci of failure: \textbf{representation}, where the encoding fails to preserve the evidence needed to answer the question; \textbf{selection}, where the required evidence is absent or diluted by irrelevant evidence; and \textbf{reasoning}, where the model cannot combine adequate evidence or misjudges whether it supports an answer. 
+This decomposition is useful because it abstracts over implementation details. Techniques differ widely but intervene on the same operations, and agentic or iterative systems merely apply them repeatedly.
+
+We use this decomposition as a framework for controlled attribution by intervening on one locus while holding the others fixed. We apply this decomposition to a single-pass pipeline on a multi-page document benchmark, and test several competing claims about modality, retrieval, and reasoning.
+%
+Our study yields three main findings. First, vision is necessary for MP-VRDU but does not replace text extraction. Second, omitting evidence sharply limits accuracy, whereas adding distractor evidence is less harmful than commonly assumed. Third, current reasoners fail to integrate evidence across pages, a limit that prompting and scale only partly close. Together, these findings suggest that MP-VRDU bottlenecks are more structured than current debates imply.
+
+Our contributions are as follows. \textbf{(1)} We introduce an attribution framework that formalises answer failure in MP-VRDU as three loci, representation, selection, and reasoning, each with two mechanisms. Because the loci are defined at the level of system function rather than model architecture, they offer a common formalisation for analysing and comparing methods. \textbf{(2)} We conduct a controlled empirical study that isolates each locus and resolves several of the field's competing and largely untested claims about modality, retrieval, and reasoning under a unified setup. \textbf{(3)} We translate the resulting analysis into practical guidance for designing and deploying MP-VRDU pipelines under a fixed compute budget.
+
+\section{Related Work}
+\label{sec:relatedwork}
+
+Prior works evaluate representations, retrievers, and reasoners through end-to-end accuracy, making it difficult to identify which stage causes an improvement or failure \citep{tanaka2025vdocrag,han2025mdocagent,suri2025visdom,yan2025docseeker}. Stage-specific diagnostic studies provide cleaner attribution by isolating OCR, retrieval, or reasoning \citep{zhang2025ohrbench,zarrinkia2026reasoningbottleneck}, but they remove competing stages and therefore cannot measure cross-stage compensation. Unified benchmarks improve comparability across systems \citep{peng2025unidocbench}, yet still localise neither gains nor cross-page reasoning failures. We address this gap through controlled interventions within one pipeline, varying representation, selection, and reasoning separately to attribute errors and test competing design claims at the stage they concern.
+
+% Prior work has established each of the three errors on its own, in a setting built so that only that error can arise. OCR-cascade studies show a parser mistake propagating untouched through a text-only system, with no image channel present to recover the corrupted content \citep{zhang2025ohrbench}, whereas we measure exactly the compensation that channel provides. Decompositions of text multi-hop question answering attribute most residual error to the reasoner once retrieval coverage is high \citep{zarrinkia2026reasoningbottleneck}, but their setting has no parsing or encoding step upstream to compete for that attribution, so the reasoner inherits errors we can separate out. UniDoc-Bench compares text, image, fused, and joint retrieval under one protocol and finds fusion strongest \citep{peng2025unidocbench}, yet it scores whole systems on questions that cite few pages, leaving both cross-page integration and the locus at which each system fails unexamined. Each of these isolates or aggregates rather than intervening stage by stage, which is what lets us attribute an error to the encoding, the selection, or the reasoning, and place the field's competing claims at the locus each concerns.
+
+% Needs redoing in powerpoint. But fairly representative. Also doubles as experimental setup (pipeline architecture).
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/lewei_intro.pdf} 
+\caption{The three failure modes and their mechanisms.}
+\label{fig:framework}
+\end{figure*}
+
+
+\section{Attribution Framework}
+\label{sec:attribution_framework}
+
+An incorrect answer from an MP-VRDU system can arise from three \emph{failure modes}: Representation, Selection, and Reasoning. These failure modes are hierarchical: evidence lost during representation cannot be selected, and evidence that is never selected cannot be incorporated into reasoning.
+
+\textbf{Representation}
+% \label{subsec:fm_representation}
+%
+refers to how faithfully a document is encoded into the tokens consumed by selection and reasoning, whether as text or visual tokens. 
+%A representation failure occurs when the encoding does not preserve the information the answer depends on. 
+Representation failures occur through two mechanisms.
+\textbf{(1) Modality Ceiling.} Each modality can represent only a bounded range of signals. A representation preserves a signal only when its modality can encode it and at the granularity permitted by its representation. For example, text tokens cannot capture non-linguistic information, and visual tokens express fine-grained details only when sufficient spatial resolution and token budget are available.
+\textbf{(2) Conversion Fidelity.} For signals that a modality can represent, conversion fidelity measures how accurately the encoding reproduces them. Failures occur when the conversion degrades or corrupts a signal that the modality could otherwise carry. For instance, a document parser may misread a numeric value and cause the downstream reasoner to operate on an incorrect but seemingly reliable representation \citep{zhang2025ohrbench}.
+
+\textbf{Selection}
+% \label{subsec:fm_selection}
+concerns what evidence is delivered to the reasoner. 
+% Its quality depends on whether the selected context contains sufficient evidence and how much irrelevant material it introduces.
+Selection failures arise through two mechanisms.
+%\textbf{(1) Evidence Coverage.} The selected context must include all evidence required by the question. Omitting required evidence leaves the reasoner with an incomplete evidence set, placing an upper bound on downstream accuracy regardless of the reasoner's capability.
+\textbf{(1) Evidence Coverage.} This mechanism measures how much of the evidence required to answer a question is present in the selected context, \emph{i.e.}, the recall of the required evidence units. Omitting required evidence leaves the reasoner with an incomplete evidence set, placing an upper bound on downstream accuracy regardless of the reasoner's capability.
+\textbf{(2) Distractor Exposure.} Selection may also deliver evidence that is irrelevant to the question. This mechanism measures the extent to which distractors accompany the required evidence. Unlike omission, distractors do not by themselves make the evidence insufficient, but they increase the burden on the reasoner to identify and use the relevant content.
+
+\textbf{Reasoning}
+% \label{subsec:fm_reasoning}
+concerns what the model does with the evidence it is given. 
+%A reasoning failure occurs when the model fails to reason overthe available evidence, produces an unsupported answer, or abstains despite having sufficient evidence. 
+Reasoning failures can arise through many mechanisms; we focus on two.
+\textbf{(1) Evidence Integration.} Multi-page questions may require the reasoner to combine complementary information from several pages, including content whose meaning spans page boundaries. A model may succeed when all relevant evidence is given but fail when it must connect distributed evidence on its own. This difficulty may be amplified in long contexts, where evidence at different positions is not used equally reliably \citep{liu2024lost}.
+\textbf{(2) Response Calibration.} This mechanism concerns whether the model aligns its response with the level of support provided by the available evidence. Unlike integration, calibration is tested both when sufficient evidence is present and when it is absent by construction. Failures occur in two directions: \emph{hallucination}, where the model produces an answer unsupported by the available evidence \citep{li2023llmattribution}, and \emph{false abstention}, where it refuses to answer despite having sufficient evidence. We treat these as a single mechanism because they represent opposite sides of the same decision, so an intervention that reduces one tends to increase the other \citep{whitehead2022reliablevqa}.
+
+% \subsection{Failure Composition}
+% \label{subsec:fm_relations}
+% The three failure modes are ordered, and each is bounded by the modes before it: representation bounds selection, since selection can deliver only what the encoding preserved, and selection bounds reasoning, since the reasoner can use only what selection delivered. This ordering is what makes attribution possible, since holding the earlier modes where they do not fail leaves any surviving error attributable to the mode under test. The bounding is not strict. A capable reasoner can recover an answer that a weaker representation would have lost. When a failure could belong to more than one mode, we attribute it to the mode our intervention isolates, not to both. Attribution therefore assigns each failure to a single mode throughout.
+
+\section{Experimental Setup}
+\label{sec:methodology}
+
+We instantiate the framework in a single-pass retriever--generator document question answering system, whose stages act once and in order so that errors can be attributed to individual failure modes. We then describe the interventions that isolate each failure mode, the pipeline configuration, and the evaluation protocol.
+
+\subsection{Attribution by Construction}
+\label{subsec:attribution}
+%We isolate each failure mode with a distinct set of interventions.
+
+% Lewei note: may need a different term for "rung" which just means how costly and how expressive a representation is e.g. "TLV Rung".
+Because each failure mode bounds those that follow, 
+% holding the earlier modes where they do not fail leaves any surviving error to the mode under test. 
+we isolate each by varying only the condition on which its failures depend.
+
+\textbf{Representation Interventions.} 
+We examine whether information is lost because the representation cannot express the required evidence or because it encodes that evidence inaccurately. All downstream components are held fixed: the same reasoner reads the same annotated gold pages, so the encoding is the only variable. The two mechanisms then map onto two axes of variation. \emph{Modality Ceiling} is varied across four document encodings that differ in their use of text, layout, and vision. 
+\emph{Conversion Fidelity} is varied by quality within each modality, through a parser for text and a render resolution for vision.
+
+\textbf{Selection Interventions.} 
+We examine whether errors arise because required evidence is absent from the delivered context or because that evidence is diluted by irrelevant pages. Representation and reasoning are held fixed, and the page selection is controlled directly. The two mechanisms map onto two perturbations of the gold evidence set. 
+\emph{Evidence Coverage} is varied by withholding gold pages from multi-page questions and evaluating against the complete gold evidence. 
+\emph{Distractor Exposure} is varied by augmenting the gold page set with non-evidence pages while keeping the required evidence unchanged.
+
+\textbf{Reasoning Interventions.} 
+We examine whether the reasoner fails to combine evidence it holds or to calibrate its responses to the available support. Representation and selection are neutralised by supplying the complete gold page set in the richest document encoding. The two mechanisms map onto two contrasts. 
+\emph{Evidence Integration} contrasts questions whose evidence lies on a single page against questions whose evidence spans several pages under the same documents and encoding. 
+\emph{Response Calibration} contrasts answerable against unanswerable questions while varying only the prompting strategy given to the reasoner (\S\ref{subsec:config}).
+
+\subsection{Pipeline Configuration}
+\label{subsec:config}
+
+We instantiate the controlled interventions above in a three-stage pipeline comprising page encoding (\textit{representation}), evidence retrieval (\textit{selection}), and answer generation (\textit{reasoning}).
+
+\textbf{Page Encoding.}
+Each page is encoded from three possible signals: text (\textbf{T}), layout (\textbf{L}), and vision (\textbf{V}). Text is taken from the page's embedded text layer, layout is the structural markup produced by a document parser, including reading order and table structure, and vision is the rendered page image consumed directly by the multimodal model. We construct three encoding forms ordered by cost and fidelity: embedded text (\textbf{T}), parser-generated layout-aware text (\textbf{TL}), and parser-generated text with the page image (\textbf{TLV}), with the page image alone (\textbf{V}) as an additional comparison. PyMuPDF is used to extract raw flattened document text, while PaddleOCR-VL \cite{cui2025paddleocrvl} is used as the default parser, with MinerU~2.5 \cite{niu2025mineru25} and unlimitedOCR \cite{yin2026unlimitedocrworks} included in the parser comparison. Page images are rendered at low, medium, and high resolutions, with the medium preset used by default.
+
+\textbf{Evidence Retrieval.}
+Evidence is selected at page granularity, matching the benchmark annotations so that a selected unit and an annotated evidence unit are the same object. Controlled experiments supply page sets built from the annotated gold pages: coverage tests withhold the highest- or lowest-ranked gold page, and exposure tests add the top-ranked non-gold pages as distractors, with page rank given by BM25 and ColQwen3 rankers. Retrieval experiments use these same rankers at varying depths. We report ColQwen3 throughout the main text and BM25 in Appendix~\ref{app:add_selection}. Selected pages are restored to their original document order before being passed to the answer generator.
+
+\textbf{Answer Generation.}
+The default answer generator is Qwen3-VL-8B-Instruct \cite{bai2025qwen3vl}, loaded in bfloat16 and decoded greedily. It receives the selected pages in a single pass and, in the baseline condition, is given no additional instruction beyond the question. Robustness experiments vary Qwen3-VL scale across 2B, 4B, 8B, and 32B, compare the 8B model with InternVL3-8B \cite{zhu2025internvl3}, and evaluate 8-bit and 4-bit quantisation. We also vary the instruction using grounding, abstention, and step-by-step reasoning prompts. 
+
+% \subsection{Pipeline Configuration}
+% \label{subsec:config}
+% The representation takes five forms ordered by compute, built from three signals: text (T), layout (L), and vision (V). \textit{Text} is the raw content extracted from the page's embedded text layer. \textit{Layout} is the structural markup a parser emits alongside that text, intrinsic to its machine-readable output, carrying reading order and table structure. \textit{Vision} is the page image, read by the reasoner's own visual capability rather than converted to text. The five forms are extracted text (T), parser markdown that adds layout (TL), raw text with the page image (TV), that markdown with the page image (TLV), and the page image alone (V). They are not cumulative, since parser output and page image are competing representations of one page rather than additions to it. In the main setup, parsed text comes from PaddleOCR-VL \cite{cui2025paddleocrvl}, the reasoner is Qwen3-VL-8B-Instruct \cite{bai2025qwen3vl} in bfloat16 with greedy decoding, and the reasoner is given no instruction beyond the question. Retrieval runs at the page level, so a retrieved unit and an annotated evidence unit are the same object.
+
+% To keep each finding from resting on one implementation, we vary components one at a time off this setup. We swap the parser for MinerU~2.5 \cite{niu2025mineru25} and unlimitedOCR \cite{yin2026unlimitedocrworks}, the reasoner for Qwen3-VL at 2B, 4B, and 32B and for InternVL3-8B \cite{zhu2025internvl3}, with Qwen-VL-8B additionally at 8-bit and 4-bit quantisations, and the instruction prompt for grounding, abstention, and chain-of-thought prompts. The page image is rendered at three resolutions. Full model versions, prompt strings, and settings are in Appendix~\ref{app:config}.
+
+\input{tables/MMLongBench}
+
+\subsection{Data and Evaluation}
+\label{subsec:data_evaluation}
+We evaluate on MMLongBench-Doc \cite{ma2024mmlongbench}, summarised in Table~\ref{tab:mmlongbench}. Its annotations define the subset each experiment runs on. The representation and reasoning experiments use answerable questions, so that answer accuracy is measured on its own without abstention mixed in. Selection withholds evidence from multi-page questions to test coverage, and adds distractors to questions of a fixed gold-page count to test exposure. Multi-hop reasoning integration contrasts the single- and multi-page questions. The instruction-prompt experiments pair the answerable and unanswerable pools. Where it is informative, we read a finding split by the evidence source a question draws on, by its document domain, and by whether the source document is born-digital or scanned.
+Answers are scored by an LLM judge rather than exact match, since a correct answer may differ from the gold string in units, rounding, or formatting that exact match would reject. We use Gemini 2.5 Flash as the judge, and report judge-scored accuracy with 95\% confidence intervals from a document-level bootstrap. Full details on pipeline configuration, data, and evaluation are available in Appendix~\ref{app:config}.
+
+\section{Empirical Findings}
+We report each failure mode in turn, isolating its two mechanisms through the interventions of \S\ref{subsec:attribution}.
+\input{tables/Ladder}
+
+\subsection{Representation}
+\label{sec:representation}
+OCR-free systems read the page image directly \citep{cho2024m3docrag,tanaka2025vdocrag}, raising the possibility that vision reduces the reliance on text extraction. We test this across the two mechanisms of representation failure, the modality ceiling and conversion fidelity. Vision moves both, but replaces the text channel in neither.
+
+\textbf{Vision is Necessary but Not Sufficient.}
+Our results support the importance of vision but not the complete replacement of text extraction (Table~\ref{tab:ladder}). Vision is necessary because page images carry graphical and spatial signals that text cannot express: a chart or figure encodes a signal no parser can render in text, so an image-free pipeline leaves these questions unanswerable regardless of parser quality. Vision alone, however, remains below the combined text--vision encoding, from 45.6 for V to 52.5 for TLV, so the page image loses signal the text channel preserves. Layout-dependent evidence shows this most sharply: even the page image, which displays layout directly, falls short of the combined encoding on these questions. This gap persists across render resolutions (Appendix~\ref{app:add_representation}), indicating a limit of the visual channel itself rather than an artefact of insufficient resolution. Vision therefore raises the modality ceiling, while text retains complementary information that visual encoding alone loses.
+
+
+
+\textbf{Vision Recovers Weak Text.}
+We further examine whether vision can compensate for errors introduced during text extraction (Figure~\ref{fig:parser}). On digital pages, the three parsers differ by 15.6 accuracy points when only their text outputs are used, from 26.6 for the weakest to 42.3 for the strongest, reflecting the downstream impact of conversion errors \citep{zhang2025ohrbench}. Adding the page image reduces this spread to 4.2 points, with the weakest parser receiving the largest gain, since the image supplies the content the parser failed to preserve. Vision also compensates for structure that flattening to raw text destroys: raw embedded text with the page image reaches 49.7, nearly matching parser-generated text with the image at 50.2, so the image restores the reading order and table structure the parser existed to recover. This compensation is not universal, because scanned pages lack a usable embedded-text layer and still require parsing to provide any textual content at all. Vision therefore reduces sensitivity to text-conversion quality without eliminating the need for text extraction.
+
+% \input{tables/Parser}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/parser_gainbars.pdf}
+\caption{Parser accuracy by text source, text-only vs.\ with the page image.}
+\label{fig:parser}
+\end{figure}
+
+\subsection{Selection}
+\label{sec:selection}
+Prior work emphasises the cost of irrelevant context, showing that it dilutes attention as the context grows \citep{shi2023large,liu2024lost,wang2024mmniah}. We find the two mechanisms of selection failure far from symmetric: omitting a required page bounds accuracy, while irrelevant pages cost little at realistic retrieval depths.
+
+
+\textbf{Missing Evidence Bounds Accuracy.}
+Our results show withholding required evidence causes a large and consistent drop in multi-page accuracy across encodings (Figure~\ref{fig:selection}(a)). At TLV, accuracy falls from an oracle of 38.6 to 18.5 once a single gold page is removed, and to 12.8 when only one page remains. The per-question transitions are strongly asymmetric, with far more answers transitioning to incorrect than recovering, so the loss is systematic rather than noise. Which page is removed matters only mildly, since a higher-ranked gold page costs more than a lower-ranked one but the gap is small beside the collapse itself. Retrieval rank is therefore a weak proxy for evidential necessity, as a lower-ranked page can still supply a necessary link in the evidence chain. The accuracy that survives likely reflects questions whose remaining page already carries enough for the reasoner to reconstruct the answer, rather than recovery of the missing evidence. Evidence coverage thus sets an upper bound later stages cannot lift.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/selection_overall_nogold3.pdf}
+\caption{Selection at the TLV encoding, with page rank given by ColQwen3.}
+\label{fig:selection}
+\end{figure}
+
+\textbf{Distractors Are Largely Tolerated.}
+Irrelevant pages, by contrast, cost little. Adding distractor pages while retaining the required evidence leaves accuracy broadly stable, against the common concern that irrelevant context dilutes useful evidence (Figure~\ref{fig:selection}(b)). At TLV, padding a gold page with three distractors lowers accuracy only slightly, from 64.6 to 63.1. The cost grows when the required evidence itself spans more pages, reaching 5.0 points for two-gold-page questions, but stays far below the loss from omitting one required page. This stability is a net figure, since distractors turn a similar number of answers incorrect and correct. Some turn correct, plausibly because an added page supplies context that aids the reasoner. The losses, by contrast, fall on visual evidence, where an added page turns a chart answer incorrect more often than it turns one correct (Appendix~\ref{app:add_selection}). Visual reasoning is already demanding for an 8B model, so extra pages plausibly disturb a process that was barely succeeding, which points to a reasoning limit rather than a selection one. The tolerance is in any case not unlimited, since a sufficiently long context may eventually impair evidence use \citep{liu2024lost,wang2024mmniah}; within the range we test, distractor exposure remains far less damaging than incomplete coverage.
+
+%\paragraph{Missing Evidence Bounds Accuracy.}
+%Withholding a single required page collapses multi-page accuracy (Table~\ref{tab:selection}), confirming that coverage bounds everything after it. Measured against the multi-page oracle, dropping one gold page roughly halves accuracy at every representation, from 43.6 to 18.5 at TLV, and reducing the context to a single page collapses it further, to 12.8. The loss is indifferent to which page is removed: dropping the lowest-ranked gold page and the highest-ranked one produce nearly the same fall (18.5 against 15.9 at TLV), so it is the absence of a required page that breaks the answer, not the loss of the most relevant one. The accuracy that survives a dropped page is a floor set by the dataset rather than evidence of recovery, since a question annotated with several gold pages is not always unanswerable from a subset; a benchmark of strictly multi-page questions would collapse further still. Coverage therefore sets a ceiling the later stages cannot lift.
+
+% Lewei Note: I will update this later. Evidence source breakdown shows that questions requiring visual evidence starts failing when distractors are added, but textual questions remain undisturbed. Will need to look into this a bit more.
+% \paragraph{Distractors Are Cheap.}
+% Adding irrelevant pages to sufficient evidence barely lowers accuracy (Table~\ref{tab:selection}). Padding a single gold page with three distractors moves TLV accuracy from 64.6 to 63.1, and the same near-flat pattern holds across every distractor count we test and both rankers, so a strong reasoner locates the evidence among pages that do not bear on the question. The tolerance is not unbounded, since past some point evidence is diluted across a context the reasoner attends to unevenly and accuracy falls \citep{liu2024lost,wang2024mmniah}, but within the six-page range we test the cost stays small. The two mechanisms are therefore asymmetric: an omitted page is costly and an extra page in this range is nearly free.
+
+\input{tables/Integration}
+
+\subsection{Reasoning}
+\label{sec:reasoning}
+With representation and selection controlled, we ask whether the reasoner uses the evidence it holds correctly. It fails in two ways: it cannot reliably combine evidence across pages, and it cannot judge when that evidence is sufficient, answering without support unless instructed to abstain, then refusing answerable questions when it is.
+
+% With representation and selection controlled, we examine whether the reasoner can use the available evidence correctly. We find that models struggle both to combine evidence across pages and to judge whether that evidence is sufficient: they often answer without adequate support, while instructions that encourage abstention also make them refuse questions that could be answered.
+
+\textbf{Cross-Page Integration Is a Reasoning Failure.}
+Our results show the reasoner failing on multi-page questions even when every required page is supplied, which points to a reasoning failure rather than a limit of capacity. At TLV, accuracy falls from 64.6 on single-page questions to 38.6 as soon as the evidence spans two pages, and the pooled multi-page deficit reaches 25.9 points. Two pages is far short of the context window, and \S\ref{sec:selection} results show single-page questions holding their accuracy even when three distractor pages are added (Figure~\ref{fig:selection}(b)), so length alone does not explain the drop: the reasoner fails on the two-page questions not because the input is long but because the answer must be assembled across pages. The deficit also widens as the representation improves. It grows from 11.7 points on text to 25.9 once the page image is added, even though the image supplies a richer, higher-fidelity view of evidence that remains well within the context limit. That a stronger representation enlarges the gap points to a visual reasoning failure specifically: the model integrates textual evidence across pages more reliably than it integrates evidence it must read from the images.
+
+
+
+\textbf{Abstention Is a Partial Safeguard.}
+We probe calibration at TLV, where the oracle pages give the reasoner the highest fidelity representation, so in principle it holds the evidence each answerable question needs. Even here, an abstention instruction leads it to refuse roughly a quarter of answerable questions (Figure~\ref{fig:prompting}). Some refusals are well-judged: the per-source breakdown (Table~\ref{tab:abstention}) shows that on the text-only representations, the reasoner abstains most on chart and figure evidence, where the answer lies in a modality the encoding does not carry, returning a concise ``not answerable'' instead of a verbose non-answer. On unanswerable questions the same instruction has the opposite effect to weigh: where the model answers rather than abstains, it commits to a claim the evidence cannot support, which we read as hallucination. The safeguard is thus imperfect at TLV, refusing some answerable questions while still answering some unanswerable ones. Without it the reasoner rarely refuses at all, so abstention converts overconfidence into caution, some warranted and some not.
+
+%The reasoner answers document questions even when the evidence does not support an answer (Table~\ref{tab:prompting}). Given no instruction or a generic grounding instruction, it abstains on unanswerable questions only rarely, on $14.3\%$ of them at the frontier, and otherwise produces an unsupported answer. This is a failure of response calibration: the response does not match the support the document provides. An instruction that targets abstention raises correct refusal on unanswerable questions to $74.6\%$, but the same instruction makes the reasoner refuse answerable questions it could have answered, and false abstention rises from $1.7\%$ to $27.4\%$ at the frontier, concentrated on the harder questions. The two error directions trade against each other, and no instruction we test separates them, so a reasoner told to refuse when unsure refuses too much while one left uninstructed refuses too little.
+
+% \input{tables/Prompting}
+
+
+% Tentative title, could slit up into individual sections, or just name it "Discussion"
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/prompting_combo.pdf}
+\caption{Calibration trade-off at TLV representation. (a) Correct vs.\ false refusal rates by prompt. (b) Accuracy vs.\ decode length by prompt.}
+\label{fig:prompting}
+\end{figure}
+
+\section{Practical Discussion}
+
+\subsection{Design Considerations}
+\label{sec:design}
+Each failure mode suggests a practical design choice for building a MP-VRDU system.
+
+\textbf{Representation: Match Encoding to the Document.}
+Representation is not a single default but a choice set by two things: the evidence a question draws on, and the encodings the document even permits. The image is required when a question rests on graphical evidence, which no text channel conveys. It also helps on layout-dependent evidence: sufficient textual encoding should in principle carry the structure, but the image makes it more robust in practice (\S\ref{sec:representation}). In addition, which text channel is available is fixed by the document. The document fixes which text channel is available: scanned pages need an ocr parser, born-digital pages already carry usable text. TLV is therefore the safe default, the only full option on scanned pages, while TV is the cheaper choice on born-digital pages, reaching a comparable encoding without the parsing pass.
+
+\textbf{Selection: Favour Recall.}
+Selection failures are asymmetric in whether the reasoner can undo them. Evidence never selected cannot be recovered downstream, and \S\ref{sec:selection} shows a single missing page bounding accuracy well below the oracle. Extra irrelevant evidence can be absorbed, since at reasonable retrieval depths the reasoner tolerates the distractors that wider retrieval brings. With a real ranker the extra evidence need not even be irrelevant, and \S\ref{sec:selection} finds a share of questions turning correct when added context supplies useful support. Retrieval should therefore favour recall even at some cost to precision, since a missing page forecloses the answer while errors from an extra page can be recovered through better reasoning, and added evidence can occasionally help.
+
+\input{tables/FalseAbstention}
+
+\textbf{Reasoning: Prompting, Scale, and Training.}
+The multi-page integration failure responds to changes in reasoning alone, confirming it is a reasoning problem and one addressable without new data. At TLV, chain-of-thought prompting raises multi-page accuracy from 38.6 to 44.9, and a 32B reasoner raises it to 46.4 (Table~\ref{tab:integration}); both act at inference time, and CoT in particular narrows the single-to-multi gap rather than lifting all questions alike. An abstention instruction similarly reduces the calibration failure at inference time, at the coverage cost weighed in \S\ref{sec:deploy}. Training is the less-explored route: single-page document reading is already well served by continued pretraining and fine-tuning \cite{ding2025survey}, whereas the multi-page skills these deficits reflect, cross-page integration in particular, are rarely a training target \citep{xu2026managing}. Building supervision around multi-page tasks is a plausible direction for what prompting and scale only partly close.
+
+\subsection{Deployment Considerations}
+\label{sec:deploy}
+The findings also bear on how to spend a fixed compute budget, where the strongest representation and the largest model are rarely the right default.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/routing.png}
+\caption{Average input tokens and accuracy by representation and routing policy.}
+\label{fig:routing}
+\end{figure}
+
+\textbf{Route by Document Class.}
+Running text and vision on every question is the safe default but an expensive one, since much of its cost buys accuracy only where the question needs the image. The representation a question needs is tied to its evidence source (\S\ref{sec:representation}): graphical evidence needs the image, while plain-text and simple-layout questions are served well by text alone. Two signals support routing on this. Where the evidence source is known, representation is routed to it directly; where it is not, the document's domain serves as a proxy, assigned by hand or by a classifier. The saving is twofold. Routing representation by document class reaches 45.6, matching vision alone, at less than half the input tokens of the full encoding (2{,}410 against 5{,}049) and fewer than vision alone requires (3{,}442, Figure~\ref{fig:routing}).
+
+\textbf{Trade Precision for Parameters.}
+A fixed memory budget can be spent on more parameters or on higher precision, and the two trade differently. Reasoner scale buys the most accuracy but costs the most, since a larger reasoner raises the prefill cost that dominates a document pipeline's latency. Quantization lowers precision for a much smaller footprint, and although low-bit weights are known to degrade language and reasoning quality \citep{wang2024qvlm,yuan2025efficientllm}, we observe almost no accuracy loss on document answering: four-bit weights cost 0.6 points at the combined encoding for a 61\% smaller footprint (Table~\ref{tab:reasoner}). A plausible reason is that document answering leans more on locating and reading evidence than on the open-ended reasoning most sensitive to quantization, so the task tolerates the lost precision. The two compose in one direction at a matched budget, since a quantized larger model performs better than a smaller full-precision one at every encoding, so precision is the first thing to trade for parameters.
+
+\textbf{Abstention by Error Cost.}
+Abstention is worth enabling where a wrong answer costs more than a missing one (Figure~\ref{fig:prompting}). The instruction raises correct refusal on unanswerable questions to about three-quarters, and \S\ref{sec:reasoning} shows much of the refusal it adds on answerable questions to be well-judged, the reasoner declining where the encoding cannot carry the evidence rather than guessing. A smaller share is genuine lost coverage, so a deployment that cannot afford any refusal of answerable questions should still weigh it, but the trade is more favourable than the raw refusal rate suggests. Where abstention is enabled, the visual encoding reduces the residual false-refusal cost, and chain-of-thought, which is more expensive to decode, is best triggered per question rather than run by default.
+
+\input{tables/Reasoner}
+
+\section{Conclusion and Future Work}
+
+We attribute failure in MP-VRDU systems to three stages: representation, selection, and reasoning. Isolating each within a controlled single-pass pipeline, we find that vision is necessary but insufficient, selection is sharply asymmetric, and reasoners struggle to integrate evidence across pages even when it is fully available. These findings establish a diagnostic basis for more targeted investigation. At the representation stage, future work can test whether stronger reasoners better exploit structure recovered by parsers. The selection results motivate closer analysis of why irrelevant visual evidence is more harmful than textual evidence, and whether this pattern persists with learned rankers. Turning to reasoning, the cross-page deficit raises questions about the mechanisms of evidence integration and the distinction between over-refusal and appropriate abstention. Addressing these directions across richer corpora, retrieval settings, and broader model families may yield substantial gains for MP-VRDU.
+
+
+
+\section*{Limitations}
+Our analysis is based the MMLongBench-Doc dataset and primarily evaluates models from the Qwen3 family, which may limit the generality of the observed effect sizes. Attribution is also conducted at page level, following the annotation granularity of MMLongBench-Doc, and correctness is assessed using a single LLM judge. Extending the study to additional datasets, model families, finer-grained evidence annotations, and multiple judges represents a natural next step for testing the robustness and broader applicability of the framework.
+
+% \section*{Acknowledgments}
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+\bibliography{custom}
+
+\appendix
+
+\input{appendix/additional_config}
+
+\input{appendix/additional_findings}
+
+\input{appendix/additional_discussion}
+
+\end{document}

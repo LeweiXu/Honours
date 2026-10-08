@@ -1,0 +1,61 @@
+% SelectionDistractors.tex — verdict flips when distractor pages are added, blocked by
+% gold-page count, by evidence source. Companion to SelectionWithholding.tex.
+% Source: results/tables/selection_distractor_transitions.csv
+% (builder reporting/tables/selection_transition.py::build_distractors).
+% colqwen3 ranking, TLV rung — same ranker and rung as the main text and
+% Figure~\ref{fig:selection}, so the All sources rows for one and two gold pages
+% reproduce that figure's flip columns exactly.
+% Heat macros (\fRW / \fWR) and their scales are defined in SelectionWithholding.tex,
+% which must be \input first; the shared scale is what makes the two tables comparable
+% (the whole point: red is faint here and strong there).
+% The three-gold block is thin at every source and is why the figure drops it; it is kept
+% here for completeness with the thin marker.
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} l rr @{\hskip 14pt} rr @{\hskip 14pt} rr @{\hskip 16pt} r @{}}
+\toprule
+ & \multicolumn{2}{c}{\textbf{$+1$ distractor}}
+ & \multicolumn{2}{c}{\textbf{$+2$ distractors}}
+ & \multicolumn{2}{c}{\textbf{$+3$ distractors}} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+\textbf{Evidence source}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R} & \textbf{$n$} \\
+\midrule
+\multicolumn{8}{@{}l}{\emph{1 gold page}} \\
+\quad Chart            & \fRW{9.3}  & \fWR{7.2} & \fRW{10.3} & \fWR{9.3}  & \fRW{17.5} & \fWR{8.2} &  97 \\
+\quad Figure           & \fRW{7.4}  & \fWR{6.8} & \fRW{11.1} & \fWR{10.5} & \fRW{9.3}  & \fWR{9.9} & 162 \\
+\quad Generalized-text & \fRW{10.7} & \fWR{5.4} & \fRW{8.9}  & \fWR{7.1}  & \fRW{7.1}  & \fWR{3.6} &  56 \\
+\quad Pure-text        & \fRW{7.2}  & \fWR{6.5} & \fRW{5.9}  & \fWR{5.9}  & \fRW{7.2}  & \fWR{5.9} & 153 \\
+\quad Table            & \fRW{8.7}  & \fWR{4.8} & \fRW{5.8}  & \fWR{3.8}  & \fRW{6.7}  & \fWR{6.7} & 104 \\
+\quad \textbf{All sources} & \fRW{7.8} & \fWR{7.0} & \fRW{8.2} & \fWR{8.0} & \fRW{9.7} & \fWR{8.2} & 474 \\
+\cmidrule(lr){1-8}
+\multicolumn{8}{@{}l}{\emph{2 gold pages}} \\
+\quad Chart            & \fRW{5.2} & \fWR{8.6}  & \fRW{6.9}  & \fWR{5.2} & \fRW{10.3} & \fWR{8.6} & 58 \\
+\quad Figure           & \fRW{4.5} & \fWR{10.6} & \fRW{3.0}  & \fWR{6.1} & \fRW{7.6}  & \fWR{3.0} & 66 \\
+\quad Generalized-text & \fRW{5.9} & \fWR{5.9}  & \fRW{17.6} & \fWR{0.0} & \fRW{23.5} & \fWR{5.9} & 34 \\
+\quad Pure-text        & \fRW{7.6} & \fWR{3.3}  & \fRW{10.9} & \fWR{4.3} & \fRW{10.9} & \fWR{3.3} & 92 \\
+\quad Table            & \fRW{8.3} & \fWR{7.3}  & \fRW{7.3}  & \fWR{5.2} & \fRW{9.4}  & \fWR{4.2} & 96 \\
+\quad \textbf{All sources} & \fRW{7.5} & \fWR{7.5} & \fRW{9.1} & \fWR{6.2} & \fRW{11.2} & \fWR{6.2} & 241 \\
+\cmidrule(lr){1-8}
+\multicolumn{8}{@{}l}{\emph{3 gold pages} \textcolor{ngray}{\scriptsize (thin at every source; omitted from Figure~\ref{fig:selection})}} \\
+\quad Chart$^{\dagger}$            & \fRW{0.0}  & \fWR{0.0}  & \fRW{0.0}  & \fWR{0.0} & \fRW{0.0}  & \fWR{0.0}  &  3 \\
+\quad Figure$^{\dagger}$           & \fRW{15.8} & \fWR{5.3}  & \fRW{26.3} & \fWR{5.3} & \fRW{21.1} & \fWR{0.0}  & 19 \\
+\quad Generalized-text$^{\dagger}$ & \fRW{0.0}  & \fWR{20.0} & \fRW{0.0}  & \fWR{20.0} & \fRW{0.0} & \fWR{20.0} &  5 \\
+\quad Pure-text$^{\dagger}$        & \fRW{11.8} & \fWR{11.8} & \fRW{5.9}  & \fWR{5.9} & \fRW{11.8} & \fWR{11.8} & 17 \\
+\quad Table$^{\dagger}$            & \fRW{0.0}  & \fWR{14.3} & \fRW{0.0}  & \fWR{0.0} & \fRW{0.0}  & \fWR{14.3} &  7 \\
+\quad \textbf{All sources}$^{\dagger}$ & \fRW{10.0} & \fWR{7.5} & \fRW{12.5} & \fWR{5.0} & \fRW{12.5} & \fWR{5.0} & 40 \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Verdict flips (\%) when $k$ non-evidence pages are added on top of a question's full gold set, measured within-question against the same question's oracle page set at the combined encoding, colqwen3 ranking. Columns and shading are as in Table~\ref{tab:selection_withholding} and on the same scales, so the two tables can be read against each other. Each block holds the gold-page count fixed and reads against its own $k{=}0$ oracle, so blocks are not comparable to one another. $^{\dagger}$ marks a row over fewer than 30 questions, where a single question moves the percentage by more than three points; the three-gold block is thin at every source, which is why the figure drops it. Adding pages breaks under a tenth of correct answers and repairs almost as many as it breaks, so the net effect stays near zero even at three added pages, against the one-way loss of withholding.\par}
+\caption{Adding distractor pages: verdict flips by gold-page count and evidence source, at the combined encoding with colqwen3 ranking. Shading is on the same scales as Table~\ref{tab:selection_withholding}: the red that dominates there is faint here, and the green nearly matches it, so added pages cost little on net.}
+\label{tab:selection_distractors}
+\end{table*}

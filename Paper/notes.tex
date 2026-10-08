@@ -1,0 +1,73 @@
+\section{Empirical Findings and Design Implications}
+\label{sec:emp_findings}
+
+We use controlled interventions on MMLongBench-Doc to connect failures in representation, selection, and reasoning to design implications for MP-VRDU pipelines.
+
+\subsection{Representation}
+\label{sec:findings_representation}
+
+\paragraph{Modality Ceiling: Vision Is Necessary but Not Sufficient.}
+\begin{itemize}
+    \item OCR-free approaches preserve visual and spatial information that text extraction may discard~\citep{cho2024m3docrag,tanaka2025vdocrag}, while multimodal approaches exploit complementary textual and visual evidence~\citep{han2025mdocagent}. Our representation comparisons examine these choices with evidence selection held at the annotated gold pages.
+
+    \item Text-only representations exhibit high refusal and low accuracy on chart and figure questions, exposing a modality ceiling: supplying the relevant pages does not ensure that the chosen representation exposes the information needed to answer (Table~\ref{tab:ladder_source}). Adding vision substantially improves access to this evidence.
+
+    \item Vision alone nevertheless remains weaker than the joint representation. This does not imply that linguistic information is absent from the image; fine-grained text can be difficult to recover at the available resolution and visual-token budget, whereas an explicit text channel exposes it directly. This complements the original benchmark's observation that OCR-fed LLMs often outperform vision-language models~\citep{ma2024mmlongbench}.
+\end{itemize}
+
+\paragraph{Redundant Channels Buffer Conversion Errors.}
+\begin{itemize}
+    \item Parser choice substantially affects accuracy when text carries the evidence alone, corroborating studies showing that OCR and structural parsing errors propagate into downstream RAG performance~\citep{zhang2025ocr,sun2026when}. On scanned documents, conversion additionally determines whether usable text is recovered at all.
+
+    \item Our multimodal conditions qualify this sensitivity: adding the page image substantially reduces the performance differences between text sources (Figure~\ref{fig:parser}). Redundancy does not improve the parser's conversion fidelity directly; it allows downstream reasoning to recover information preserved through another channel.
+
+    \item Render resolution exposes the same mechanism from the visual side. Increasing resolution improves vision-only performance more strongly overall than joint text--vision performance, where explicit text already preserves some fine-grained information (Table~\ref{tab:resolution_sweep}). The effect remains evidence-dependent.
+
+    \item \textbf{Design implication.} Preserve complementary channels so that conversion errors do not remove the only usable copy of required evidence; prioritise fidelity improvements where that redundancy is unavailable.
+\end{itemize}
+
+\subsection{Selection}
+\label{sec:findings_selection}
+
+\paragraph{Incomplete Evidence Coverage Predominantly Breaks Correct Answers.}
+\begin{itemize}
+    \item Withholding gold pages produces a strongly directional loss: previously correct answers become incorrect much more frequently than incorrect answers are repaired (Figure~\ref{fig:sufficiency}). Retaining only part of the gold set further reduces performance, showing that downstream reasoning rarely compensates for the omitted evidence.
+
+    \item Removing either higher- or lower-ranked gold pages causes substantial losses. Retrieval rank therefore does not establish whether a page is dispensable: lower-ranked evidence can still supply a necessary part of the answer.
+
+    \item \citeauthor{jin2025long} show that broader retrieval initially improves performance before accumulated hard negatives cause degradation. Our interventions complement that finding by directly withholding annotated evidence while preserving the remaining configuration, isolating the contribution of evidence coverage to selection loss.
+\end{itemize}
+
+\paragraph{Distractor Exposure: Non-Gold Pages Can Distort or Complete Evidence.}
+\begin{itemize}
+    \item \citeauthor{cuconasu2024power} show that additional passages are not uniformly harmful: highly ranked but answer-irrelevant passages can degrade performance, while random passages can improve it, with effects depending on context composition and position. \citeauthor{jin2025long} similarly identify hard negatives as a cause of degradation at greater retrieval depths.
+
+    \item Our distractor-exposure results are consistent with this conditional account. Within the tested range, aggregate accuracy changes modestly, but paired verdict transitions reveal both broken and repaired answers (Table~\ref{tab:exposure}). Apparent stability therefore reflects partially offsetting effects and does not establish that additional context is harmless.
+
+    \item Manual inspection adds a document-specific qualification: a non-gold page is not necessarily irrelevant to interpreting the annotated evidence. Added pages can introduce partial context that encourages overcounting or misinterpretation, but can also supply disambiguating or supplementary information that repairs an answer. These contextual repairs differ from a general claim that random noise improves reasoning.
+
+    \item \textbf{Design implication.} Acquire evidence broadly enough to support coverage and contextualisation, while controlling its presentation. Retrieval depth trades incomplete evidence against both useful context and potentially misleading content.
+\end{itemize}
+
+\subsection{Reasoning}
+\label{sec:findings_reasoning}
+
+\paragraph{CoT Selectively Improves Evidence Integration.}
+\begin{itemize}
+    \item Cross-page questions remain harder under oracle selection, consistent with the difficulty reported by MMLongBench-Doc~\citep{ma2024mmlongbench}. This difference describes distinct question pools; the paired CoT comparison tests which failures respond to a reasoning intervention on unchanged evidence.
+
+    \item CoT improves performance when evidence spans pages, while slightly reducing accuracy on single-page groups (Table~\ref{tab:integration_prompt}). Explicit intermediate reasoning therefore helps evidence integration selectively, qualifying its broader motivation as an aid to complex reasoning~\citep{wei2022chain} and its use in document-understanding approaches~\citep{jia2025leopard,xiong2026docr1}.
+
+    \item Evidence type provides a separate qualification. Within the analysed multi-hop pool, table questions show the largest improvement, while other sources receive smaller or negative gains (Table~\ref{tab:integration_sources_cot}). This suggests particular value for explicit operations over structured evidence, without establishing that source type and cross-page structure have independent effects.
+\end{itemize}
+
+\paragraph{Abstention Shifts Response Calibration Towards Refusal.}
+\begin{itemize}
+    \item \citeauthor{zhou2023context} show that prompting can improve contextual faithfulness and abstention behaviour, while MMLongBench-Doc reports differences between aggressive and conservative answering across models~\citep{ma2024mmlongbench}. Our intervention examines how the answer-or-abstain decision changes within the same reasoner.
+
+    \item Abstention instructions increase correct refusal on unanswerable questions, but also increase false abstention and reduce accuracy on answerable questions (Figure~\ref{fig:abstention_outcomes}). The reduction in unsupported answers therefore comes partly from a general increase in reluctance to answer. Response calibration must be assessed through correct and false refusal jointly~\citep{whitehead2022reliable}.
+
+    \item Under the abstention instruction, false refusal is particularly frequent for figure and table questions despite oracle pages and the joint representation (Table~\ref{tab:abstention_sources}). This pattern is consistent with difficulty interpreting supplied evidence influencing whether it is judged sufficient.
+
+    \item \textbf{Design implication.} Structure evidence integration where its demands justify additional reasoning, and condition abstention on an explicit assessment of evidential support. Stricter refusal instructions alone do not cleanly separate difficult evidence from missing evidence.
+\end{itemize}

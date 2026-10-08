@@ -1,0 +1,172 @@
+% The page of full-width figures before this one leaves LaTeX with a short height for the
+% next column, which would push the first example into the second column. Reset it.
+\makeatletter\global\@colroom\@colht\global\vsize\@colht\makeatother
+\section{Worked Examples}
+\label{app:examples}
+
+% Worked-example boxes. Macro namespace: \wx* only.
+\definecolor{wxright}{HTML}{1BAF7A}
+\definecolor{wxwrong}{HTML}{D95926}
+\definecolor{wxhold}{HTML}{C8891B}
+\definecolor{wxrule}{HTML}{BFBFBF}
+\definecolor{wxtitle}{HTML}{EFEFEF}
+\newcommand{\wxR}{\textcolor{wxright}{$\checkmark$}}
+\newcommand{\wxW}{\textcolor{wxwrong}{$\times$}}
+\newcommand{\wxA}{\textcolor{wxhold}{$\circ$}}
+\newtcolorbox{wxbox}[3]{%
+  breakable, enhanced, sharp corners, boxrule=0.4pt,
+  colback=white, colframe=wxrule,
+  left=4pt, right=4pt, top=3pt, bottom=3pt,
+  toptitle=1pt, bottomtitle=1pt,
+  colbacktitle=wxtitle, coltitle=black, titlerule=0pt,
+  fonttitle=\footnotesize, halign title=flush left,
+  title={\textbf{#1}\hspace{0.6em}\textbf{#2}\hfill\texttt{\scriptsize #3}},
+}
+\newcommand{\wxmeta}[1]{{\scriptsize\textcolor{black!62}{#1}\par}\vspace{1.5pt}}
+\newcommand{\wxq}[1]{{\footnotesize\textbf{Q}\hspace{0.5em}#1\par}}
+\newcommand{\wxgold}[1]{{\footnotesize\textbf{Gold}\hspace{0.5em}#1\par}}
+\newcommand{\wxsep}{\vspace{2.5pt}{\color{wxrule}\hrule height 0.4pt}\vspace{2.5pt}}
+\newcommand{\wxrow}[3]{%
+  \par\vspace{1.5pt}%
+  \noindent%
+  \parbox[t]{0.300\linewidth}{\footnotesize\raggedright #1}%
+  \hspace{1pt}%
+  \parbox[t]{0.045\linewidth}{\footnotesize #2}%
+  \hspace{1pt}%
+  \parbox[t]{0.620\linewidth}{\footnotesize\raggedright #3}\par}
+\newcommand{\wxnote}[1]{{\footnotesize #1\par}}
+\newcommand{\wxsnip}[1]{%
+  \par\vspace{2pt}\noindent\hspace{0.02\linewidth}%
+  \parbox{0.96\linewidth}{\scriptsize\ttfamily\raggedright\sloppy #1}\par\vspace{2pt}}
+\newcommand{\wxread}[1]{\wxsep{\footnotesize\textit{#1}\par}}
+
+This appendix shows individual questions behind the rates of \S\ref{sec:findings}, at least one for each failure mechanism of \S\ref{sec:attribution_framework}. Each box gives the question, the gold answer, and the reasoner's output under every condition shown, marked \wxR{} correct, \wxW{} incorrect or \wxA{} abstained. The reasoner is Qwen3-VL-8B at \textbf{TLV} with no instruction unless a row says otherwise, and verdicts follow the accuracy rubric. Page numbers are zero-based indices into the document.
+
+%% ---------------------------------------------------------------------------
+\subsection{Representation}
+\label{app:ex_representation}
+
+\begin{wxbox}{R1}{Modality ceiling}{mmlongbench:000085}
+\wxmeta{Smartwatch user guide (Guidebook), born-digital. Gold page 15. Evidence source: text and figure.}
+\wxq{What are the colors of the icons that the users touch to move the app up and remove the app respectively?}
+\wxgold{gray, red}
+\wxsep
+\wxnote{The page's instructions survive the parse intact; the two inline icons do not. PaddleOCR-VL emits:}
+\wxsnip{\#\# NOTE \textbullet{} On the Favorites screen, touch to move the app up to the top of the list. <img src="[\ldots]" width="3\%" /> <img src="[\ldots]" width="3\%" /> - On the Favorites screen, touch to remove the app from the list.}
+\wxsep
+\wxrow{T}{\wxW}{``The document does not specify the colors of the icons used to move the app up or remove the app. [\ldots] no visual descriptions or color information are provided.''}
+\wxrow{TL}{\wxW}{``[\ldots] While it describes the actions users should take [\ldots], it does not mention any visual details such as icon colors.''}
+\wxrow{V}{\wxR}{``\textbf{To move the app up:} The icon is \textbf{gray}. \textbf{To remove the app:} The icon is \textbf{red}.''}
+\wxrow{TLV}{\wxR}{``\textbf{To move the app up}: The icon is \textbf{gray} (a gray upward arrow). \textbf{To remove the app}: The icon is \textbf{red} [\ldots].''}
+\wxread{Colour is not a linguistic signal, so no parser can carry it. Both text representations decline instead of guessing, which is the refusal pattern of Table~\ref{tab:abstention_rungs}: the evidence is absent from the modality, not misread.}
+\end{wxbox}
+
+\begin{wxbox}{R2}{Conversion fidelity: parser}{mmlongbench:000158}
+\wxmeta{Presentation deck (Tutorial/Workshop), scanned, so no usable embedded text layer. Gold page 0. Evidence source: layout.}
+\wxq{What is the name of the company that created this presentation?}
+\wxgold{AVALAUNCH MEDIA}
+\wxsep
+\wxnote{The three parsers convert the same title slide into three different pages. Only one keeps the banner that carries the answer:}
+\wxsnip{PaddleOCR-VL: \#\# PRESENTATIONS THAT KICK ASTERKS \\[1.5pt] MinerU 2.5: (empty) \\[1.5pt] Unlimited-OCR: AVALAUNCH MEDIA \textbar{} PRESENTATIONS THAT KICK \textbar{} LAST YEAR}
+\wxsep
+\wxrow{T}{\wxW}{``The document does not provide any evidence or information about the company that created the presentation.''}
+\wxrow{TL, PaddleOCR-VL}{\wxW}{``The name of the company that created this presentation is \textbf{Asterks}.''}
+\wxrow{TL, MinerU 2.5}{\wxW}{``The document does not provide any evidence or information about the company [\ldots]''}
+\wxrow{TL, Unlimited-OCR}{\wxR}{``The name of the company that created this presentation is \textbf{AVALAUNCH MEDIA}.''}
+\wxrow{TLV, PaddleOCR-VL}{\wxR}{``[\ldots] the name of the company [\ldots] is \textbf{Avalaunch Media}. This name is clearly visible in the banner located at the top of the presentation's title slide [\ldots]''}
+\wxread{With text alone, a parser error is indistinguishable from evidence: the corrupted title is returned as a company name. The page image is the redundant channel that absorbs the error, so the same faulty parse yields the right answer under TLV.}
+\end{wxbox}
+
+\begin{wxbox}{R3}{Conversion fidelity: resolution}{mmlongbench:000065}
+\wxmeta{Academic paper, born-digital. Gold page 6, a results table with one row per model and temperature. Evidence source: text and table.}
+\wxq{From the paper, which temperature gives ChatGPT the highest alignment score?}
+\wxgold{0.1}
+\wxsep
+\wxrow{V, \texttt{low}}{\wxW}{``[\ldots] the temperature that gives ChatGPT the highest alignment score is \textbf{0.5}.''}
+\wxrow{V, \texttt{med}}{\wxW}{``[\ldots] is \textbf{0.5}. [\ldots] Table 3 lists three ChatGPT models: ChatGPT (0.5), ChatGPT (0.1), and ChatGPT (0.9) [\ldots]''}
+\wxrow{V, \texttt{high}}{\wxR}{``[\ldots] the temperature that gives ChatGPT the highest alignment score is \textbf{0.1}.''}
+\wxrow{TLV, \texttt{low}}{\wxR}{``[\ldots] ChatGPT (0.1): 85.9, ChatGPT (0.5): 84.5, ChatGPT (0.9): 84.1. [\ldots] \textbf{85.9} is the highest alignment score, which corresponds to [\ldots] \textbf{0.1}.''}
+\wxread{The image alone finds the right table at every resolution but only reads its small digits correctly at \texttt{high}. With parser text the values are available as characters, so the lowest resolution already suffices, as in the table rows of Table~\ref{tab:app_resolution_sources}.}
+\end{wxbox}
+
+%% ---------------------------------------------------------------------------
+\subsection{Selection}
+\label{app:ex_selection}
+
+\begin{wxbox}{S1}{Evidence coverage}{mmlongbench:000141}
+\wxmeta{Climate assessment report (Research report), born-digital. Gold pages 13 and 14, both parts of one author list; \texttt{drop\_top} leaves page 14 and \texttt{drop\_bottom} page 13. Evidence source: text.}
+\wxq{How many chapter authors of this report come from Columbia University?}
+\wxgold{3}
+\wxsep
+\wxrow{gold pages}{\wxR}{``[\ldots] there are \textbf{three} chapter authors from Columbia University: 1. \textbf{Radley Horton} 2. \textbf{Patrick Kinney} 3. \textbf{Carlos Perez Garcia-Pando}''}
+\wxrow{\texttt{drop\_top}}{\wxW}{``[\ldots] there is \textbf{one} chapter author from Columbia University. The author listed is \textbf{Carlos Perez Garcia-Pando} [\ldots] No other chapter authors in the document are listed as being from [\ldots]''}
+\wxrow{\texttt{drop\_bottom}}{\wxW}{``[\ldots] there are \textbf{two} chapter authors from Columbia University: \textbf{Radley Horton}, \textbf{Patrick Kinney} [\ldots]''}
+\wxread{Each reduced context yields a count that is correct for the pages supplied and wrong for the question, stated with the same confidence. Both removals break the answer, so retrieval rank does not identify a page that can safely be omitted.}
+\end{wxbox}
+
+\begin{wxbox}{S2}{Distractor exposure: broken}{mmlongbench:000078}
+\wxmeta{Survey paper (Academic paper), born-digital, multi-hop. Gold pages 5 (a table of methods) and 16 (the reference list). $+3$ adds pages 0, 6 and 7; page 0 is the survey's own title page. 4-bit weights.}
+\wxq{What is the paper's full title that proposes the method that has a retrieval granularity of phrase?}
+\wxgold{Copy is all you need.}
+\wxsep
+\wxrow{gold only}{\wxR}{``[\ldots] the method with a retrieval granularity of ``Phrase'' is \textbf{CoG [29]}. [\ldots] the full title of the paper proposing the CoG method is: \textbf{``Copy is all you need''}. This is found in the References section [\ldots]''}
+\wxrow{$+3$}{\wxW}{``[\ldots] the paper's full title is \textbf{Retrieval-Augmented Generation for Large Language Models: A Survey}. This is explicitly stated in the title section of the document [\ldots]''}
+\wxrow{$+5$ to $+18$}{\wxW}{The same answer at every completed depth.}
+\wxread{Both gold pages are still present and nothing in them changed. The added title page is a plausible partial match for ``the paper's full title'', and the reasoner takes it instead of following the table entry to its reference. Coverage is complete; the failure is in using the evidence amid competing context.}
+\end{wxbox}
+
+\begin{wxbox}{S3}{Distractor exposure: repaired}{mmlongbench:000243}
+\wxmeta{Rezoning study (Research report), born-digital, single-hop. Gold page 7, which carries a table of residential capacity by borough. $+3$ adds pages 4, 8 and 12, the surrounding discussion. 4-bit weights.}
+\wxq{What is the residential capacity of Staten Island from 2003 to 2007? Give me an integer.}
+\wxgold{435000000}
+\wxsep
+\wxrow{gold only}{\wxW}{``80000''}
+\wxrow{$+3$}{\wxR}{``435000000''}
+\wxrow{$+10$}{\wxR}{``435000000''}
+\wxrow{$+13$}{\wxW}{``5980000''}
+\wxrow{$+18$}{\wxR}{``435000000''}
+\wxread{The table holding the answer is supplied in every row. The reasoner misreads it in isolation and reads it correctly once neighbouring pages of the same section are present, then fails again at one deeper setting. Added pages therefore both repair and break answers on the same question, the two-way movement behind the transitions of Figure~\ref{fig:distractor_k}.}
+\end{wxbox}
+
+\paragraph{Distractors on LongDocURL.}
+Table~\ref{tab:app_ldu_distractor} repeats the distractor sweep on LongDocURL with Qwen3-VL-8B. This experiment is still running, and the table reports the depths completed so far. On single-hop questions the first three added pages lower accuracy from 77.2\% to 68.5\%, breaking 13.5\% of answers and repairing 4.8\%, close to the first step on MMLongBench-Doc.
+
+%% ---------------------------------------------------------------------------
+\subsection{Reasoning}
+\label{app:ex_reasoning}
+
+\begin{wxbox}{N1}{Evidence integration}{mmlongbench:000192}
+\wxmeta{Academic paper, born-digital, multi-hop. Gold pages 7 (a system diagram in which the demonstrations are drawn in green) and 8 (the ablation table). Rows are Qwen3-VL sizes. Evidence source: figure and table.}
+\wxq{If I drop the green module shown in Figure 6, what is the absolute percentage drop on 100-shot TACREV setting?}
+\wxgold{0.5\%}
+\wxsep
+\wxrow{2B}{\wxW}{``[\ldots] is \textbf{2.4\%}. [\ldots] The analysis of the filter-then-rerank system is presented in Table 3 [\ldots]''}
+\wxrow{4B}{\wxW}{``[\ldots] when dropping the green module (demos) is \textbf{-9.6\%}. [\ldots] Table 5 [\ldots] presents the results of this ablation study [\ldots]''}
+\wxrow{8B}{\wxW}{``[\ldots] With demos: The F1 score is \textbf{75.9}. Without demos: The F1 score is \textbf{74.9}. The absolute percentage drop is calculated as: (75.9 $-$ 74.9) / 75.9 [\ldots] $\approx$ \textbf{1.32\%}''}
+\wxrow{32B}{\wxR}{``[\ldots] The baseline [\ldots] for TACREV (100-shot) is \textbf{75.9}. The result when Demo is removed [\ldots] is \textbf{75.4}. [\ldots] 75.9 $-$ 75.4 = \textbf{0.5}''}
+\wxread{Every model receives the same two pages. The smallest uses the wrong table, the next two link the green module to the ablation table but take the wrong row or the wrong operation, and only the largest carries the chain from diagram to row to difference. The evidence was sufficient throughout; what scales is the ability to combine it.}
+\end{wxbox}
+
+\begin{wxbox}{N2}{Response calibration: answerable}{mmlongbench:000457}
+\wxmeta{Academic paper, born-digital, multi-hop. Gold pages 4 and 5, one results table on each. Evidence source: table.}
+\wxq{How much lower is the accuracy of GPT-4 on SituatedQA compared to MMLU Chemistry?}
+\wxgold{16.7\%}
+\wxsep
+\wxrow{\texttt{none}}{\wxR}{``[\ldots] the accuracy of GPT-4 on SituatedQA is \textbf{63.2\%}, while its accuracy on MMLU Chemistry is \textbf{79.9\%}. [\ldots] \textbf{16.7 percentage points lower} [\ldots]''}
+\wxrow{\texttt{cot}}{\wxR}{``Step 1: [\ldots] From Table 2, GPT-4's accuracy on SituatedQA is 63.2\%. Step 2: [\ldots] From Table 1, GPT-4's accuracy on MMLU Chemistry is 79.9\%. Step 3: [\ldots] Answer: 16.7\%''}
+\wxrow{\texttt{abstain}}{\wxA}{``Not answerable''}
+\wxrow{\texttt{abstain\_cot}}{\wxR}{``Step 1: [\ldots] 63.2\%. Step 2: [\ldots] 79.9\%. Step 3: [\ldots] Difference = 79.9\% $-$ 63.2\% = 16.7\%. [\ldots]''}
+\wxread{The answer is not stated anywhere; it has to be assembled from two tables. Under \texttt{abstain} the reasoner refuses a question it answers correctly with no instruction, a false refusal. Asking it to reason before deciding makes it locate both values first, and the refusal disappears.}
+\end{wxbox}
+
+\begin{wxbox}{N3}{Response calibration: unanswerable}{mmlongbench:000047}
+\wxmeta{Data-leadership talk (Tutorial/Workshop), scanned, unanswerable. BM25's top three pages (0, 1, 2) are supplied; the document mentions no video.}
+\wxq{Which Youtube does the slides use to show the consequce of having a weak data leadership?}
+\wxgold{Not answerable}
+\wxsep
+\wxrow{\texttt{none}}{\wxW}{``The slides use a YouTube clip from the TV show \textit{Breaking Bad} to illustrate the consequence of having weak data leadership [\ldots] as symbolized by the character Walter White hoarding money [\ldots]''}
+\wxrow{\texttt{cot}}{\wxR}{``[\ldots] Step 4: However, the document evidence does not mention any YouTube or reference any video content. The image is a still image, not a YouTube video. [\ldots] Answer: Not specified in the document.''}
+\wxrow{\texttt{abstain}}{\wxR}{``Not answerable''}
+\wxrow{\texttt{abstain\_cot}}{\wxR}{``[\ldots] Step 3: The document does not mention YouTube at all. [\ldots] Answer: Not answerable''}
+\wxread{One supplied page shows a man holding stacks of money, and with no instruction the reasoner builds a show, a character and an interpretation out of it. Each of the other prompts leads it to check the premise against the pages and decline, which is the correct response here.}
+\end{wxbox}

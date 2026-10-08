@@ -1,0 +1,114 @@
+\section{Validation System Details}
+\label{app:val_system_details}
+
+This appendix specifies the validation system of \S\ref{sec:simple_adaptive_method}: how its components follow from the design implications, how a question's trajectory unfolds, what each role receives and emits, and how outputs are parsed and recovered.
+
+%% ---------------------------------------------------------------------------
+\subsection{Design Mapping}
+\label{app:design_mapping}
+
+\input{appendix/tables/design_mapping}
+
+Table~\ref{tab:design_mapping} maps each design implication of \S\ref{sec:findings} to the component that applies it, together with the closest related mechanism in prior MP-VRDU systems. Two components have no direct precedent: separating recorded pages from fully presented pages, and gating refusal on a named missing fact that the \texttt{arbiter} can only answer by reading further.
+
+%% ---------------------------------------------------------------------------
+\subsection{Trajectory}
+\label{app:trajectory}
+
+\paragraph{Reading Cycles.}
+ColQwen3.5 ranks every page once per question, and the \texttt{reader} walks that ranking from the top, $p$ pages per turn. A question proceeds in reading cycles. Each cycle consists of \texttt{reader} turns until a \texttt{STOP} is accepted, followed by one \texttt{synthesizer} turn and one \texttt{arbiter} turn:
+\begin{enumerate}
+\item The \texttt{reader} reads the next page and the note, appends a record to the note, flags the page if it may carry answer evidence, and decides \texttt{CONTINUE} or \texttt{STOP}.
+\item A \texttt{STOP} is accepted only after a minimum number of reading turns in the current cycle: $k$ in the first cycle and $m$ in each later one. A \texttt{STOP} before that floor is dropped and reading continues.
+\item The \texttt{synthesizer} answers from the note and the flagged pages.
+\item The \texttt{arbiter} either ends the question or names a missing fact and starts a new cycle, in which the \texttt{reader} resumes at the next unread page.
+\end{enumerate}
+
+\paragraph{Termination.}
+A question ends when the \texttt{arbiter} writes \texttt{END}, when $B$ pages have been read, when fewer than $m \cdot p$ unread pages remain so that no further cycle could reach its floor, or when the document runs out. A budget exhausted while the \texttt{arbiter} still requests further reading is a forced end. Both floors are capped at the pages remaining, so a short document can stop on its last page. The last \texttt{synthesizer} answer is the system's answer.
+
+\paragraph{Abstention Gating.}
+The \texttt{synthesizer} may answer \emph{Not answerable} in any cycle, but the answer stands only when the \texttt{arbiter} cannot start another cycle. When another cycle is possible, the \texttt{arbiter} treats a refusal as evidence that the record is insufficient and prefers further reading. A refusal therefore becomes final only after the reading budget or the document is exhausted.
+
+\paragraph{Concealment.}
+The \texttt{reader} cannot tell that a cycle has ended. Nothing downstream writes to the note, the count of remaining pages decreases monotonically across the whole question, and turn numbers in note headers continue across cycles. A resumed \texttt{reader} therefore cannot learn to stop early in anticipation of review, and because it sees a new page and a longer note, greedy decoding does not reproduce its previous output.
+
+%% ---------------------------------------------------------------------------
+\subsection{Roles and Evidence}
+\label{app:roles}
+
+\input{appendix/figures/reader_prompt}
+\input{appendix/figures/synthesizer_prompt}
+\input{appendix/figures/arbiter_prompt}
+
+\paragraph{Reader.}
+Each \texttt{reader} turn shows one page in \textbf{TLV}, with Unlimited-OCR text and a high-resolution image, together with the note. The \texttt{reader} reasons, then emits a \texttt{RECORD:} block, an \texttt{ANSWER PAGE:} flag, and a \texttt{DECISION:}. Records are evidence logs rather than working notes: they reproduce tables with headers and units, describe charts and figures completely enough to answer from the description, copy numbers and identifiers exactly, and state what each fact refers to. Flags favour recall. The \texttt{reader} flags any page the answer may depend on, every page holding part of an answer that spans pages, and any page it is unsure about, because a missed flag is costlier than an extra one.
+
+\paragraph{The note.}
+The note is one append-only markdown file per question; nothing is revised, deleted, or truncated. The pipeline writes each section header, giving the turn, the document's own page number, and the page's rank, and the \texttt{reader} writes only the body. A record whose 8-word $n$-grams already appear in the note at a share of 0.95 or more is stored as \texttt{none}, preventing repeated copying of earlier records.
+
+\paragraph{Synthesizer.}
+The \texttt{synthesizer} receives one evidence block per page, in document order. A flagged page contributes its record, its parser text, and its image at medium resolution. Any other recorded page contributes its record alone, and pages recorded as \texttt{none} are omitted. When nothing is flagged, the two highest-ranked pages read are shown in full. If the payload exceeds memory, the lowest-ranked flagged page is dropped from the multimodal payload, one at a time, while every record is kept. The prompt instructs the \texttt{synthesizer} to prefer parser text for words and numbers and the image for visual content over a record's paraphrase, to check every detail the question asserts or presupposes before answering, and to write a \texttt{MISSING:} line naming the absent fact before any \emph{Not answerable}.
+
+\paragraph{Arbiter.}
+The \texttt{arbiter} receives the note, the candidate answer, and the flagged pages as the \texttt{synthesizer} saw them. It emits a \texttt{MISSING:} line and a \texttt{DECISION:} of \texttt{CONTINUE} or \texttt{END}. It has no answer channel. A \texttt{CONTINUE} whose \texttt{MISSING:} line reads \texttt{none} is treated as \texttt{END}, so reopening requires naming a missing fact.
+Figures~\ref{fig:app_reader_prompt}--\ref{fig:app_arbiter_prompt} give the role prompts.
+
+%% ---------------------------------------------------------------------------
+\subsection{Output Handling}
+\label{app:output_handling}
+
+\paragraph{Parsing.}
+Every role reasons after a prefilled \texttt{REASONING:} marker, then emits its fields after line-start markers matched case-insensitively. Because reasoning often echoes markers, the last occurrence of each marker is used.
+
+\paragraph{Missing Markers.}
+An output that ends without its required markers is retried once with a format-correction block, reusing the same input and consuming no page budget. If the retry also fails, defaults favour continued reading: a missing record is stored as \texttt{none}, a missing \texttt{reader} decision becomes \texttt{CONTINUE}, and a missing \texttt{arbiter} decision becomes \texttt{CONTINUE} when another cycle is still possible. A \texttt{synthesizer} output with no \texttt{ANSWER:} line falls back to a line reading only \emph{Not answerable}, if present, and otherwise to the text after the last marker written.
+
+\paragraph{Truncation.}
+An output that reaches its decode budget is continued by up to $C$ completion passes, which retain the reasoning and prefill the next required marker. A record cut off mid-output is regenerated rather than kept, because a partial table row is indistinguishable from a complete one to every later turn. A record still incomplete after the passes is stored as \texttt{none}.
+
+\paragraph{Repetition.}
+Generation stops once its last 32 tokens have appeared three times, and the output is cut to one copy. A looping \texttt{synthesizer} is first asked again, once, with a prompt noting the loop and asking for brief reasoning, so that greedy decoding sees a changed input before any resumption at the answer marker.
+
+%% ---------------------------------------------------------------------------
+\subsection{Configuration}
+\label{app:validation_config}
+
+Table~\ref{tab:app_validation_config} specifies the configuration used for the MMLongBench-Doc validation run, including the reading limits, image resolutions, and generation budgets.
+
+\input{appendix/tables/validation_system_config}
+
+\clearpage
+\section{Additional Validation Results}
+\label{app:validation_results}
+
+This appendix reports how far the validation system reads and what a question costs, on MMLongBench-Doc.
+% LongDocURL: the telemetry for this benchmark is pending. Its float and sentences below
+% are commented out; uncomment them once tables/scripts/validation_cost.py and
+% figures/scripts/plot_method_trajectory_column.py have been run on the LongDocURL run.
+
+\input{appendix/tables/validation_cost}
+
+% \input{appendix/tables/validation_cost_ldu}
+
+\paragraph{Inference Cost.}
+A question takes 13.8 agent turns on average and 9 at the median (Table~\ref{tab:app_validation_cost}). The \texttt{reader} accounts for 11.5 of them, while the \texttt{synthesizer} and \texttt{arbiter} are each invoked 1.2 times per question. Across its trajectory a question consumes on average 76,669 text tokens, 13,767 visual tokens, and 9,092 output tokens. The principal cost is latency rather than memory. Decoding takes 617.5\,s per question against 28.5\,s of prefill, for a mean of 10.8 minutes and a median of 6.7. Peak memory averages 8.2\,GiB and never exceeds 13.6\,GiB, within the 16\,GB of the deployment GPU. The system therefore trades sequential inference time for bounded memory and broader evidence acquisition, and its deployment parameters ($B$, $k$, and $m$) directly control that trade.
+% On LongDocURL, ... (Table~\ref{tab:app_validation_cost_ldu}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{appendix/figures/method_trajectory.pdf}
+\caption{Agent turns per question on MMLongBench-Doc, by the number of reading cycles. A cycle is the \texttt{reader}'s turns followed by one \texttt{synthesizer} and one \texttt{arbiter} turn.}
+\label{fig:app_trajectory}
+\end{figure}
+
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=\columnwidth]{appendix/figures/method_trajectory_ldu.pdf}
+% \caption{Agent turns per question on LongDocURL, by the number of reading cycles.}
+% \label{fig:app_trajectory_ldu}
+% \end{figure}
+
+\paragraph{Reading Depth.}
+The system does not uniformly consume its page budget (Figure~\ref{fig:app_trajectory}). Of the 1,067 questions it finished, 450 end after eight agent turns, the earliest point the reading floor $k=6$ permits: six \texttt{reader} turns, one \texttt{synthesizer} turn, and one \texttt{arbiter} turn. Progressively fewer questions read deeper, and 226 take twenty turns or more, including 63 that read all $B=30$ pages in a single cycle. Reopened trajectories, in which the \texttt{arbiter} requests further reading, account for part of this tail. The median question reads 7 pages, well beyond the one or two gold pages that most answerable questions cite. That gap reflects the deployed setting: the locations of the evidence pages are unknown, so coverage has to be bought with reading depth.
+% On LongDocURL, ... (Figure~\ref{fig:app_trajectory_ldu}).

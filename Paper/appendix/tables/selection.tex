@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.28\columnwidth-4pt\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.72\columnwidth-4pt\relax}@{}}
+\toprule
+\textbf{Condition} & \textbf{Pages supplied} \\
+\midrule
+\texttt{drop\_top}    & Gold set minus highest-ranked page \\
+\texttt{drop\_bottom} & Gold set minus lowest-ranked page \\
+\texttt{keep\_top}    & Highest-ranked gold page only \\
+\texttt{keep\_bottom} & Lowest-ranked gold page only \\
+$+k$                  & Gold set plus the $k$ highest-ranked non-gold pages, $k \in \{0,3,5,7,10,13,15,18\}$ \\
+\bottomrule
+\end{tabular}
+\caption{Selection conditions.}
+\label{tab:app_selection}
+\end{table}

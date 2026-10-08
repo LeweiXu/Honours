@@ -1,0 +1,44 @@
+% Hand-maintained (not generated): the official-protocol rows of
+% tables/include/simple_method_results_v2.tex and tables/include/ldu_method_results.tex in
+% one table, a row per system, without MMLongBench-Doc's evidence-source columns. Method
+% names carry no citation; cite them where the baselines are introduced:
+%   MDocAgent han2025mdocagent, M3DocRAG cho2024m3docrag, MoLoRAG wu2025molorag,
+%   DocAgent sun2025docagent, MARDoc chen2026mardoc, DocTrace xiang2026doctrace,
+%   SLEUTH liu2025resolving.
+% Qwen3-VL-8B rows only; the Qwen2.5-VL-7B block is in tables/paper/method_results.tex.
+% Ours on MMLongBench-Doc is iteration 7's official-protocol block in
+% results/method/results_v7.md (1,067 of the 1,082 questions finished). The LongDocURL
+% numbers for Ours and for the gold-pages row are from results/method/ldu_official.md
+% (`python -m seqread.official_ldu`). PROVISIONAL: Ours is on the 583 of 1,002 subset
+% questions finished so far; refresh it, and drop footnote d, when the run is complete.
+\begin{table*}[t]
+\centering
+\small
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{$\times$}
+\resizebox{\textwidth}{!}{%
+\setlength{\tabcolsep}{7pt}%
+\begin{tabular}{@{}lcc cccc cccc@{}}
+\toprule
+& & & \multicolumn{4}{c}{\textbf{MMLongBench-Doc}} & \multicolumn{4}{c}{\textbf{LongDocURL}} \\
+\cmidrule(lr){4-7}\cmidrule(l){8-11}
+\textbf{Method} & \textbf{OCR} & \textbf{Trained}
+& SIN & MUL & UNA & \textbf{ACC} & UND & REA & LOC & \textbf{ACC} \\
+\midrule
+Gold pages + VLM & \yes & \no & 57.7 & 37.4 & 52.5 & 49.5 & 69.7 & 63.6 & 59.5 & 65.7 \\
+\addlinespace
+Whole document (via DocTrace) & \no & \no & 46.9 & 35.3 & 25.8 & 38.5 & -- & -- & -- & 45.1 \\
+M3DocRAG (via SLEUTH) & \no & \no & -- & -- & 48.6 & 45.9$^{a}$ & 60.1 & 52.4 & 45.5 & 54.6 \\
+DocAgent (via MARDoc) & \yes & \no & -- & -- & -- & 46.6 & -- & -- & -- & -- \\
+MDocAgent (via SLEUTH) & \yes & \no & -- & -- & 49.7 & 47.8$^{a}$ & 57.5 & 51.5 & 44.7 & 53.1 \\
+MoLoRAG (via SLEUTH) & \no & \no & -- & -- & 51.7 & 48.8$^{a}$ & 63.4 & 52.7 & 49.3 & 57.6 \\
+% MARDoc & \yes & \no$^{b}$ & -- & -- & -- & 52.7 & -- & -- & -- & -- \\
+SLEUTH & \no & \no & -- & -- & 67.4 & 52.8$^{a}$ & 65.7 & 53.0 & \textbf{53.6} & 60.0 \\
+DocTrace & \yes & \yes & 53.2 & \textbf{41.1} & 70.5 & 52.9 & -- & -- & -- & 56.4 \\
+\textbf{Ours} (4-bit) & \yes & \no & \textbf{60.5} & 39.2 & \textbf{76.9} & \textbf{56.5} & \textbf{66.4}$^{d}$ & \textbf{63.6}$^{d}$ & 51.2$^{d}$ & \textbf{61.3}$^{d}$ \\
+\bottomrule
+\end{tabular}%
+}
+\caption{\small Accuracy (\%) under each benchmark's official protocol. Every system we compare against uses Qwen3-VL-8B as its backbone, as ours does. ``via'' marks a result reproduced by another study, and ``--'' indicates not reported. \textbf{OCR}: parser or OCR text is an input. \textbf{Trained}: task-specific fine-tuning or RL in the pipeline. $^{a}$The average SLEUTH reports over its evidence-type columns, which is not accuracy over all questions.}
+\label{tab:method_results}
+\end{table*}

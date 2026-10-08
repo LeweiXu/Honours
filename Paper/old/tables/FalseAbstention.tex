@@ -1,0 +1,28 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4.5pt}
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\definecolor{halldred}{HTML}{9B1C1C}
+\newcommand{\gA}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-23)/(53-23)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\bF}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(53-0)*55))}\edef\t{recwarm!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\bH}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(53-0)*55))}\edef\t{halldred!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{4}{c}{\textbf{Abstention}} & \textbf{Acc.} & \textbf{Inc.} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-6}\cmidrule(lr){7-7}
+\textbf{Evidence source} & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} & \textbf{TLV} & \textbf{TLV} \\
+\midrule
+Chart            & \bF{52.2} & \bF{59.0} & \bF{25.3} & \bF{27.5} & \gA{28.7} & \bH{46.0} \\
+Figure           & \bF{76.2} & \bF{65.2} & \bF{35.2} & \bF{38.3} & \gA{34.5} & \bH{30.3} \\
+Generalized-text & \bF{55.9} & \bF{44.1} & \bF{19.5} & \bF{25.4} & \gA{41.5} & \bH{39.0} \\
+Pure-text        & \bF{41.9} & \bF{35.4} & \bF{23.7} & \bF{30.9} & \gA{45.7} & \bH{30.6} \\
+Table            & \bF{42.4} & \bF{36.4} & \bF{30.0} & \bF{39.6} & \gA{39.2} & \bH{30.8} \\
+\midrule
+\textbf{Overall} & \bF{52.2} & \bF{47.1} & \bF{27.4} & \bF{32.5} & \gA{41.4} & \bH{31.2} \\
+\bottomrule
+\end{tabular}
+\caption{Abstention across encodings, with accuracy and incorrect rate at TLV, under the abstention instruction for answerable questions, by evidence source.}
+\label{tab:abstention}
+\end{table}

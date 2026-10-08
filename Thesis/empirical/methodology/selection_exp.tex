@@ -3,20 +3,18 @@
 \small
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{2.9cm}@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.0cm}@{}}
 \toprule
-Rule & Pages supplied & Blocking & Range \\
+Condition & Pages supplied & Question pool \\
 \midrule
-\texttt{drop\_top} & All gold except the highest-ranked & $\geq 2$ gold & -- \\
-\texttt{drop\_bottom} & All gold except the lowest-ranked & $\geq 2$ gold & -- \\
-\texttt{keep\_top} & The highest-ranked gold page only & $\geq 2$ gold & -- \\
-\texttt{keep\_bottom} & The lowest-ranked gold page only & $\geq 2$ gold & -- \\
+\texttt{drop\_top}    & All gold pages except the highest-ranked & $\geq 2$ gold pages \\
+\texttt{drop\_bottom} & All gold pages except the lowest-ranked  & $\geq 2$ gold pages \\
+\texttt{keep\_top}    & The highest-ranked gold page only        & $\geq 2$ gold pages \\
+\texttt{keep\_bottom} & The lowest-ranked gold page only         & $\geq 2$ gold pages \\
 \midrule
-$+k$ distractors & All gold plus the $k$ top-ranked non-gold pages & Exactly 1 gold & $k \in \{1,2,3,4,5\}$ \\
-$+k$ distractors & All gold plus the $k$ top-ranked non-gold pages & Exactly 2 gold & $k \in \{1,2,3,4\}$ \\
-% $+k$ distractors & All gold plus the $k$ top-ranked non-gold pages & Exactly 3 gold & $k \in \{1,2,3\}$ \\
+$+k$ distractors & All gold pages plus the $k$ highest-ranked non-gold pages, $k \in \{3,5,7,10,13,15,18\}$ & Single-hop; multi-hop \\
 \bottomrule
 \end{tabularx}
-\caption{Gold set perturbations for selection experiments. Read against the oracle condition of all gold pages with no distractors. The distractor rules hold the supplied set at six pages or fewer regardless of gold count.}
+\caption{Gold-set perturbations for the selection experiments, each compared with the complete gold set on the same questions.}
 \label{tab:page_set}
 \end{table}

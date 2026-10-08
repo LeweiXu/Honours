@@ -1,0 +1,37 @@
+\begin{figure*}[t]
+\centering
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+A reader gathered evidence from a long document, and a synthesizer
+proposed an answer. Decide whether the gathered evidence is sufficient
+to answer the QUESTION. You may inspect the reader's records and the
+flagged pages shown in full. Your task is to decide whether to end or
+read more pages; you cannot replace the proposed answer.\\[0.5em]
+
+Think step by step. Identify the facts the question requires, where
+the evidence supplies them, and any specific fact still missing.
+Inspect the parsed text and images when a record may have omitted a
+relevant detail.\\[0.5em]
+
+Write DECISION: CONTINUE only if a required fact is missing and further
+reading could plausibly find it. Name that fact after MISSING:. If the
+evidence is sufficient but the proposed answer is mistaken, additional
+reading is not a substitute for correcting the answer: write
+DECISION: END. When the proposed answer is ``Not answerable'' and pages
+remain, check especially whether more reading could resolve the gap.\\[0.5em]
+
+REASONING: <assessment of evidential sufficiency>\\
+MISSING: <specific missing fact, or exactly ``none''>\\
+DECISION: <CONTINUE or END>\\[0.5em]
+
+QUESTION: \{question\}\\
+RECORDS: \{accumulated reader records\}\\
+FLAGGED PAGES: \{parser text and medium-resolution images\}\\
+PROPOSED ANSWER: \{synthesizer answer\}\\
+PAGES LEFT: \{number of unread pages available\}
+\end{tcolorbox}
+\caption{Arbiter prompt structure for iteration 7. A \texttt{CONTINUE} decision resumes reading at the next unread ranked page; the arbiter has no channel for issuing a replacement answer.}
+\label{fig:app_arbiter_prompt}
+\end{figure*}

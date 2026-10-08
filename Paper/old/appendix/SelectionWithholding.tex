@@ -1,0 +1,50 @@
+% SelectionWithholding.tex — verdict flips when a gold page is withheld or isolated,
+% by evidence source. Companion to SelectionDistractors.tex; together they replace the
+% single-direction SelectionTransitions table.
+% Source: results/tables/selection_withholding_transitions.csv
+% (builder reporting/tables/selection_transition.py::build_withholding).
+% colqwen3 ranking, TLV rung — the same ranker and rung as the main text and
+% Figure~\ref{fig:selection}, so the All sources row reproduces that figure's two flip
+% columns exactly and this table is its per-evidence-source breakdown.
+% Shared heat scales with SelectionDistractors so the two read against each other:
+%   red  R→W (what the change breaks)  fixed [0,36], capped 65%
+%   green W→R (what it repairs)        fixed [0,12], capped 55%
+\definecolor{flipred}{HTML}{E23B2E}
+\definecolor{flipgrn}{HTML}{16B84E}
+\newcommand{\fRW}[1]{\pgfmathtruncatemacro{\fshade}{max(0,min(65,(#1-0)/(36-0)*70))}\edef\fcol{flipred!\fshade}\expandafter\cellcolor\expandafter{\fcol}#1}
+\newcommand{\fWR}[1]{\pgfmathtruncatemacro{\fshade}{max(0,min(55,(#1-0)/(12-0)*60))}\edef\fcol{flipgrn!\fshade}\expandafter\cellcolor\expandafter{\fcol}#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} l rr @{\hskip 14pt} rr @{\hskip 14pt} rr @{\hskip 14pt} rr @{\hskip 16pt} r @{}}
+\toprule
+ & \multicolumn{2}{c}{\textbf{drop lowest gold}}
+ & \multicolumn{2}{c}{\textbf{drop highest gold}}
+ & \multicolumn{2}{c}{\textbf{keep highest only}}
+ & \multicolumn{2}{c}{\textbf{keep lowest only}} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+\textbf{Evidence source}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R}
+ & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R} & \textbf{$n$} \\
+\midrule
+Chart            & \fRW{19.2} & \fWR{3.8} & \fRW{20.5} & \fWR{2.6}  & \fRW{19.2} & \fWR{1.3} & \fRW{21.8} & \fWR{0.0} &  78 \\
+Figure           & \fRW{26.3} & \fWR{4.4} & \fRW{31.6} & \fWR{5.3}  & \fRW{29.8} & \fWR{2.6} & \fRW{36.0} & \fWR{4.4} & 114 \\
+Generalized-text & \fRW{25.0} & \fWR{5.0} & \fRW{31.7} & \fWR{10.0} & \fRW{28.3} & \fWR{1.7} & \fRW{35.0} & \fWR{5.0} &  60 \\
+Pure-text        & \fRW{26.7} & \fWR{3.1} & \fRW{26.7} & \fWR{3.1}  & \fRW{31.3} & \fWR{0.8} & \fRW{30.5} & \fWR{0.8} & 131 \\
+Table            & \fRW{22.2} & \fWR{5.6} & \fRW{22.2} & \fWR{1.9}  & \fRW{25.0} & \fWR{3.7} & \fRW{24.1} & \fWR{0.9} & 108 \\
+\midrule
+\textbf{All sources} & \fRW{24.7} & \fWR{4.5} & \fRW{27.0} & \fWR{4.3} & \fRW{28.4} & \fWR{2.6} & \fRW{30.4} & \fWR{2.3} & 352 \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Verdict flips (\%) when one gold page is withheld or the context is reduced to a single gold page, measured within-question against the same question's oracle page set at the combined encoding, colqwen3 ranking, on the multi-page pool. \textbf{R$\rightarrow$W} is the share of oracle-correct questions the change breaks and \textbf{W$\rightarrow$R} the share of oracle-wrong questions it repairs, both as percentages of the row's $n$, so the two columns are the loss and the gain of the same change and their difference is its net effect. Ranker and encoding match Figure~\ref{fig:selection}, so the All sources row reproduces that figure's flip columns exactly. A question citing several evidence sources appears under each, so the per-source rows overlap and do not sum; the All sources row counts every question once and is a pooled total rather than a column sum. Withholding a required page breaks a fifth to a third of previously correct answers at every source, and repairs almost nothing in return, so the loss runs one way.\par}
+\caption{Withholding gold pages: verdict flips by evidence source, at the combined encoding with colqwen3 ranking. Red deepens with what the change breaks, green with what it repairs, on scales shared with Table~\ref{tab:selection_distractors}.}
+\label{tab:selection_withholding}
+\end{table*}

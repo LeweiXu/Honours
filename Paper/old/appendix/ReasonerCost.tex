@@ -1,0 +1,66 @@
+% ReasonerCost.tex — generation cost: prefill and decode (s) per rung for each reasoner
+% config, plus the per-rung input-token profile. Source: results/tables/reasoner_cost.csv
+% (builder reporting/tables/reasoner_cost.py, plan key `reasoner_cost`).
+%
+% ROWS ARE GROUPED BY MEASURING MACHINE AND THE GROUPS ARE NOT COMPARABLE.
+% The V100 block reads the pre-recovery `results.v100.jsonl` snapshots; the 32B and
+% Thinking runs only ever ran post-migration on an H100, which prefills the same input
+% ~50x faster. The `machine` field is `local` on every row, so the file split is the
+% only handle. Within a block, rows are restricted to the cells every config in that
+% block ran, so a difference down a block is the config and not the pool.
+%
+% Two-column (table*): the four rung groups carry two columns each, which is too wide
+% to read at \columnwidth.
+% Heat shading uses the retrieval table's amber (retamber), one scale per metric as in
+% RetrievalFull.tex, since prefill and decode are different quantities:
+%   prefill [0,36] and decode [4,27], both capped at 60%.
+% A SINGLE prefill scale spans both machine blocks on purpose: the H100 rows come out
+% near-white, which is the visual statement that their prefill is a different machine's
+% number and not a config win. Token rows are counts, not seconds, and are left unshaded.
+%
+% Input-token rows cover the 840 of 847 answerable questions that were actually fed
+% pages. Seven questions on mi_phone.pdf resolve to an EMPTY page set in every run
+% despite carrying valid gold pages, so they are fed no evidence and score 0 everywhere;
+% including them would put a nonsensical ~32-token floor under the image rungs (32 tokens
+% is the bare prompt scaffolding, not a page).
+\definecolor{retamber}{HTML}{C8891B}
+% two per-metric shaders; \pgfmathtruncatemacro forces the INTEGER xcolor's ! mixing needs.
+\newcommand{\cPre}[1]{\pgfmathtruncatemacro{\cshadeval}{max(0,min(60,(#1-0)/(36-0)*65))}\edef\ctmpcol{retamber!\cshadeval}\expandafter\cellcolor\expandafter{\ctmpcol}#1}
+\newcommand{\cDec}[1]{\pgfmathtruncatemacro{\cshadeval}{max(0,min(60,(#1-4)/(27-4)*65))}\edef\ctmpcol{retamber!\cshadeval}\expandafter\cellcolor\expandafter{\ctmpcol}#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} l rr @{\hskip 14pt} rr @{\hskip 14pt} rr @{\hskip 14pt} rr @{}}
+\toprule
+ & \multicolumn{2}{c}{\textbf{T}} & \multicolumn{2}{c}{\textbf{TL}} & \multicolumn{2}{c}{\textbf{TLV}} & \multicolumn{2}{c}{\textbf{V}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+\textbf{Reasoner} & \textbf{Pre} & \textbf{Dec} & \textbf{Pre} & \textbf{Dec} & \textbf{Pre} & \textbf{Dec} & \textbf{Pre} & \textbf{Dec} \\
+\midrule
+\multicolumn{9}{@{}l}{\emph{$2\times$V100} \textcolor{ngray}{\scriptsize ($n=831/761/717/834$ per rung)}} \\
+Qwen3-VL-8B, 16-bit & \cPre{1.4} & \cDec{5.7} & \cPre{1.8} & \cDec{6.6} & \cPre{26.3} & \cDec{6.7} & \cPre{29.0} & \cDec{7.1} \\
+\quad 8-bit         & \cPre{0.7} & \cDec{18.4} & \cPre{0.9} & \cDec{21.2} & \cPre{25.0} & \cDec{21.2} & \cPre{28.2} & \cDec{21.8} \\
+\quad 4-bit         & \cPre{1.5} & \cDec{9.2} & \cPre{1.8} & \cDec{10.7} & \cPre{28.0} & \cDec{10.3} & \cPre{30.6} & \cDec{11.1} \\
+Qwen3-VL-2B         & \cPre{0.4} & \cDec{4.8} & \cPre{0.4} & \cDec{5.5} & \cPre{29.8} & \cDec{5.8} & \cPre{34.6} & \cDec{6.3} \\
+Qwen3-VL-4B         & \cPre{0.9} & \cDec{6.2} & \cPre{1.1} & \cDec{7.3} & \cPre{31.1} & \cDec{6.3} & \cPre{35.6} & \cDec{7.4} \\
+InternVL3-8B        & -- & -- & -- & -- & -- & -- & -- & -- \\
+\cmidrule(lr){1-9}
+\multicolumn{9}{@{}l}{\emph{H100} \textcolor{ngray}{\scriptsize ($n\approx684$; \textbf{not} comparable to the block above)}} \\
+Qwen3-VL-32B        & \cPre{0.2} & \cDec{5.1} & \cPre{0.3} & \cDec{6.4} & \cPre{0.5} & \cDec{6.5} & \cPre{0.2} & \cDec{6.0} \\
+\quad 4-bit         & \cPre{0.3} & \cDec{4.4} & \cPre{0.4} & \cDec{5.5} & \cPre{0.6} & \cDec{5.7} & \cPre{0.3} & \cDec{5.2} \\
+Qwen3-VL-8B-Think   & \cPre{0.1} & \cDec{24.3} & \cPre{0.1} & \cDec{26.6} & \cPre{0.2} & \cDec{20.3} & \cPre{0.1} & \cDec{16.1} \\
+\midrule
+\multicolumn{9}{@{}l}{\emph{Input tokens} \textcolor{ngray}{\scriptsize (any Qwen3-VL spec, pages-fed pool $n=840$)}} \\
+Mean     & \multicolumn{2}{c}{938} & \multicolumn{2}{c}{1{,}658} & \multicolumn{2}{c}{5{,}091} & \multicolumn{2}{c}{3{,}470} \\
+Min--max & \multicolumn{2}{c}{29--26{,}636} & \multicolumn{2}{c}{37--29{,}489} & \multicolumn{2}{c}{1{,}838--58{,}679} & \multicolumn{2}{c}{1{,}822--43{,}227} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Prefill (Pre) and decode (Dec) in seconds, oracle pages at medium resolution, prompt mode \texttt{none}; amber deepens with cost on a separate fixed scale per metric. Rows are grouped by the machine that measured them and \textbf{the two blocks must not be compared}: the V100 rows are the pre-recovery snapshots, whereas the 32B and Thinking runs only ever ran on an H100, which prefills the same input roughly 50 times faster, so the near-white prefill of the lower block is a property of the machine and not of the configuration. Within a block every row is restricted to the cells all of its configs ran, so a difference down a block is the config rather than the pool. Prefill is the input-bound cost set by the representation and decode the output-bound cost set by the prompt; their sum is not end-to-end latency, which also carries scheduling and detokenisation. Because \texttt{none} carries no instruction, the model runs to the 256-token cap and every decode figure is an uninstructed upper bound; the Thinking row additionally emits reasoning, so its decode is not comparable even within its own block. InternVL3-8B generates through one blocking call and records no prefill/decode split, which is reported as \texttt{--} rather than zero. Input tokens depend only on the rung, since every Qwen3-VL spec shares a tokenizer, and are counts rather than seconds, so they are left unshaded; they cover the $840$ of $847$ answerable questions that were fed pages, excluding seven questions on one document whose page set resolves empty in every run. The image rungs carry a hard floor of roughly $1{,}800$ visual tokens for a single page. Because the V100 blocks exclude the cells that OOMed, their inputs are lighter than the token rows suggest (TLV averages $3{,}535$ tokens over the V100 matched cells against $5{,}091$ over the pages-fed pool), so the V100 latencies price a lighter input. Adding the page image is what costs: prefill rises roughly fifteen-fold from TL to TLV, while decode is flat across rungs and moves only with precision and prompt.\par}
+\caption{Generation cost per rung: prefill and decode seconds for each reasoner configuration, over the input-token profile each rung feeds. Amber deepens with cost, on a separate scale for prefill and decode. Adding the page image raises prefill roughly fifteen-fold while decode stays flat; 8-bit weights cost about three times the decode of bf16. Blocks are separated by measuring machine and are not comparable across the rule.}
+\label{tab:reasoner_cost}
+\end{table*}

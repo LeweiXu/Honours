@@ -3,12 +3,13 @@
 \begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily]
 You judge answers to document questions.\\
 Return only JSON with keys:\\
-- verdict: one of correct, incorrect\\
+- verdict: one of correct, incorrect, abstained\\
 - extracted\_answer: the answer extracted from the model response, or empty string\\
 - rationale: a short reason\\[0.5em]
 Mark correct when the model answer is semantically equivalent to the gold answer.\\
-For unanswerable questions, mark correct only when the model abstains.
+For unanswerable questions, mark correct only when the model abstains.\\[0.5em]
+Return the verdict ``abstained'' whenever the response declines to answer because it judges the evidence insufficient, however it is worded. ``Not answerable'', ``the document does not provide this'', ``there is no document evidence to determine this'' and ``it is not possible to determine this from the given information'' are all abstentions. A response that notes a limitation and then commits to an answer anyway is NOT an abstention: judge the answer it commits to.
 \end{tcolorbox}
-\caption{Judge accuracy rubric.}
+\caption{Judge rubric.}
 \label{fig:judge_prompt}
 \end{figure}

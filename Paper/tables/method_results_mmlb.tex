@@ -1,0 +1,47 @@
+% Hand-maintained (not generated): the official-protocol block of
+% tables/include/simple_method_results_v2.tex, laid out across both ACL columns (it does not fit one). Method names
+% carry no citation; cite them where the baselines are introduced:
+%   URaG shi2026urag, CoR guo2026end, MDocAgent han2025mdocagent, MoLoRAG wu2025molorag,
+%   DocSeeker yan2026docseeker, Doc-V* zheng2026doc, MM-Doc-R1 lin2026mm,
+%   DocAgent sun2025docagent, MARDoc chen2026mardoc, DocTrace xiang2026doctrace.
+% The Ours row is iteration 7's official-protocol block in results/method/results_v7.md
+% (1,067 of the 1,082 questions finished; 15 failed cells are in no column).
+\begin{table*}[t]
+\centering
+\small
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{$\times$}
+\newcommand{\bbgroup}[1]{\multicolumn{12}{@{}l}{\textit{#1}} \\}
+\resizebox{\textwidth}{!}{%
+% \setlength{\tabcolsep}{7pt}%
+\begin{tabular}{@{}lcc ccccc ccc c@{}}
+\toprule
+& & & \multicolumn{5}{c}{\textbf{Evidence source}} & \multicolumn{3}{c}{\textbf{Evidence pages}} & \\
+\cmidrule(lr){4-8}\cmidrule(lr){9-11}
+\textbf{Method} & \textbf{OCR} & \textbf{Trained}
+& TXT & LAY & CHA & TAB & FIG & SIN & MUL & UNA & \textbf{ACC} \\
+\midrule
+Gold pages + VLM & \yes & \no & 48.1 & 49.6 & 39.4 & 50.5 & 42.5 & 57.7 & 37.4 & 52.5 & 49.5 \\
+\addlinespace
+\bbgroup{\textbf{Qwen2.5-VL-7B}}
+URaG & \no & \yes & 33.6 & 27.7 & 29.3 & 27.5 & 27.2 & 42.7 & 16.9 & 43.5 & 33.8 \\
+CoR & \no & \yes & 39.4 & 31.2 & 27.7 & 38.6 & 27.5 & 41.9 & 25.9 & 45.5 & 37.4 \\
+MDocAgent$^{\dagger}$ (via MoLoRAG) & \yes & \no & 43.1 & 31.2 & 32.6 & 38.7 & 37.9 & 53.5 & 23.8 & 28.3 & 38.5 \\
+MoLoRAG & \no & \no & 41.7 & 32.4 & 34.2 & 37.9 & 37.6 & 50.1 & 26.1 & 35.0 & 39.3 \\
+MoLoRAG+ & \no & \yes$^{a}$ & 42.7 & 38.8 & 33.3 & 38.5 & 40.7 & 52.9 & 27.6 & 35.9 & 41.0 \\
+DocSeeker & \no & \yes & -- & -- & -- & -- & -- & -- & -- & -- & 40.1 \\
+Doc-V$^{*}$ & \no & \yes & -- & -- & -- & -- & -- & -- & -- & -- & 42.1 \\
+MM-Doc-R1$^{\dagger}$ & \yes & \yes & 46.2 & 38.1 & 40.8 & 52.8 & 35.9 & 56.0 & 31.2 & 68.2 & 49.7 \\
+\addlinespace
+\bbgroup{\textbf{Qwen3-VL-8B}}
+Whole document (via DocTrace) & \no & \no & -- & -- & -- & -- & -- & 46.9 & 35.3 & 25.8 & 38.5 \\
+DocAgent (via MARDoc) & \yes & \no & -- & -- & -- & -- & -- & -- & -- & -- & 46.6 \\
+MARDoc & \yes & \no$^{b}$ & -- & -- & -- & -- & -- & -- & -- & -- & 52.7 \\
+DocTrace & \yes & \yes & -- & -- & -- & -- & -- & 53.2 & \textbf{41.1} & 70.5 & 52.9 \\
+\textbf{Ours} (4-bit) & \yes & \no & \textbf{51.9} & \textbf{43.0} & \textbf{41.4} & \textbf{62.1} & \textbf{41.4} & \textbf{60.5} & 39.2 & \textbf{76.9} & \textbf{56.5} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{MMLongBench-Doc accuracy (\%) under the official protocol (answer extraction, then the rule-based scorer) for systems on open 7--8B vision-language backbones. Values are as each paper reports them; ``via'' marks a result reproduced by another study. \textbf{OCR}: parser or OCR text is an input. \textbf{Trained}: task-specific fine-tuning or RL in the pipeline. $^{\dagger}$A text LLM runs alongside the VLM. $^{a}$Retriever only. $^{b}$Its document outline uses visual-element descriptions from Qwen3-VL-235B.}
+\label{tab:mmlb_method_results}
+\end{table*}

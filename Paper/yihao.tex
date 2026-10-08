@@ -1,0 +1,397 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[review]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{stfloats}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{caption}
+\usepackage{adjustbox}   % for \begin{adjustbox}
+\usepackage{natbib}      % for \citeyear  (or use biblatex)
+\usepackage{lscape}      % optional: landscape
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{forest}
+\usepackage{xcolor}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{An Empirical Analysis of Failure Modes in Multi-Page Visually-Rich Document Understanding}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{First Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\\And
+  Second Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\}
+
+%\author{
+%  \textbf{First Author\textsuperscript{1}},
+%  \textbf{Second Author\textsuperscript{1,2}},
+%  \textbf{Third T. Author\textsuperscript{1}},
+%  \textbf{Fourth Author\textsuperscript{1}},
+%\\
+%  \textbf{Fifth Author\textsuperscript{1,2}},
+%  \textbf{Sixth Author\textsuperscript{1}},
+%  \textbf{Seventh Author\textsuperscript{1}},
+%  \textbf{Eighth Author \textsuperscript{1,2,3,4}},
+%\\
+%  \textbf{Ninth Author\textsuperscript{1}},
+%  \textbf{Tenth Author\textsuperscript{1}},
+%  \textbf{Eleventh E. Author\textsuperscript{1,2,3,4,5}},
+%  \textbf{Twelfth Author\textsuperscript{1}},
+%\\
+%  \textbf{Thirteenth Author\textsuperscript{3}},
+%  \textbf{Fourteenth F. Author\textsuperscript{2,4}},
+%  \textbf{Fifteenth Author\textsuperscript{1}},
+%  \textbf{Sixteenth Author\textsuperscript{1}},
+%\\
+%  \textbf{Seventeenth S. Author\textsuperscript{4,5}},
+%  \textbf{Eighteenth Author\textsuperscript{3,4}},
+%  \textbf{Nineteenth N. Author\textsuperscript{2,5}},
+%  \textbf{Twentieth Author\textsuperscript{1}}
+%\\
+%\\
+%  \textsuperscript{1}Affiliation 1,
+%  \textsuperscript{2}Affiliation 2,
+%  \textsuperscript{3}Affiliation 3,
+%  \textsuperscript{4}Affiliation 4,
+%  \textsuperscript{5}Affiliation 5
+%\\
+%  \small{
+%    \textbf{Correspondence:} \href{mailto:email@domain}{email@domain}
+%  }
+%}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction}
+
+% Multi-page VRDU is at its core an evidence-management problem: answer-relevant evidence is sparse, spread across pages, and often larger than the backbone's context window, so a system must decide what to retain, discard, retrieve, or acquire under a fixed compute budget \cite{xu2026managing}. Surveyed systems fall into four families, two of which fold evidence selection into a single opaque forward pass, while retrieval-augmented and adaptive-trajectory pipelines decouple selection from generation. We study the retriever-generator pipeline these decoupled families share: an adaptive-trajectory system reduces to it under a single non-iterative pass, and it is the only setting in which retrieval, representation, and reasoning exist as separable stages that error can be attributed to rather than collapsed into one system-level number. A real retriever's rankings are used only to source realistic evidence drops and distractors, not as the object of study, so our attribution characterizes evidence management in general rather than retrieval in particular.
+
+% Understanding a long visually-rich document is fundamentally an evidence-management problem: the evidence bearing on a question is sparse, spread across pages, and often larger than the reasoner's context window, so a system cannot simply read the whole document and must instead decide what to acquire, encode, select, and reason over under a fixed budget \cite{xu2026managing}. The current frontier meets this constraint by decoupling evidence selection from answer generation, either as a retriever-generator pipeline that selects evidence once and answers from it, or as an adaptive-trajectory pipeline whose controller gathers evidence over several steps; both share the same underlying stages, and the latter reduces to the former under a single non-iterative pass. We study this shared pipeline and identify three loci at which it loses the answer: the fidelity of how the document is encoded, the selection of which encoded evidence reaches the reasoner, and the reasoning carried out over what is selected. These loci are not independent stages. The encoding conditions both what selection can find and what the reasoner can read; selection determines what the reasoner receives, and is shaped in turn by the encoding it ranks over and by the evidence the reasoner can use; and reasoning depends on both. We present them in pipeline order for exposition, not because a failure at one is sealed off from the others.
+
+\section{Related Work}
+\label{sec:relatedwork}
+
+Within document understanding, the loss surface has been examined one region at a time. OHRBench~\cite{zhang2025ohrbench} traces OCR noise through a text pipeline and finds that it cascades; because that pipeline carries no image channel, nothing can compensate for a parser failure, which is the compensation our setting makes observable. UniDoc-Bench~\cite{peng2025unidocbench} compares text, image, and fused retrieval under one protocol and reports that fusion outperforms either channel alone, on questions that cite few pages and so leave cross-page combination untested. Graph-RAG~\cite{zarrinkia2026reasoningbottleneck} attributes most residual error to reasoning once retrieval coverage is high, in a text multi-hop setting where acquisition and fidelity cannot fail and therefore cannot compete for the attribution. DocScope~\cite{feng2026docscope} is a benchmark that grades evaluation by supplying gold pages, then gold regions, then gold facts, so a model can be scored at each level of provided evidence; it fixes the encoding throughout and defines test conditions rather than isolating where a pipeline loses the answer.
+Each of these studies examines one region of the loss surface with the others held absent, and each stops once the loss is located. We instead measure the losses on a single pipeline where they co-occur, and ask which of them a practitioner can move.
+
+\section{Attribution Framework}
+\label{sec:attribution_framework}
+Successful MP-VRDU depends on three ordered conditions: answer-relevant information must be faithfully preserved in the document representation, sufficient evidence must be delivered to the reasoner, and the generated
+response must be supported by that evidence. Violations of these conditions are referred to as \textbf{representation},
+\textbf{selection}, and \textbf{reasoning} failures, respectively.
+These conditions define an attribution order rather than three independent error categories. A downstream failure is interpretable only after the upstream conditions have been controlled: selection cannot recover information lost during representation, and reasoning cannot operate on evidence that was not selected. We therefore perform conditional attribution through controlled interventions.
+% We identify three failure modes at which a decoupled MP-VRDU pipeline loses the answer. They stand in a precedence order, and failure travels along it in one direction only: a failure at one mode can cause a failure at the modes it precedes, but never at those upstream of it, so a failure attributed to a mode is one that survived every mode above it. The order is what makes attribution possible, since holding the upstream modes at a setting where they do not fail leaves any surviving error attributable to the mode itself. We define each mode below by the condition under which it fails and the structure that failure takes, independent of the mechanism that produces it: \textbf{representation}, \textbf{selection}, and \textbf{reasoning}.
+
+\subsection{Representation}
+\label{subsec:fm_representation}
+% Definition Sentence
+Representation is how faithfully the document is encoded into the tokens consumed by retrieval and reasoning.  
+%Failure modes
+A representation failure occurs when answer-relevant information is omitted, distorted, or no longer recoverable from the encoded page. 
+% Categories
+Two factors determine representation fidelity. 
+% Definition for the first error type
+\textbf{(1) Modality Ceiling}: each representation can preserve only the signals it can express reliably. 
+% Example
+A textual representation may lose layout or graphical information, while a visual representation may lose fine-grained details under limited resolution or visual-token budgets. 
+% Optional link to evaluation?
+Because the ceiling is a property of the signal rather than of the encoder, it binds asymmetrically: which representation suffices is set by the modality of the evidence a question draws on, and we therefore attribute representation failures per question and evidence source. 
+The second is \textbf{(2) Conversion Fidelity}: even when a signal is representable, the conversion process may omit or corrupt it. 
+For example, an extractor may misread a value and propagate a confident error downstream \citep{zhang2025ohrbench}, or fail to encode the relevant content altogether \citep{vanstrien2020assessingocr}. 
+Corruption makes this factor bidirectional: a conversion that raises fidelity on average can still lose questions it previously answered. 
+Because gold evidence is annotated at the page level, representation here is limited to the fidelity of the encoded page. 
+A relevant page that is not delivered to the reasoner is treated as a selection failure, while failure to combine correctly represented evidence across pages is treated as a reasoning failure, as is content whose meaning spans a page boundary, since no per-page encoding preserves that relation.
+
+%The first is the \textbf{modality ceiling}: a modality cannot carry a signal outside its expressive range, so a non-linguistic signal such as a plotted value has no faithful textual encoding, and a visual encoding preserves it only above the resolution its token budget allows. The second is \textbf{conversion fidelity}: within a modality the encoding can degrade the signal it does carry, and it can corrupt rather than merely omit, as when an extractor misreads a value and passes the reasoner a confident error \citep{zhang2025ohrbench}, with the limiting case being content that never enters the encoding at all \citep{vanstrien2020assessingocr}.
+
+%The multi-page setting adds structural failures the single page does not exhibit, since content spanning a page boundary, cross-page references, and reading order all depend on relations a per-page conversion cannot preserve. These share a cause: page coverage and per-page fidelity compete for one budget, so a longer document forces the encoding to drop pages or read each less faithfully, and the structure crossing pages is the first to be lost. Representation precedes the modes below it, so its losses reappear as evidence that selection cannot retrieve and that the reasoner cannot read.
+
+\subsection{Selection}
+\label{subsec:fm_selection}
+
+Selection concerns which encoded pages are delivered to the reasoner. Its quality depends on whether the selected context
+contains sufficient evidence and how much irrelevant material it introduces. We distinguish two factors that determine selection quality.
+\textbf{(1) Evidence Coverage.} The selected context must include all evidence required by the question. Omitting a necessary page leaves the reasoner with an incomplete evidence set, placing an upper bound on downstream accuracy regardless of the reasoner's capability. 
+%optional
+Because the required evidence differs across questions, we assess coverage at the question level against its annotated evidence pages.
+\textbf{(2) Distractor Exposure.} Selection may deliver the required evidence together with irrelevant pages. Unlike omission, this does not make the evidence insufficient by itself, but increases the burden on the reasoner to identify and use the relevant content. We therefore separate the effect of distractors from evidence coverage by varying irrelevant context while holding the amount of required evidence fixed.
+% Duplicated, may add another section to clearify the relationships
+Selection is bounded by representation, since it can retrieve only the information preserved by the encoding, and it in turn bounds reasoning, since the reasoner cannot use evidence it does not receive.
+
+\subsection{Reasoning}
+\label{subsec:fm_reasoning}
+
+Reasoning concerns whether the model produces a response supported by the selected evidence, once representation and selection have been controlled. A reasoning failure occurs when the model fails to combine the available evidence, produces an unsupported answer, or abstains despite having sufficient evidence. We focus on two factors.
+\textbf{(1) Evidence Integration.} Multi-page questions may require the model to combine complementary information from several pages. A model
+may succeed when the evidence is localized but fail when it must connect multiple pieces of evidence. This difficulty may be amplified in long contexts, where evidence at different positions is not used equally
+reliably \citep{liu2024lost}.
+\textbf{(2) Response Calibration.} The model must align its response with the level of support provided by the document. It can fail in two directions: \emph{hallucination}, where it produces an answer that is not supported by the available evidence \citep{li2023llmattribution}, and \emph{false abstention}, where it refuses to answer despite having sufficient evidence.
+
+%Reasoning is the final mode in the attribution order. Errors remaining after representation and selection have been controlled are treated as a conditional reasoning residual. Because no practical representation is perfectly faithful, this residual should not be interpreted as a pure, stage-independent measure of reasoning ability.
+
+\input{tables/MMLongBench}
+
+\section{Methodology}
+\label{sec:methodology}
+
+We measure where a multi-page document-understanding pipeline loses the answer by holding the pipeline fixed and varying one stage at a time. The pipeline encodes each page into a textual or visual form, selects a subset of pages, and passes them to a multimodal reasoner that answers from them, mirroring the representation, selection, and reasoning modes of Section~\ref{sec:attribution_framework}.
+
+\subsection{Attribution by construction}
+\label{subsec:isolation}
+
+To attribute error to a failure mode we build a single-pass retriever-generator pipeline: each page is encoded into text or an image, a retriever selects a subset of pages, and a frozen multimodal reasoner answers from that subset in one pass. The three stages map onto the modes of Section~\ref{sec:attribution_framework} and, because the pipeline runs in a single pass, they stay separable rather than interleaving across turns as an adaptive controller would. This separability is what makes attribution possible: since failure propagates in precedence order, holding the stages upstream of a mode at a setting where they do not fail leaves any surviving error attributable to that mode. The instrument that supplies those settings is an oracle selector that returns the annotated gold pages directly, which removes selection loss on demand, together with a faithful encoding and a reasoner held fixed across every condition.
+
+\textbf{Representation} is measured by holding the pages and the reasoner fixed and varying only the encoding. Under oracle pages selection contributes nothing, so as the encoding moves along the ladder from text to image the change in accuracy is produced by the encoding alone. The mode is therefore measured directly, from the sweep, rather than inferred as what other modes leave behind.
+
+\textbf{Selection} is measured by fixing the encoding and replacing the oracle with a real retriever, so that selection is the only stage that changes and the accuracy given up against the oracle is the loss it introduces. To separate its two ways of failing we manipulate the oracle set instead of the retriever: withholding a gold page tests whether the remaining evidence is sufficient, and adding non-evidence pages tests robustness to distraction at a fixed count of true evidence pages.
+
+\textbf{Reasoning} is measured as the residual. With oracle pages and a faithful encoding neutralising the two upstream modes, error that survives is what the reasoner fails to do with evidence that is present, sufficient, and legible. Comparing single-page against multi-page questions on oracle pages isolates integration, and comparing answerable against unanswerable questions isolates calibration. Two limits bound this residual: it is only as clean as the judge that scores it, and interactions between modes, such as a low-fidelity encoding degrading retrieval, are real but are not separated out.
+
+\subsection{Pipeline configuration}
+\label{subsec:config}
+
+Pages are encoded along four alternatives ordered by compute: extracted text (T), parser markdown (TL), that markdown with the page images (TLV), and the page images alone (V). The four are not cumulative, since parser output and page image are competing encodings of one page rather than additions to it. Parsed text comes from PaddleOCR-VL \cite{cui2025paddleocrvl}, with MinerU~2.5 \cite{niu2025mineru25} as an alternative so that parsing loss is not confounded with one implementation. The reasoner is Qwen3-VL-8B-Instruct \cite{bai2025qwen3vl} in bfloat16, and retrieval spans lexical, dense text, and late-interaction visual methods at the page level, so a retrieved unit and an annotated evidence unit are the same object. Remaining versions and settings are in Appendix~\ref{app:config}.
+
+\subsection{Data and evaluation}
+\label{subsec:data}
+
+We evaluate on MMLongBench-Doc \cite{ma2024mmlongbench} (Table~\ref{tab:dataset}), which supplies the annotations the method needs: gold evidence pages for oracle selection, a typed evidence source per question, a domain label, and an unanswerable subset for scoring abstention. Documents are long and right-skewed, so the context pressure that forces selection is present rather than assumed, and from the gold pages we derive a single- or multi-page evidence hop. Answers are scored by an LLM judge rather than exact match, since a correct answer may differ from the gold string in units or formatting; given the question, gold, and model answer it returns correct, incorrect, or abstained, and we use two judges of different families to guard against family-specific leniency. Accuracy is judge-scored correctness with 95\% bootstrap confidence intervals from 1{,}000 document-level resamples, resampling documents rather than questions because questions from one document are not independent.
+
+\input{tables/Representation}
+
+\section{Results}
+\label{sec:results}
+
+We report the measured surface along the three failure modes of Section~\ref{sec:failuremodes}: the fidelity of the encoding (Section~\ref{subsec:res_representation}), which evidence reaches the reasoner (Section~\ref{subsec:res_selection}), and how the reasoner uses it (Section~\ref{subsec:res_reasoning}). All figures are on oracle pages over the full answerable pool unless noted, so selection contributes nothing and each change is produced by the mode under study. We state the measurements here and interpret them in the sections that follow.
+
+\subsection{Representation}
+\label{subsec:res_representation}
+
+Accuracy rises across both encoding steps of the ladder and falls when text is removed, so the combined text-and-image encoding is the frontier (Table~\ref{tab:representation}). The two steps recover different content: traced per question, the parse step recovers structured text and can also corrupt it, running net negative on academic papers, while the image step recovers the chart and figure questions that parsing leaves near chance and barely moves the table questions. The frontier rung is not uniform across domains, since questions over tables and financial reports flatten once text is supplied while questions over research papers and tutorials continue to gain from the image. On scanned documents the ordering inverts, with the image rungs overtaking every text rung once no embedded text layer remains, though the scanned pool is small enough that we read this as a direction rather than a precise effect.
+
+\subsection{Selection}
+\label{subsec:res_selection}
+
+Withholding evidence and adding evidence act on multi-page accuracy asymmetrically (Table~\ref{tab:selection}). Removing a single gold page from the multi-hop pool roughly halves accuracy at every rung, and the collapse is the same whether the withheld page was the highest or lowest ranked. Adding non-evidence pages to a fixed set of gold pages leaves accuracy close to its oracle value. The sufficiency and robustness conditions run on different pools, so we read the halving as a direction rather than a matched difference. Retrieval over these documents favours the visual channel, with a vision retriever roughly doubling the best text retriever at the page level and a joint ranker not improving on vision alone at the top rank, while recall continues to climb with depth as precision falls away.
+
+\subsection{Reasoning}
+\label{subsec:res_reasoning}
+
+The reasoning mode carries two distinct results, integration and calibration. The gap between single- and multi-page accuracy widens as the encoding improves rather than closing (Table~\ref{tab:RQ3_integration}): the step that adds the most accuracy is the step at which the deficit deepens most, so the gain concentrates on the single-page questions. The tendency is strong rather than universal, with academic papers running positive throughout because their multi-page evidence is drawn mostly from figures, the source of shallowest single-page penalty. Turning to calibration, answerable accuracy and abstention are coupled (Table~\ref{tab:faithfulness}): instructing the reasoner to abstain when evidence is absent raises its abstention on unanswerable questions but forces it to abstain on answerable questions it should answer, and no prompt separates the two rates. The false-abstention cost falls as the encoding grows richer, and reasoning prompts leave both rates near baseline while holding accuracy.
+
+\section{Error Attribution}
+\label{sec:attribution}
+
+Attributing the error to the three modes of Section~\ref{sec:attribution_framework} shows that they are not independent knobs a system tunes in isolation. The modality that minimises loss is conditional rather than global, the loss that dominates relocates as the encoding improves rather than reducing, and the multi-page deficit is a failure to receive the evidence rather than to reason over it. None of these is stated by the per-mode surface of Section~\ref{sec:results}; each is what the attribution reveals once the modes are read against one another.
+
+\input{tables/Integration}
+\input{tables/Selection}
+\input{tables/Prompting}
+\input{tables/Reasoner}
+
+\subsection{Modality is conditional, not global}
+\label{subsec:attr_modality}
+
+The field's guidance on which modality to encode a document with, whether vision alone suffices or text and vision should be combined, presumes a global answer, and our attribution finds none. The two encoding steps recover different content: parsing recovers the structured text that carries table and prose questions, and can corrupt it where a layout-aware parser misreads a value; rendering recovers the chart and figure questions that parsing leaves near chance. Because the sources a question draws on determine which channel carries it, no single modality is sufficient across a document, and the encoding that minimises loss is the union of the two rather than either alone. Document origin conditions the answer further. On born-digital pages the text channel carries the ladder and the rendered image is a poorer encoding of a parsed table; on scanned pages, where no text layer survives extraction, the ordering inverts and the image becomes the only faithful channel. The claim that vision is sufficient is therefore true for exactly the documents whose text layer has failed and false for the rest, so modality is a routing decision conditioned on source and origin, not a property of the setting to be settled once.
+
+\subsection{Representation relocates the loss it does not resolve}
+\label{subsec:attr_relocation}
+
+Improving the encoding does not reduce error evenly across the modes; it moves it. The richer encoding wins most of its accuracy on the questions answerable from a single page, and the deficit on questions requiring evidence combined across pages widens as the ladder climbs (Table~\ref{tab:RQ3_integration}), so the step that adds the most accuracy is the step at which the integration gap deepens most. Representation quality is thus better understood as relocating the loss than as resolving it: the gains land on the mode that was already strong, and the reasoning-mode deficit is left larger than it was found. This reframes representation from an error reducer into an error mover, and it locates the binding constraint downstream of the encoding, on the reasoner's ability to integrate evidence it now receives faithfully but still distributed. Whether that relocated loss can be recovered without paying for the encoding again is the question Section~\ref{sec:mitigation} takes up. The exceptions confirm the mechanism rather than contradicting it: the domains that resist the widening are those whose multi-page evidence is concentrated in the sources of shallowest single-page penalty, so their integration gap stays narrow because the evidence they combine was cheap to encode, not because integration itself became easier.
+
+\subsection{The multi-page deficit is a problem of evidence coverage}
+\label{subsec:attr_coverage}
+
+The deficit that representation relocates onto the reasoner is, in turn, less a limit of reasoning than of the evidence the reasoner is given. Withholding a single gold page roughly halves accuracy while adding irrelevant pages barely moves it, and the two are not symmetric: the reasoner is starved by absence and untroubled by distraction. The multi-page difficulty is therefore one of coverage, of getting the answer-bearing evidence in front of the reasoner, rather than of reasoning being intrinsically harder across pages, which would predict degradation under distraction that we do not observe. This is the point at which the evidence-management view of the setting is vindicated: the constraint that governs multi-page accuracy is which evidence reaches the reasoner, and the reasoner's competence is bounded by coverage before it is bounded by any difficulty of combination. It also sets the target for selection, since a reasoner robust to distraction but fragile to omission is served by recovering evidence broadly rather than ranking it precisely, a consequence Section~\ref{sec:mitigation} develops.
+
+\section{Mitigation}
+\label{sec:mitigation}
+
+Section~\ref{sec:attribution} located two losses that a single accuracy figure hides: an integration deficit that grows as representation improves, and a calibration failure in both directions. The practitioner's question is which of these move at inference, before the deployment budget is touched. The located losses recover unevenly: reasoning-time scaffolding reaches the integration loss and retrieval design reaches the selection loss, but calibration is a coupled trade that no prompt escapes.
+
+\subsection{Recovering integration}
+\label{subsec:mit_integration}
+Chain-of-thought prompting narrows the multi-page deficit rather than merely lifting accuracy (Table~\ref{tab:faithfulness}). A prompt that raises single- and multi-page accuracy together would leave the integration gap where it was; instead the gain concentrates on the multi-page questions, so the deficit that Section~\ref{sec:attribution} showed deepening along the ladder is the one chain-of-thought reaches. Extraction prompting does the same. Neither closes the gap, so integration is reachable but sticky: reasoning-time scaffolding recovers part of the loss that richer representation left in place, without removing it.
+This is consistent with the view that multimodal reasoning falters when it proceeds in text without returning to the image \citep{hu2026tvicot}, though in our setting even text-only chain-of-thought helps, so the gain is not only a matter of re-attending to visual features but of giving the reasoner room to combine evidence it already holds.
+
+\subsection{Recovering selection}
+\label{subsec:mit_selection}
+The selection loss is recovered not by ranking evidence more precisely but by retrieving more of it. Section~\ref{sec:attribution} showed that the reasoner is starved by missing evidence and largely untroubled by distraction, and retrieval over these documents is imperfect and favours the visual channel: a vision retriever roughly doubles a text retriever at the page level, and a joint ranker does not improve on vision alone at the top rank. Recall keeps climbing as retrieval depth increases while precision falls away, so the two operating points pull apart.
+Read against the robustness result, this settles which to prefer. Since added distractors cost the reasoner little and withheld evidence costs it half its accuracy, the retriever that recovers the evidence at depth is preferable to the one that ranks it precisely but shallowly, and a system for this setting should be tuned for deep recall rather than top-rank precision. This inverts the usual operating point, at which retrieval is optimised for the precision that a downstream reasoner sensitive to distraction would require.
+
+\subsection{Calibration resists repair}
+\label{subsec:mit_calibration}
+Faithfulness does not repair at inference, because its two failures are coupled (Table~\ref{tab:faithfulness}). Instructing the reasoner to abstain when evidence is absent does raise its abstention on unanswerable questions, but the same instruction forces it to abstain on answerable questions it should answer, refusing roughly half of them at the text rung, and no prompt we test separates the two rates; a balanced variant only shifts the operating point along the same trade. Prompting for abstention buys correct refusals and false ones together.
+The cost of that trade falls as representation improves, which locates its cause. False abstention drops sharply from the text rung to the full text-and-image encoding, because a reasoner given a faithful encoding can tell evidence that is absent from evidence that is present but illegible, whereas an impoverished encoding collapses the two and the reasoner refuses out of doubt. Calibration is therefore not independently fixable by prompting; it inherits the quality of the encoding beneath it. The closest prior measurement of this abstention trade is on impossible images rather than absent document evidence \citep{saadat2025visiontrap}, and our bidirectional reading across the ladder is what the multi-page setting makes visible.
+
+\subsection{What representation preconditions}
+\label{subsec:mit_precondition}
+The levers that work and the one that does not are all bounded by the encoding already in place. Higher resolution helps, but as a general legibility gain rather than a targeted recovery of any one source \citep{li2025textorpixels}, and calibration inherits representation quality outright. The lever with the largest reach is therefore which representation the pipeline can afford to compute, and that is not a prompt but a deployment choice, which the next section takes up.
+
+\section{Deployment}
+\label{sec:deployment}
+
+The encoding that wins accuracy in Section~\ref{sec:attribution} is the one Section~\ref{sec:mitigation} could not cheaply recover from below, and it is also the one a deployment can least afford to run. The practitioner's question is therefore not which encoding is best but how to route around the cost of the best one. The large, actionable choices are which rung to spend on and which reasoner to run; the choices the literature treats as expensive, precision and quantization, turn out to be nearly free.
+
+\subsection{The frontier is dear}
+\label{subsec:dep_frontier}
+The rungs that carry the visual sources are the ones a deployment struggles to run. Supplying page images raises the prefill cost by more than an order of magnitude over the text rungs, since each page becomes thousands of visual tokens rather than hundreds of text tokens, and the same rungs exhaust memory as a document lengthens, so the questions whose evidence is most widely spread are the ones that fail to run at all. This attrition is not neutral: because the long, multi-page questions are the first to exceed memory, a result computed only over the questions that survived overstates the frontier rung, and the accuracy a practitioner would actually see on the full workload is lower than a survivor-pool figure reports. The cost of the winning encoding is thus paid twice, once in latency and once in an accuracy that does not hold at scale.
+
+\subsection{Routing by domain}
+\label{subsec:dep_routing}
+Because the rung a document needs depends on the document, a deployment can route rather than pay for the full encoding everywhere. Section~\ref{sec:attribution} showed the frontier rung is domain-dependent: questions over tables and financial reports are answered from the parsed text and gain little from the image, while questions over research papers and tutorials need it. Sending each document to its minimum viable rung recovers almost all of the accuracy of running the full encoding everywhere, at close to half the ingestion cost, so most of the frontier's benefit is available without most of its price. The policy this implies is concrete: a pipeline that handles predominantly text and layout can serve the cheaper rung and reserve the image channel for the document classes that repay it.
+
+\subsection{The reasoner is a visual-reasoning choice}
+\label{subsec:dep_reasoner}
+Which reasoner to run matters more than how precisely to run it, and the reason is visual (Table~\ref{tab:reasoner}). Two backbones of the same size differ modestly on the text rungs and sharply once the image is supplied: the weaker of them, InternVL3-8B against Qwen3-VL-8B, loses most of its ground on the chart and figure questions and stays near parity on text, so the family gap is a gap in reading the image rather than in reasoning as such. Scale behaves the same way, its returns concentrating on the visual rungs rather than the text ones, so a larger reasoner buys accuracy for a visual workload and little for a textual one. The reasoner choice is therefore a choice about visual-reasoning capacity, and it dominates the precision and quantization settings that a deployment might otherwise tune first.
+
+\subsection{Precision is cheap; the parser is not}
+\label{subsec:dep_precision}
+Quantization is nearly free in aggregate, as prior work on vision-language quantization reports \citep{wang2024qvlm}, but its cost is not evenly spread. Four-bit quantization leaves pooled accuracy almost unchanged while cutting the model to a fraction of its footprint, and the small loss it does carry falls on the table questions, whose dense numeric content is the least tolerant of reduced precision, so a table-heavy deployment is the one case that should hold a higher precision. At a matched budget the same trade appears as scale against precision: a quantized larger model beats a full-precision smaller one on the text rungs and only ties it at the frontier, so which to prefer again depends on the workload. The parser is the one component that is not cheap to get wrong: a weak parser is recoverable only by adding the image channel, so a deployment that runs text and layout-dense documents without paying for vision has no such fallback, and a strong parser becomes a requirement rather than a preference.
+
+% \section{Error Attribution}
+% \label{sec:attribution}
+
+% The field has answered the question of where a multi-page pipeline loses the answer one stage at a time, each position argued on a pipeline that carries a single channel or asserted without isolating the stage it blames. Read on one measured surface, those positions are less a matter of right and wrong than of the regime each was measured in: the modality that minimises loss is conditional rather than global, the dominant loss relocates as the encoding improves rather than reducing, and the multi-page deficit is a failure to receive evidence rather than to reason over it. Each is what the attribution shows once the failures of Section~\ref{sec:results} are read together.
+
+% \subsection{Conditional Modality}
+% \label{subsec:attr_modality}
+
+% Much of the field builds on the premise that rendering the page and reading it with vision removes a lossy dependence on text extraction, so that vision is the encoding a reasoner should consume \citep{cho2024m3docrag,tanaka2025vdocrag,zheng2026docvstar}. A smaller body of measured work holds the opposite, that removing text costs more than the image returns, and that a reasoner given only pixels fails on dense text it cannot read \citep{hannan2025docslm,ma2024mmlongbench}. Our surface shows why both follow from correct measurements. The two encoding steps recover different content: parsing recovers the structured text that carries table and prose questions, and can corrupt it where a parser misreads a value; rendering recovers the chart and figure questions that parsing leaves near chance, and barely moves those parsing already reads. Because the source a question draws on decides which channel carries it, neither modality is sufficient across a document, and the encoding that minimises loss is the union of the two. The frontier shows this directly, as removing text from the combined encoding loses more than it gains.
+
+% Document origin conditions the answer further, and here the disagreement resolves into a boundary rather than a winner. On born-digital pages the text channel carries the ladder. On scanned pages, where extraction returns almost nothing, the ordering inverts: the text rung collapses to near zero and both image-bearing rungs overtake every text rung. The claim that vision suffices is therefore true for exactly the documents whose text layer has failed and false for the rest. Modality is a routing decision conditioned on source and origin, not a property of the setting to be settled once.
+
+% \subsection{The Relocated Loss}
+% \label{subsec:attr_relocation}
+
+% Improving the encoding does not reduce error evenly; it moves it. The richer encoding wins most of its accuracy on questions answerable from a single page, while the deficit on questions whose evidence is spread across pages widens as the ladder climbs, narrowest on text and widest at the combined frontier. The step that adds the most accuracy is the step at which the integration gap deepens most. Representation quality is thus better understood as relocating the loss than resolving it: the gains land on the questions already easiest, and the reasoning-stage deficit is left larger than it was found. The binding constraint sits after the encoding rather than in it, on the reasoner's ability to combine evidence it now receives faithfully but still spread across pages, and it is the loss Section~\ref{sec:mitigation} asks whether inference can recover. The domains that resist the widening confirm the mechanism: where a domain's multi-page evidence sits in the sources that carry the shallowest single-page penalty, its integration gap stays narrow because the evidence it combines was cheap to encode, not because integration became easier.
+
+% \subsection{The Coverage Deficit}
+% \label{subsec:attr_coverage}
+
+% The field agrees that long multi-page context degrades accuracy but divides on the cause. One account attributes it to the dilution of attention over a long input, where evidence far from the start is attended to more weakly \citep{liu2024lost,zhang2025dream}; another holds that the failure is one of organising evidence, and persists even when the context is short enough to hold it all \citep{zheng2026docvstar,yan2025docseeker}. The relocated deficit speaks to this, because the two accounts predict opposite behaviour under controlled evidence and only one holds. Withholding a single answer-bearing page roughly halves accuracy, while adding non-evidence pages to the same set barely moves it: the reasoner is starved by absence and untroubled by distraction. Were attention dilution the cause, the added pages would degrade accuracy, and they do not. The multi-page difficulty is therefore one of coverage, of getting the answer-bearing evidence in front of the reasoner, not of reasoning being intrinsically harder across pages. A reasoner robust to distraction but fragile to omission is served by recovering evidence broadly rather than ranking it precisely, the target Section~\ref{sec:mitigation} takes up.
+
+% \section{Mitigation}
+% \label{sec:mitigation}
+
+% The losses Section~\ref{sec:attribution} located are partly recoverable at inference, before the deployment budget is touched. The recovery is real rather than cosmetic: reasoning-time scaffolding reaches the integration loss that a richer encoding only relocated, and the retrieval operating point can be tuned to what the reasoner is actually sensitive to. Neither lever closes its loss, and the calibration failure does not respond to prompting at all, because it inherits the quality of the encoding beneath it. Recovery is therefore bounded, and the bound is representation.
+
+% \subsection{Recovering Integration}
+% \label{subsec:mit_integration}
+
+% Chain-of-thought prompting \citep{wei2022chain} reaches the integration loss that a richer encoding left in place. A prompt that raised single- and multi-page accuracy together would leave the deficit where Section~\ref{sec:attribution} found it; instead the gain concentrates on the multi-page questions, so the gap narrows rather than shifting upward. Extraction prompting narrows it by a similar margin. Neither closes it, so the relocated loss is reachable but resistant: reasoning-time scaffolding recovers part of what representation moved onto the reasoner without removing it. This is consistent with the view that multimodal reasoning falters when it proceeds in text without returning to the image \citep{hu2026tvicot}, though the gain here appears even under text-only reasoning, so it is less a matter of re-attending to visual features than of giving the reasoner room to combine evidence it already holds.
+
+% \subsection{Recovering Selection}
+% \label{subsec:mit_selection}
+
+% A consistent finding in the field is that fixed top-$k$ retrieval is brittle, too small a $k$ omitting evidence and too large a $k$ injecting noise that dilutes reasoning, which motivates adaptive or reranked retrieval that keeps the passed set small and precise \citep{yan2025docseeker,li2025avir,xu2026managing}. Our attribution refines this. Section~\ref{sec:attribution} showed the multi-page deficit to be missing evidence rather than distraction, and the reasoner untroubled by non-evidence pages added to a true set. The brittleness is therefore one-sided: the reasoner pays half its accuracy for an omitted page and almost nothing for an admitted distractor, so the operating point that serves it is deep recall rather than top-rank precision. This inverts the usual target, at which retrieval is tuned for the precision a distraction-sensitive reasoner would need. We confirm the tolerance to the depth our hardware admits, a few distractors beyond the true set; past that the image rung exhausts memory, so the untested region is one a modest deployment cannot run in any case.
+
+% \subsection{The Limit Is Representation}
+% \label{subsec:mit_calibration}
+
+% The calibration failure, unlike the other two, does not respond to prompting, and the reason exposes what bounds the levers that do. Instructing the reasoner to abstain when evidence is absent raises its abstention on unanswerable questions, but the same instruction forces it to abstain on answerable questions it should answer, and no prompt separates the two rates; a balanced variant only shifts the operating point along the same trade. The cost of that trade falls as the encoding grows richer, which locates its cause: a reasoner given a faithful encoding can tell evidence that is absent from evidence that is present but illegible, whereas an impoverished encoding collapses the two and the reasoner abstains out of doubt. Calibration is thus a precondition set by representation, not a behaviour a prompt can install, which the closest prior measurement of the trade, on impossible images rather than absent document evidence, could not make visible \citep{saadat2025visiontrap}. The same ceiling holds the other levers. Higher resolution helps, but as a general gain in legibility that matters where the image is the sole channel, not as a targeted recovery of any one source \citep{li2025textorpixels}, and chain-of-thought narrows integration only as far as the evidence it combines was faithfully encoded to begin with. The lever with the longest reach is therefore which representation the pipeline can afford to compute, and that is not a prompt but a deployment choice.
+
+% \input{tables/Reasoner}
+% \input{tables/Cost}
+
+% \section{Deployment}
+% \label{sec:deployment}
+
+% The representation the pipeline can afford is, as Section~\ref{sec:mitigation} showed, the lever with the longest reach, and it is not a prompt but a standing cost. That cost resolves into a sequence of deployment decisions ordered by what they buy: which rung to spend on and which reasoner to run are the large choices, and the precision to run them at is nearly free. We take them in turn, and find that the choices the literature treats as expensive are cheap, while the one it treats as settled, the parser, is not.
+
+% \subsection{The frontier is dear}
+% \label{subsec:dep_frontier}
+
+% The accuracy a deployment would actually see on the winning rung is lower than a benchmark reports, because the questions that fail to run are the ones that most need it. Supplying page images raises the ingestion cost by more than an order of magnitude over the text rungs and exhausts memory as a document lengthens, so the questions whose evidence is most widely spread, the multi-page questions the image rung exists to serve, are the first to be dropped. A figure computed over the questions that survived therefore overstates the rung, and the overstatement falls entirely on the encoding a practitioner would most want to trust. The cost of the frontier is thus paid twice, once in latency and once in an accuracy that does not hold at the scale the rung was chosen for.
+
+% \subsection{Routing by domain}
+% \label{subsec:dep_routing}
+
+% Because the rung a document needs is set by its domain, a deployment can route rather than pay the frontier everywhere. Section~\ref{sec:attribution} showed the minimum viable rung differs across document classes, and routing each document to its own rung recovers almost all of the accuracy of running the full encoding everywhere at close to half the ingestion cost. Most of the frontier's benefit is available without most of its price, and the policy is concrete: a pipeline can serve the cheaper rung by default and reserve the image channel for the document classes that repay it, rather than committing every document to the encoding only some of them need.
+
+% \subsection{Model choice is a visual-reasoning choice}
+% \label{subsec:dep_reasoner}
+
+% Which reasoner to run matters more than how precisely to run it, and both the family and the scale of the reasoner act on the same axis (Table~\ref{tab:reasoner}). Two backbones of equal size differ modestly on the text rungs and sharply once the image is supplied, the weaker of them losing most of its ground on the chart and figure questions while staying near parity on text, so the gap between backbones is a gap in reading the image rather than in reasoning. Scale behaves the same way, its returns concentrating on the visual rungs and leaving the text rungs almost flat, so a larger reasoner buys accuracy for a visual workload and little for a textual one. The model choice is therefore a choice about visual-reasoning capacity, and for a workload that leans on the image it dominates the precision and quantization settings a deployment might otherwise tune first.
+
+% \subsection{The cheap and the non-negotiable}
+% \label{subsec:dep_precision}
+
+% Precision is the setting the literature treats as costly and it is nearly free: four-bit quantization leaves pooled accuracy almost unchanged while cutting the reasoner to a fraction of its footprint \citep{wang2024qvlm}, and its small loss falls on the table questions, whose dense numeric content is least tolerant of reduced precision, so only a table-heavy deployment has reason to hold a higher precision. At a matched budget the trade reappears as scale against precision, a quantized larger reasoner beating a full-precision smaller one on the text rungs and only matching it at the frontier, so which to prefer again follows the workload. The parser is the one component that is not cheap to get wrong. A weak parser is recoverable only by adding the image channel, the same compensation the scanned documents of Section~\ref{sec:attribution} exhibit, so a deployment that runs text and layout-dense documents without paying for vision has no such fallback and a strong parser becomes a requirement rather than a preference. The pattern across these choices is one the thesis anticipates: deployment rations exactly the representation that would resolve the located loss, so the practitioner recovers what they can through routing and model choice and pays, in latency or in a weaker encoding, for what remains.
+
+
+\section*{Limitations}
+
+\section*{Acknowledgments}
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+\bibliography{custom}
+
+\appendix
+
+\end{document}

@@ -1,0 +1,32 @@
+% Routing.tex — accuracy vs cost across representation-routing policies. Single-column.
+% Source: all_tables.md "Routing policies: accuracy vs latency". Oracle pages, Qwen3-VL-8B bf16
+% med res, prompt_mode=none. prefill_ms is clean ingestion cost; latency_ms is end-to-end and
+% decode-inflated by the uninstructed verbose-answer run (~20x), so read prefill for the cost lever.
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Policy} & \textbf{Acc.} & \textbf{Prefill (ms)} & \textbf{Latency (ms)} \\
+\midrule
+Uniform text (T)        & 31.9 & 1{,}411  & 7{,}115  \\
+Uniform image (TLV)     & 52.4 & 22{,}358 & 28{,}632 \\
+Per-class routing       & 47.0 & 11{,}639 & 18{,}276 \\
+\quad + learned classifier & 47.0 & 11{,}639 & 47{,}126 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) and cost across representation-routing policies on the answerable pool, oracle
+% pages. Prefill is the clean per-question ingestion cost, set by the representation; end-to-end
+% latency is decode-inflated by the uninstructed run and is not a deployment figure. Per-class
+% routing sends each document class to its accuracy-maximising rung (Table~\ref{tab:ladder}),
+% recovering most of the uniform-image accuracy at roughly half the prefill. Adding a learned
+% classifier to choose the rung leaves accuracy unchanged but more than doubles latency, since the
+% classifier's own pass costs more than the routing saves.\par}
+
+\caption{Representation-routing policies. Per-class routing recovers most of the image rung's accuracy at half the prefill, but only if the routing decision is near-free.}
+\label{tab:routing}
+\end{table}

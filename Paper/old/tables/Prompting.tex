@@ -1,0 +1,57 @@
+% Prompting.tex — full prompting sweep: accuracy, the bidirectional abstention trade, and
+% decode cost, across the ladder. Metric-major: three per-rung metric blocks (four rungs each)
+% plus a two-column decode block measured at TLV. HEAT-SHADED.
+% Teal = "good" (answerable accuracy [23,54]; unanswerable abstention [5,82]);
+% warm = "bad" (false abstention [0,53], an error). Decode columns unshaded (cost axis).
+% Acc = answerable accuracy (oracle, n=847); Abst = abstention on unanswerable (bm25 k=3, n=244);
+% FA = false abstention on answerable (oracle, n=847). Decode/output from the TLV decode-cost table.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\pAcc}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-23)/(54-23)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\pUn}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-5)/(82-5)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\pFa}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(53-0)*55))}\edef\t{recwarm!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{l@{\hskip 16pt}rrrr@{\hskip 20pt}rrrr@{\hskip 20pt}rrrr@{\hskip 20pt}rr}
+\toprule
+& \multicolumn{4}{c}{\textbf{Answerable acc.}}
+& \multicolumn{4}{c}{\textbf{False abstention (ans.)}}
+& \multicolumn{4}{c}{\textbf{Abstention (unans.)}}
+& \multicolumn{2}{c}{\textbf{Decode (TLV)}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}\cmidrule(lr){14-15}
+\textbf{Prompt}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V}
+& \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V}
+& \textbf{ms} & \textbf{tok.} \\
+\midrule
+none             & \pAcc{31.9} & \pAcc{38.8} & \pAcc{52.5} & \pAcc{45.6} & \pFa{7.4}  & \pFa{3.3}  & \pFa{1.7}  & \pFa{1.1}  & \pUn{13.1} & \pUn{13.1} & \pUn{14.3} & \pUn{13.5} & 2438 & 136 \\
+grounded         & \pAcc{26.8} & \pAcc{34.4} & \pAcc{45.7} & \pAcc{39.9} & \pFa{9.6}  & \pFa{1.3}  & \pFa{0.8}  & \pFa{0.6}  & \pUn{22.1} & \pUn{6.6}  & \pUn{8.2}  & \pUn{5.3}  &  171 &  10 \\
+abstain          & \pAcc{23.3} & \pAcc{29.3} & \pAcc{41.4} & \pAcc{33.5} & \pFa{52.2} & \pFa{47.1} & \pFa{27.4} & \pFa{32.5} & \pUn{81.1} & \pUn{79.9} & \pUn{74.6} & \pUn{81.6} &  114 &   7 \\
+abstain\_bal.    & \pAcc{23.8} & \pAcc{30.0} & \pAcc{42.6} & \pAcc{35.2} & \pFa{47.8} & \pFa{42.9} & \pFa{22.9} & \pFa{27.7} & \pUn{75.4} & \pUn{77.0} & \pUn{68.9} & \pUn{76.6} &  119 &   8 \\
+cot              & \pAcc{29.5} & \pAcc{36.0} & \pAcc{53.1} & \pAcc{49.7} & \pFa{2.8}  & \pFa{4.3}  & \pFa{1.1}  & \pFa{0.4}  & \pUn{8.6}  & \pUn{13.9} & \pUn{11.9} & \pUn{5.7}  & 2979 & 166 \\
+extract\_cot     & \pAcc{28.0} & \pAcc{36.5} & \pAcc{50.2} & \pAcc{44.4} & \pFa{2.5}  & \pFa{5.7}  & \pFa{2.1}  & \pFa{2.4}  & \pUn{8.6}  & \pUn{18.0} & \pUn{18.4} & \pUn{18.4} & 4507 & 242 \\
+\bottomrule
+\end{tabular}%
+}
+% {\footnotesize\raggedright
+% Judge-scored rates (\%) across six prompt modes and four rungs; teal deepens with the good-direction
+% rate (answerable accuracy, and correct refusal on unanswerable questions), warm deepens with false
+% abstention (an error). Answerable accuracy and false-abstention run on oracle pages over the answerable
+% pool ($n{=}847$ per rung); unanswerable abstention runs on the bm25 $k{=}3$ page set over the unanswerable
+% pool ($n{=}244$ per rung), since an unanswerable question has no gold page to select. Abstention is
+% read off the extracted final answer. False abstention is an error, so lower is better; correct
+% refusal on unanswerable questions is the goal, so higher is better. Decode reports median
+% decode latency (ms) and output tokens at the TLV rung, where the input side is held fixed so
+% the difference is the instruction's; the chain-of-thought modes run under a $2048$-token budget
+% against $256$ for the rest, and the none figure is an uninstructed upper bound. The abstain
+% prompt lifts correct refusal to about three-quarters but also drives false abstention on
+% answerable questions above a quarter at TLV, and no prompt separates the two rates. The
+% chain-of-thought modes leave both abstention rates near baseline while lifting accuracy at the
+% image rungs, and they carry the decode cost the abstention prompts avoid.\par}
+\caption{\small Faithfulness across six prompt modes, with decode cost. The abstention instruction couples correct refusal to false refusal; no prompt separates them, and the reasoning prompts pay the decode cost the abstention prompts avoid.}
+\label{tab:prompting}
+\end{table*}

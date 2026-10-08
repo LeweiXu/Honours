@@ -1,0 +1,41 @@
+% tables/MMLongBench.tex — MMLongBench-Doc summary + domain breakdown. Single-column, two panels.
+%
+% The evidence-page rows are ANSWERABLE-ONLY counts, recomputed from the staged parquet
+% (.data/mmlongbench/data/train-00000-of-00001.parquet): 1 page 480 · 2 pages 246 ·
+% 3+ pages 112, plus 9 answerable questions that carry no annotated gold pages (847 total).
+% The 9 are not given a row: they are a corpus quirk, not a finding, and explaining them
+% costs more space than they are worth. The sub-rows therefore sum to 838, and the caption
+% carries the one clause that accounts for the difference.
+%
+% Do NOT take these from docs/generated/mmlongbench_stats.md's "Derived hop" table: that
+% table is a census of all 1091 questions INCLUDING the unanswerable ones, and 7
+% unanswerable questions do carry evidence pages (5 with one page, 1 with two, 1 with six).
+% Its 485/247 are therefore corpus-wide, not answerable-only, and exceed the correct
+% 480/246 by exactly those.
+%
+% These counts are the denominators used by tables/Integration.tex (single 480, multi 358
+% = 246 + 112, i.e. 838 once the 9 no-gold-page questions are dropped).
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrclr}
+\toprule
+\multicolumn{2}{c}{\textbf{Summary}} && \multicolumn{2}{c}{\textbf{By domain}} \\
+\cmidrule{1-2}\cmidrule{4-5}
+\textbf{Property} & \textbf{Value} && \textbf{Domain} & \textbf{Q} \\
+\midrule
+  Questions          & 1091   && Research report   & 293 \\
+  \quad Answerable    & 847    && Academic paper    & 204 \\
+  \quad\quad 1 page    & 480    && Guidebook         & 156 \\
+  \quad\quad 2 pages   & 246    && Tutorial/Workshop & 139 \\
+  \quad\quad 3+ pages  & 112    && Financial report  & 117 \\
+  \quad Unanswerable  & 244    && Brochure          & 101 \\
+  Mean pages/doc     & 48.3   && Admin/Industry    &  81 \\
+  Pages min--max     & 9--468 && Total             & 1091 \\
+\bottomrule
+\end{tabular}
+\caption{MMLongBench-Doc composition.}
+% Evidence-page counts are answerable questions only; nine carry no annotated gold pages.}
+\label{tab:mmlongbench}
+\end{table}

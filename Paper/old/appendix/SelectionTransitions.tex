@@ -1,0 +1,47 @@
+% SelectionTransitions.tex — R→W regression rate (%) by evidence source across the selection transitions.
+% Companion to SelectionFull. bm25 ranker; sufficiency (4 rules) + robustness gold-1/gold-2 (+1,+3 distractors).
+% Single metric: R→W = fraction of oracle-correct questions that flip to wrong under the transition (the loss).
+% Bright-red heat, fixed [0,28] scale capped 65%. Sufficiency glows (omission breaks answers); robustness stays pale.
+\definecolor{regred}{HTML}{E23B2E}
+\newcommand{\rw}[1]{\pgfmathtruncatemacro{\s}{max(0,min(65,(#1-0)/(28-0)*70))}\edef\t{regred!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} l rrrr @{\hskip 20pt} rr @{\hskip 16pt} rr @{}}
+\toprule
+& \multicolumn{4}{c}{\textbf{Sufficiency} (one gold page withheld/isolated)}
+& \multicolumn{2}{c}{\textbf{Robustness, gold 1}}
+& \multicolumn{2}{c}{\textbf{Robustness, gold 2}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+\textbf{Evidence source}
+& \textbf{drop bot.} & \textbf{drop top} & \textbf{keep bot.} & \textbf{keep top}
+& \textbf{+1 dist.} & \textbf{+3 dist.}
+& \textbf{+1 dist.} & \textbf{+3 dist.} \\
+\midrule
+Chart            & \rw{15.4} & \rw{14.7} & \rw{16.0} & \rw{17.0} & \rw{6.2} & \rw{8.8} & \rw{5.6} & \rw{6.9} \\
+Figure           & \rw{20.0} & \rw{17.3} & \rw{20.2} & \rw{22.4} & \rw{4.6} & \rw{6.2} & \rw{5.3} & \rw{5.7} \\
+Generalized-text & \rw{22.9} & \rw{22.9} & \rw{25.8} & \rw{23.8} & \rw{9.4} & \rw{10.7} & \rw{5.9} & \rw{7.4} \\
+Pure-text        & \rw{23.7} & \rw{22.1} & \rw{26.7} & \rw{27.3} & \rw{3.1} & \rw{4.9} & \rw{7.1} & \rw{6.0} \\
+Table            & \rw{22.2} & \rw{24.8} & \rw{25.7} & \rw{22.7} & \rw{7.2} & \rw{6.2} & \rw{6.8} & \rw{7.8} \\
+\cmidrule(lr){1-9}
+\textbf{All sources} & \rw{22.4} & \rw{21.4} & \rw{24.4} & \rw{24.6} & \rw{4.9} & \rw{6.6} & \rw{7.0} & \rw{7.8} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Right$\rightarrow$wrong transition rate (\%): the fraction of questions answered correctly under the oracle page
+% set that flip to incorrect once the page set is altered, on the multi-page pool with the bm25 ranker; red deepens
+% with the rate. Each rate is paired within-question against that source's oracle answers. \textbf{Sufficiency}
+% withholds one gold page (drop bottom/top of the ranking) or isolates a single gold page (keep bottom/top);
+% \textbf{Robustness} adds one or three distractor pages to a fixed set of one, then two, gold pages. Source rows
+% overlap, since a question citing several sources appears under each, so the \textbf{All sources} row pools each
+% question once rather than summing. Omission flips a fifth to a quarter of correct answers at every source, while
+% distraction flips under a tenth; the reverse transition (wrong$\rightarrow$right, evidence appearing to help)
+% stayed at or below 13.2\% in every cell and is omitted. colqwen3 gives the same pattern.\par}
+\caption{Right$\rightarrow$wrong transition rate by evidence source across the selection interventions. Withholding or isolating a gold page flips a fifth to a quarter of correct answers (left, red); adding distractors flips far fewer (right, pale), and the pattern holds across every evidence source.}
+\label{tab:selection_transitions}
+\end{table*}

@@ -1,0 +1,13 @@
+\begin{figure}[t]
+\centering
+\begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily,left=5pt,right=5pt]
+$\langle$accuracy rubric, with an error\_category key in place of rationale$\rangle$\\[0.5em]
+ABSTENTION\\
+Return the verdict "abstained" whenever the response declines to answer because it judges the evidence insufficient, however it is worded. "Not answerable", "the document does not provide this", "there is no document evidence to determine this" and "it is not possible to determine this from the given information" are all abstentions. A response that notes a limitation and then commits to an answer anyway is NOT an abstention: judge the answer it commits to.\\[0.5em]
+ERROR CATEGORY\\
+Decide the verdict FIRST, using only the two rules above, and do not revisit it. The error category explains a verdict you have already reached; it never changes one. In particular, a response that states the gold answer in its own words, or surrounds it with explanation, is still correct.\\[0.5em]
+$\langle$the eleven categories of Table~\ref{tab:app_error_taxonomy}, in priority order$\rangle$
+\end{tcolorbox}
+\caption{Taxonomy rubric.}
+\label{fig:app_judge_prompt_taxonomy}
+\end{figure}

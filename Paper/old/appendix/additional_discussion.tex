@@ -1,0 +1,185 @@
+\newpage
+
+\input{appendix/ReasonerCost}
+\input{appendix/ReasonerHop}
+
+\section{Cost and Scale}
+\label{app:add_cost}
+
+\subsection{Prefill and Decode}
+\label{app:generation_cost}
+
+Table~\ref{tab:reasoner_cost} splits generation cost into its input-bound and output-bound halves for each reasoner configuration, over the input-token profile each encoding feeds. Reporting the two separately is what makes either readable, since end-to-end latency is dominated by whichever half the run happens to inflate. The input side is set by the representation and dwarfs everything else on the image encodings: prefill rises from $1.8$ seconds at parser text alone to $26.3$ at the combined encoding, roughly fifteen-fold, because a page image costs about $1{,}800$ visual tokens against the few hundred a page of text contributes, and the mean input grows from $1{,}658$ tokens to $5{,}091$. The output side does not follow. Decode is flat across the encodings, moving with the precision and the prompt instead: eight-bit weights decode in $21.2$ seconds at the combined encoding against $6.7$ for bfloat16, roughly three times slower, and four-bit in $10.3$. This is the practical qualification on the quantization result in the main text, where low-bit weights cost almost no accuracy for a much smaller footprint. They are close to free in accuracy and in memory, but they are not free in latency, and a deployment that quantizes to fit a smaller card pays for it in decode time rather than in answers. Two measurement caveats bound how far the table can be read. Rows are grouped by the machine that measured them and the two groups must not be compared, since the larger and reasoning-variant configurations only ever ran on hardware that prefills the same input roughly fifty times faster. And every decode figure is an uninstructed upper bound, because these cells carry no instruction and the model runs to its token cap; the instructed modes settle an order of magnitude lower.
+
+\subsection{Scale and Integration}
+\label{app:scale_integration}
+
+Table~\ref{tab:reasoner_hop} asks whether reasoner scale recovers multi-page accuracy, by resolving accuracy against the number of gold evidence pages a question cites for each model size. It buys accuracy, steadily and on both hop classes. The 32B gains $2.6$, $6.0$, $7.8$ and $12.5$ points of multi-page accuracy over the 8B across the four encodings, and the gain is largest where the image carries the evidence, which is consistent with the visual channel being the part of the input that most rewards capacity. What scale does not buy is integration. Single-page accuracy rises just as fast as multi-page accuracy, so the deficit between them is no smaller at 32B than at 2B, and at the combined encoding it is in fact widest at the two larger models. Sixteen times the parameters therefore leaves the cross-page loss where it was, which is the negative result that gives the chain-of-thought finding its force: a prompt costing nothing at inference reaches a loss that four size steps do not. Two smaller observations follow from the same table. The 4B tracks the 8B closely on multi-page questions at both image encodings, within a point at each ($+0.6$ and $-0.3$), and trails it by only a few points on the text encodings, which supports routing text-sufficient traffic to the smaller model rather than treating scale as uniformly beneficial. And the tail buckets fall off sharply at every size, so questions citing three or more pages remain the hardest class in the corpus regardless of the reasoner, which is where a system that could genuinely combine evidence would show its advantage.
+
+\newpage
+
+\input{appendix/WorkedExamples}
+
+\section{Worked Examples}
+\label{app:examples}
+
+The tables report rates; this section shows individual questions behind them, one
+per failure mechanism (Section~\ref{sec:attribution_framework}) and one per
+intervention (Sections~\ref{sec:design} and~\ref{sec:deploy}). Each box gives the
+question, the gold answer, and the reasoner's output under every condition shown,
+marked \wxR{} correct, \wxW{} incorrect or \wxA{} abstained. Page indices are the
+corpus's zero-based ones, and the gold pages are those the oracle conditions supply.
+
+Several rows show the reasoner declining to answer while correctly reporting that
+its evidence does not carry the information (R1's text rungs, R3's \texttt{T (raw)}
+and \texttt{TL (MinerU)}). Whether the judge logs that as an abstention or as an
+incorrect answer, it is not a correct one, and accuracy counts it as a failure to
+answer: the question was answerable from the document, and the condition under test
+is why the model could not answer it. It is better behaviour than inventing a value,
+but not a third outcome for the metric.
+
+\subsection{Failure Mechanisms}
+\label{app:ex_mechanisms}
+
+Two per failure mode, one for each of its mechanisms, in the order
+Section~\ref{sec:attribution_framework} introduces them.
+
+\begin{wxbox}{R1}{Modality ceiling}{mmlongbench:000085}
+\wxmeta{Honor Watch GS Pro user guide (Guidebook), born-digital. Gold page 15. Evidence source: plain text + figure.}
+\wxq{What are the colors of the icons that the users touch to move the app up and remove the app respectively?}
+\wxgold{gray, red}
+\wxsep
+\wxnote{The page's instructions survive the parse intact; the two inline icons do not. PaddleOCR-VL emits:}
+\wxsnip{\#\# NOTE \textbullet{} On the Favorites screen, touch to move the app up to the top of the list. <img src="[\ldots]" width="3\%" /> <img src="[\ldots]" width="3\%" /> - On the Favorites screen, touch to remove the app from the list.}
+\wxsep
+\wxrow{T}{\wxW}{``The document does not specify the colors of the icons used to move the app up or remove the app. The text only mentions that users should `touch' certain icons [\ldots] no visual descriptions or color information are provided.''}
+\wxrow{TL}{\wxW}{``[\ldots] While it describes the actions users should take (`touch to move the app up' and `touch to remove the app'), it does not mention any visual details such as icon colors.''}
+\wxrow{V}{\wxR}{``\textbf{To move the app up:} The icon is \textbf{gray}. \textbf{To remove the app:} The icon is \textbf{red}.''}
+\wxrow{TLV}{\wxR}{``\textbf{To move the app up}: The icon is \textbf{gray} (a gray upward arrow). \textbf{To remove the app}: The icon is \textbf{red} (a red circle with a line through it [\ldots]).''}
+\wxread{Colour is not a linguistic signal, so no parser can carry it however well it works. Both text rungs report the gap rather than guessing, which places the failure in the encoding and not in the reasoning over it.}
+\end{wxbox}
+
+\begin{wxbox}{R3}{Conversion fidelity}{mmlongbench:000158}
+\wxmeta{Presentation deck (Tutorial/Workshop), scanned, so no usable embedded text layer. Gold page 0. Evidence source: layout.}
+\wxq{What is the name of the company that created this presentation?}
+\wxgold{AVALAUNCH MEDIA}
+\wxsep
+\wxnote{The three parsers convert the same title slide into three different pages. Only one keeps the banner that carries the answer:}
+\wxsnip{PaddleOCR-VL: \#\# PRESENTATIONS THAT KICK ASTERKS \\[1.5pt] MinerU 2.5: (empty) \\[1.5pt] unlimitedOCR: AVALAUNCH MEDIA \textbar{} PRESENTATIONS THAT KICK \textbar{} LAST YEAR}
+\wxsep
+\wxrow{T (raw)}{\wxW}{``The document does not provide any evidence or information about the company that created the presentation.''}
+\wxrow{TL (Paddle)}{\wxW}{``The name of the company that created this presentation is \textbf{Asterks}.''}
+\wxrow{TL (MinerU)}{\wxW}{``The document does not provide any evidence or information about the company [\ldots]''}
+\wxrow{TL (unlimited)}{\wxR}{``The name of the company that created this presentation is \textbf{AVALAUNCH MEDIA}.''}
+\wxrow{TLV}{\wxR}{``[\ldots] the name of the company [\ldots] is \textbf{Avalaunch Media}. This name is clearly visible in the banner located at the top of the presentation's title slide [\ldots]''}
+\wxread{The banner leaves the encoding entirely and the slide title is corrupted to ``ASTERKS'', which the reasoner then returns as a company name. It has no way to tell a corrupted token from a real one, so a parser mistake is indistinguishable from evidence. The page image recovers both.}
+\end{wxbox}
+
+\begin{wxbox}{S1}{Evidence coverage}{mmlongbench:000141}
+\wxmeta{Climate assessment report (Research report), born-digital. Gold pages 13 and 14, both parts of one author list. Evidence source: plain text.}
+\wxq{How many chapter authors of this report come from Columbia University?}
+\wxgold{3}
+\wxsep
+\wxrow{oracle: 13, 14}{\wxR}{``[\ldots] there are \textbf{three} chapter authors from Columbia University: 1. \textbf{Radley Horton} 2. \textbf{Patrick Kinney} 3. \textbf{Carlos Perez Garcia-Pando}''}
+\wxrow{drop top: 14 left}{\wxW}{``[\ldots] there is \textbf{one} chapter author from Columbia University. The author listed is \textbf{Carlos Perez Garcia-Pando} [\ldots] No other chapter authors in the document are listed as being from [\ldots]''}
+\wxrow{drop bottom: 13 left}{\wxW}{``[\ldots] there are \textbf{two} chapter authors from Columbia University: \textbf{Radley Horton}, \textbf{Patrick Kinney} [\ldots]''}
+\wxread{Each truncated context yields a count that is correct over the pages supplied and wrong for the question asked, asserted with the same confidence and with any others explicitly denied. The two removals cost different amounts, one author against two, which is why retrieval rank is a weak proxy for evidential necessity.}
+\end{wxbox}
+
+\begin{wxbox}{S3}{Distractor exposure}{mmlongbench:000178}
+\wxmeta{Arab Youth Survey (Research report), scanned. Gold page 19, a per-country bar chart. Distractors are the top-ranked non-gold pages: +1 adds page 17, +2 adds 15, +3 adds 42. Evidence source: chart.}
+\wxq{According to this survey, which country's youth show the greatest concern about unemployment problem?}
+\wxgold{Egypt}
+\wxsep
+\wxrow{gold only}{\wxR}{``\textbf{Egypt}'s youth show the greatest concern about unemployment. The chart displays the level of concern about unemployment for different countries, broken down into four categories [\ldots]''}
+\wxrow{+1 distractor}{\wxW}{``[\ldots] are from \textbf{Iraq}, with 59\% reporting they are `Very concerned'.''}
+\wxrow{+2 distractor}{\wxW}{``[\ldots] is \textbf{Iraq}. The chart titled `CONCERN ABOUT UNEMPLOYMENT BY COUNTRY' displays the percentage of youth who are `Very concerned' (the blue segment at the bottom of each bar) [\ldots]''}
+\wxrow{+3 distractor}{\wxW}{``[\ldots] is \textbf{Algeria}. The chart titled `CONCERN ABOUT UNEMPLOYMENT BY COUNTRY' displays [\ldots]''}
+\wxread{The added page 17 is a second concern chart from the same survey, carrying the same question stem and its own unemployment figures. The model keeps citing the correct chart by title and reads a different country off it each time. Nothing was removed and nothing became ambiguous, so this is a chart reading that was barely succeeding being disturbed: a reasoning limit surfacing under selection rather than a selection cost.}
+\end{wxbox}
+
+\begin{wxbox}{N2}{Evidence integration}{mmlongbench:000443}
+\wxmeta{Dataset paper (Academic paper), born-digital. Gold pages 18 and 19, two qualitative-example tables: page 18 gives the Acropolis Museum's 2009 opening, page 19 the Chapel Bridge's construction in 1333. Evidence source: table.}
+\wxq{How many years after The Chapel Bridge was The Acropolis Museum completed? Return me an integer.}
+\wxgold{676}
+\wxsep
+\wxrow{none}{\wxW}{``10''}
+\wxrow{cot}{\wxR}{``Step 1: [\ldots] `The Acropolis Museum was inaugurated on June 20, 2009'. Step 2: [\ldots] `The Chapel Bridge is over 700 years old having been built in 1333'. Step 3: [\ldots] 2009 $-$ 1333 = 676 [\ldots]''}
+\wxread{The two dates sit one page apart and the subtraction is trivial, yet the direct answer matches neither the difference nor either date. The second row is diagnostic rather than a result: both operands were reachable all along, which places the failure in the assembly and not in reading either page. Note also that it is silent, since an integration failure produces a confident answer rather than a refusal.}
+\end{wxbox}
+
+\begin{wxbox}{N3}{Calibration: hallucination}{mmlongbench:000047}
+\wxmeta{Data-leadership talk (Tutorial/Workshop), scanned, unanswerable. Top-3 retrieved pages (0, 1, 2); the premise of the question is not in the document at all.}
+\wxq{Which Youtube does the slides use to show the consequce of having a weak data leadership?}
+\wxgold{Not answerable}
+\wxsep
+\wxrow{none}{\wxW}{``The slides use a YouTube clip from the TV show \textit{Breaking Bad} to illustrate the consequence of having weak data leadership, specifically, the potential for organizations to make poor, uncontrolled decisions [\ldots] as symbolized by the character Walter White hoarding money [\ldots]''}
+\wxrow{grounded}{\wxW}{``The slides use a YouTube clip featuring Walter White from `Breaking Bad' to show the consequence of having a weak data leadership.''}
+\wxrow{abstain}{\wxR}{``Not answerable''}
+\wxread{One retrieved page carries a photograph of a man with stacks of money, and the model builds a show, a character and a narrative reading out of it, then repeats the invention when instructed to ground its answer in the document. Grounding fails here because the answer \emph{is} grounded in something visible; what is missing is any check that the document supports the claim being made.}
+\end{wxbox}
+
+\subsection{Verdict Transitions Under Intervention}
+\label{app:ex_transitions}
+
+One example for each intervention recommended in Sections~\ref{sec:design}
+and~\ref{sec:deploy}, showing what it does to a single question. Where an
+intervention also has a cost, the reading notes it.
+
+\begin{wxbox}{M2}{Pair text with vision}{mmlongbench:000230}
+\wxmeta{Command newsletter (Administration/Industry file), born-digital. Gold page 1, carrying two commanding officers' messages. Evidence source: figure + plain text.}
+\wxq{Who is the commanding officer in the first figure on the second page?}
+\wxgold{Capt. John W. Sanders}
+\wxsep
+\wxrow{T}{\wxW}{``[\ldots] is \textbf{Cmdr. Cindy Tamminga of NMRC}. The second page contains the `NMRC Commanding Officer's Message' (first section) and `NSMRL Commanding Officer's Message' (second) [\ldots]''}
+\wxrow{TL}{\wxW}{``[\ldots] is \textbf{Cmdr. Cindy Tamminga of NMRC}. The first figure (image) on the \textbf{second page} is located [\ldots]''}
+\wxrow{V}{\wxW}{``[\ldots] is \textbf{Steven M. Wechsler, CAPT, MC, USN}. The document is divided into two main sections, each with a `Commanding Officer's Message' [\ldots]''}
+\wxrow{TLV}{\wxR}{``[\ldots] the first figure on the second page is the photograph accompanying the `NMRC Commanding Officer's Message'. The message is signed by \textbf{John W. Sanders III, CAPT, MC, USN}.''}
+\wxread{The question needs the position of a photograph, which the text channels cannot see, and a signature block, which the image channel has to read at small type. Each single-modality rung fails on the half it cannot serve and names a different wrong officer. The pairing supplies both halves, which is the concrete form of the claim that the combined encoding is not merely the better of its parts.}
+\end{wxbox}
+
+\begin{wxbox}{M3}{Favour recall}{mmlongbench:000403}
+\wxmeta{Genetics lecture deck (Tutorial/Workshop), scanned. Gold pages 0, 27, 47. Vision retriever; k=1 returns page 27, k=3 returns exactly the gold set, k=5 adds pages 6 and 18. PROVISIONAL: partial G2 pool.}
+\wxq{Which chapters are included in the slide? Your answer should be formatted as a list like ['Chapter 1', 'Chapter 3'].}
+\wxgold{['Chapter 8', 'Chapter 9', 'Chapter 10']}
+\wxsep
+\wxrow{k=1 (1 of 3 gold)}{\wxW}{``['Chapter 9']''}
+\wxrow{k=3 (3 of 3 gold)}{\wxR}{``['Chapter 8', 'Chapter 9', 'Chapter 10']''}
+\wxrow{k=5 (3 gold + 2 extra)}{\wxR}{``['Chapter 8', 'Chapter 9', 'Chapter 10']''}
+\wxread{At k=1 the answer is truncated to the evidence available rather than wrong, exactly as in S1. Going deeper completes the gold set and the answer completes with it, and the two non-gold pages that arrive at k=5 leave it untouched, so both halves of the selection asymmetry are visible within a single question.}
+\end{wxbox}
+
+\begin{wxbox}{M5}{Chain-of-thought}{mmlongbench:000111}
+\wxmeta{Pew survey report (Research report), born-digital. Gold pages 26 and 38: a bar chart and the sample-size table. Evidence source: table + chart.}
+\wxq{Among all valid respondents, how many rep/lean rep independents (the exact number, not the ratio) favor building a strong relationship with China on trade? [\ldots]}
+\wxgold{300}
+\wxsep
+\wxrow{none}{\wxW}{``260. \textbf{Reasoning:} [\ldots] The document provides the unweighted sample size for the `Rep/Lean Rep' group as \textbf{1,106} [\ldots]''}
+\wxrow{cot}{\wxR}{``Step 1: Identify the group of interest. Step 2: From the table, find the unweighted sample size for this group: 1,106. Step 3: From the chart [\ldots] 26\% favor `Build a strong relationship'. Step 4: Calculate: 1,106 $\times$ 0.26 = 287.56. Step 5: Round to the nearest hundred: 300.''}
+\wxread{The uninstructed answer quotes the sample size from page 38 correctly and still returns a number that no combination of the two pages produces. The instruction changes nothing about the evidence and only forces the percentage on page 26 to be retrieved as a separate step, so the repair is in the ordering of the work rather than in the information available. The cost falls elsewhere: on graphical evidence the same decomposition resolves each bar in isolation and destroys comparisons the model reads correctly in one pass, which is why the pooled gain concentrates on tabular evidence.}
+\end{wxbox}
+
+\begin{wxbox}{M8}{Reasoner scale: no repair}{mmlongbench:000287}
+\wxmeta{Fact-verification paper (Academic paper), born-digital. Gold pages 2 and 3; the four example prompt boxes are split across them, three on page 2 (Sections 3.1 and 3.2) and one on page 3 (Section 3.4). Evidence source: layout + plain text.}
+\wxq{How many prompts instruction examples are listed in the main body of the paper? Please writhe down the answer in float format.}
+\wxgold{4}
+\wxsep
+\wxrow{8B}{\wxW}{``10.0''}
+\wxrow{32B}{\wxW}{``0.0''}
+\wxrow{8B + CoT}{\wxR}{``Section 3.1 [\ldots] provides one example prompt. Section 3.2 [\ldots] provides two example prompts. Section 3.4 [\ldots] provides one example prompt. [\ldots]''}
+\wxread{Page 2 contains the sentence ``we prompt InstructGPT with ten distinct in-context examples''. The 8B model returns that number, reading a salient figure off one page instead of counting objects across two; the 32B does not copy it but fails differently and returns zero, so scale changes the error without removing it. The same 8B model counts correctly once the prompt makes it walk the sections in order, which is Section~\ref{sec:design}'s ordering in miniature.}
+\end{wxbox}
+
+\begin{wxbox}{M9 / M10}{Abstention: both directions}{mmlongbench:000458, :000457}
+\wxmeta{Prompting paper (Academic paper), born-digital. M9 is unanswerable: the paper reports GPT-4, not GPT-4o. M10 is answerable from gold pages 4 and 5. Evidence source: table.}
+\wxq{M9: How much lower is the accuracy of GPT-4\textbf{o} on SituatedQA compared to MMLU Chemistry? \newline M10: How much lower is the accuracy of GPT-4 on SituatedQA compared to MMLU Chemistry?}
+\wxgold{M9: Not answerable\quad M10: 16.7\%}
+\wxsep
+\wxrow{M9 none}{\wxW}{``[\ldots] the accuracy of \textbf{GPT-4} on SituatedQA is \textbf{63.2\%}, while its accuracy on MMLU Chemistry is \textbf{79.9\%} [\ldots] \textbf{16.7 percentage points lower}''}
+\wxrow{M10 none}{\wxR}{``[\ldots] the accuracy of GPT-4 on SituatedQA is \textbf{63.2\%} [\ldots] \textbf{16.7 percentage points lower} [\ldots]''}
+\wxrow{M9 grounded}{\wxW}{``3.3\%''}
+\wxrow{M10 grounded}{\wxW}{``13.3\%''}
+\wxrow{M9 abstain}{\wxR}{``Not answerable''}
+\wxrow{M10 abstain}{\wxA}{``Not answerable''}
+\wxread{The two questions differ by one character. Uninstructed, the model returns the same answer to both, silently reading GPT-4o as GPT-4, which is correct for M10 and a hallucination for M9. Instructed to abstain, it refuses both, and the grounding instruction in between reaches neither, replacing the shared answer with two different wrong numbers. In no setting does the model distinguish the two questions; the instruction only chooses which of them it gets wrong.}
+\end{wxbox}

@@ -1,0 +1,65 @@
+% Parser fidelity by evidence source and scan status — CATEGORY = parser (4) × evidence source (5) + per-parser All.
+% Columns: Text/+Vision accuracy split digital/scanned, then R→W / W→R transition rates split digital/scanned.
+% Text = TL (layout parsers) or T (PyMuPDF); +Vision = TLV or TV. Transitions describe the TL→TLV (T→TV) step.
+% HEAT: teal = "good" (accuracy [0,72]; W→R recovery [0,60]); warm = "bad" (R→W regression [0,11]). Capped 60/55%.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\pacc}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-0)/(72-0)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\definecolor{regamber}{HTML}{E23B2E}   % R→W regression (bad) — bright red
+\definecolor{recblue}{HTML}{16B84E}    % W→R recovery (good) — bright green
+\newcommand{\prw}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(11-0)*55))}\edef\t{regamber!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\pwr}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-0)/(60-0)*65))}\edef\t{recblue!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{} ll rrrr @{\hskip 12pt} rrrr @{}}
+\toprule
+ & & \multicolumn{4}{c}{\textbf{Accuracy (\%)}} & \multicolumn{4}{c}{\textbf{Verdict transition (\%)}} \\
+\cmidrule(lr){3-6}\cmidrule(lr){7-10}
+ & & \multicolumn{2}{c}{\textbf{Digital}} & \multicolumn{2}{c}{\textbf{Scanned}} & \multicolumn{2}{c}{\textbf{Digital}} & \multicolumn{2}{c}{\textbf{Scanned}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+\textbf{Parser} & \textbf{Source} & \textbf{Text} & \textbf{+Vis} & \textbf{Text} & \textbf{+Vis} & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R} & \textbf{R$\rightarrow$W} & \textbf{W$\rightarrow$R} \\
+\midrule
+\multirow{6}{*}{PaddleOCR-VL}
+ & Chart            & \pacc{23.8} & \pacc{40.8} & \pacc{4.2}  & \pacc{54.2} & \prw{3.8}  & \pwr{20.8} & \prw{0.0} & \pwr{50.0} \\
+ & Figure           & \pacc{17.4} & \pacc{37.0} & \pacc{31.1} & \pacc{57.5} & \prw{1.6}  & \pwr{21.2} & \prw{0.9} & \pwr{27.4} \\
+ & Generalized-text & \pacc{43.8} & \pacc{47.5} & \pacc{26.3} & \pacc{57.9} & \prw{3.8}  & \pwr{7.5}  & \prw{0.0} & \pwr{31.6} \\
+ & Pure-text        & \pacc{50.9} & \pacc{54.9} & \pacc{35.4} & \pacc{55.4} & \prw{3.5}  & \pwr{7.5}  & \prw{0.0} & \pwr{20.0} \\
+ & Table            & \pacc{47.6} & \pacc{46.5} & \pacc{59.4} & \pacc{71.9} & \prw{5.9}  & \pwr{4.9}  & \prw{3.1} & \pwr{15.6} \\
+ & \textbf{All}     & \pacc{40.1} & \pacc{49.7} & \pacc{32.8} & \pacc{61.2} & \prw{3.7}  & \pwr{13.3} & \prw{1.0} & \pwr{29.4} \\
+\cmidrule(lr){1-10}
+\multirow{6}{*}{MinerU}
+ & Chart            & \pacc{17.7} & \pacc{38.5} & \pacc{14.6} & \pacc{47.9} & \prw{3.1}  & \pwr{23.8} & \prw{2.1} & \pwr{35.4} \\
+ & Figure           & \pacc{12.5} & \pacc{38.6} & \pacc{25.5} & \pacc{50.9} & \prw{1.6}  & \pwr{27.7} & \prw{1.9} & \pwr{27.4} \\
+ & Generalized-text & \pacc{20.0} & \pacc{43.8} & \pacc{18.4} & \pacc{50.0} & \prw{2.5}  & \pwr{26.2} & \prw{2.6} & \pwr{34.2} \\
+ & Pure-text        & \pacc{30.1} & \pacc{49.1} & \pacc{30.8} & \pacc{53.8} & \prw{3.1}  & \pwr{22.1} & \prw{0.0} & \pwr{23.1} \\
+ & Table            & \pacc{36.8} & \pacc{42.7} & \pacc{56.2} & \pacc{65.6} & \prw{5.9}  & \pwr{11.9} & \prw{6.2} & \pwr{15.6} \\
+ & \textbf{All}     & \pacc{26.6} & \pacc{46.0} & \pacc{27.4} & \pacc{55.7} & \prw{3.4}  & \pwr{22.8} & \prw{2.0} & \pwr{30.3} \\
+\cmidrule(lr){1-10}
+\multirow{6}{*}{Unlimited-OCR}
+ & Chart            & \pacc{23.8} & \pacc{42.3} & \pacc{2.1}  & \pacc{58.3} & \prw{3.8}  & \pwr{22.3} & \prw{0.0} & \pwr{56.2} \\
+ & Figure           & \pacc{20.7} & \pacc{38.0} & \pacc{34.0} & \pacc{58.5} & \prw{2.7}  & \pwr{20.1} & \prw{0.9} & \pwr{25.5} \\
+ & Generalized-text & \pacc{43.8} & \pacc{52.5} & \pacc{36.8} & \pacc{60.5} & \prw{2.5}  & \pwr{11.2} & \prw{0.0} & \pwr{23.7} \\
+ & Pure-text        & \pacc{50.4} & \pacc{53.1} & \pacc{36.9} & \pacc{56.9} & \prw{4.4}  & \pwr{7.1}  & \prw{0.0} & \pwr{20.0} \\
+ & Table            & \pacc{49.7} & \pacc{48.1} & \pacc{59.4} & \pacc{71.9} & \prw{6.5}  & \pwr{4.9}  & \prw{6.2} & \pwr{18.8} \\
+ & \textbf{All}     & \pacc{42.3} & \pacc{50.2} & \pacc{34.3} & \pacc{63.7} & \prw{4.6}  & \pwr{12.5} & \prw{1.5} & \pwr{30.8} \\
+\cmidrule(lr){1-10}
+\multirow{6}{*}{PyMuPDF}
+ & Chart            & \pacc{24.6} & \pacc{37.7} & \pacc{0.0}  & \pacc{54.2} & \prw{3.8}  & \pwr{16.9} & \prw{0.0} & \pwr{54.2} \\
+ & Figure           & \pacc{19.6} & \pacc{41.3} & \pacc{7.5}  & \pacc{52.8} & \prw{3.3}  & \pwr{25.0} & \prw{0.9} & \pwr{46.2} \\
+ & Generalized-text & \pacc{40.0} & \pacc{47.5} & \pacc{2.6}  & \pacc{52.6} & \prw{3.8}  & \pwr{11.2} & \prw{2.6} & \pwr{52.6} \\
+ & Pure-text        & \pacc{50.0} & \pacc{54.4} & \pacc{3.1}  & \pacc{50.8} & \prw{4.4}  & \pwr{8.8}  & \prw{0.0} & \pwr{47.7} \\
+ & Table            & \pacc{48.1} & \pacc{44.9} & \pacc{0.0}  & \pacc{59.4} & \prw{10.3} & \pwr{7.0}  & \prw{0.0} & \pwr{59.4} \\
+ & \textbf{All}     & \pacc{40.6} & \pacc{49.7} & \pacc{4.0}  & \pacc{57.7} & \prw{4.8}  & \pwr{13.9} & \prw{0.5} & \pwr{54.2} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages, Qwen3-VL-8B bf16, medium resolution, answerable pool (digital $n=646$, scanned $n=201$); teal deepens with accuracy and with the vision-step recovery rate (W$\rightarrow$R), warm deepens with the vision-step regression rate (R$\rightarrow$W). \textbf{Text} is the text channel alone (TL for the three layout parsers, raw embedded text T for PyMuPDF); \textbf{+Vis} adds the page image (TLV, or TV for PyMuPDF). \textbf{R$\rightarrow$W} and \textbf{W$\rightarrow$R} are the paired within-question verdict changes across the vision step (a question right on Text then wrong on +Vis, and the reverse). Parser rows partition by the parser used; evidence-source rows within a parser overlap, since a question citing several sources is counted under each, so their $n$ do not sum and the \textbf{All} row pools each question once. Transition cells are percentages of that cell's paired questions (digital $n=80$--$226$ per source, scanned $n=32$--$106$), so the scanned per-source cells are thin and should be read for direction. PyMuPDF on scanned pages sits at the token floor (raw embedded text is near-absent on scans), so its text-only accuracy reads as ``no usable text handed to the reasoner'' rather than a genuine text reading.\par}
+\caption{Parser fidelity by evidence source and scan status, categorised by parser. Teal deepens with accuracy and with the vision-step recovery rate (W$\rightarrow$R); warm deepens with the vision-step regression rate (R$\rightarrow$W). Text-channel accuracy and its vision-step verdict transitions, split digital vs scanned, for each parser across the five evidence sources.}
+\label{tab:parser_fidelity}
+\end{table*}

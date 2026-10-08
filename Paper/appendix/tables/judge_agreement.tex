@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}l r r l@{}}
+\toprule
+\textbf{Reference} & \textbf{$n$} & \textbf{Agree.} & \textbf{Cohen's $\kappa$ [95\% CI]} \\
+\midrule
+GPT-4o          & 500 & 96.0\% & 0.918 [0.881, 0.951] \\
+Human annotator & 120 & 98.3\% & 0.966 [0.915, 1.000] \\
+\bottomrule
+\end{tabular*}
+\caption{Judge agreement with Gemini-2.5-Flash.}
+\label{tab:app_judge_agreement}
+\end{table}

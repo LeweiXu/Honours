@@ -1,0 +1,46 @@
+% PromptingFlips.tex: paired verdict flips from the uninstructed prompt to the two
+% abstention prompts, per rung. Single-column table.
+% Source: results/tables/prompt_transitions.csv
+% (builder reporting/tables/prompt_transition.py::build).
+% Pool: the answerable set on oracle pages, n=847 paired questions per cell (every
+% question scored under both prompt modes at that rung). Only the instruction changes
+% between the two sides, so every flip is the instruction's.
+% R→W splits into the two ways a correct answer is lost: the model refuses a question
+% it had answered correctly (false abstention), or it still answers and answers wrongly.
+% The two split rows sum to the R→W row; R→W minus W→R is the Net row, which reproduces
+% the accuracy change between the same two prompt modes in Table~\ref{tab:prompting_full}
+% (the abstentions row of that table's false-abstention block is reproduced exactly by the
+% builder's `abstentions` column, which is the check that the two tables share a pool).
+% HEAT: warm on the three loss rows, one shared scale [0,15] so a component reads against
+%   its total; green on W→R [0,4]. Macro names are unique to this table (\aRW/\aWR).
+\definecolor{flipwarm}{HTML}{D95926}
+\definecolor{flipgreen}{HTML}{16B84E}
+\newcommand{\aRW}[1]{\pgfmathtruncatemacro{\ashade}{max(0,min(60,(#1-0)/(15-0)*65))}\edef\acol{flipwarm!\ashade}\expandafter\cellcolor\expandafter{\acol}#1}
+\newcommand{\aWR}[1]{\pgfmathtruncatemacro{\ashade}{max(0,min(55,(#1-0)/(4-0)*60))}\edef\acol{flipgreen!\ashade}\expandafter\cellcolor\expandafter{\acol}#1}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{} l rrrr @{}}
+\toprule
+\textbf{Verdict flip} & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{none $\rightarrow$ abstain}} \\
+R$\rightarrow$W            & \aRW{9.9} & \aRW{11.1} & \aRW{12.9} & \aRW{14.6} \\
+\quad refused              & \aRW{4.5} &  \aRW{6.3} &  \aRW{4.8} &  \aRW{6.3} \\
+\quad answered wrongly     & \aRW{5.4} &  \aRW{4.8} &  \aRW{8.0} &  \aRW{8.4} \\
+W$\rightarrow$R            & \aWR{1.3} &  \aWR{1.5} &  \aWR{1.8} &  \aWR{2.6} \\
+Net                        &  $-8.6$   &   $-9.6$   &  $-11.1$   &  $-12.0$   \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{none $\rightarrow$ abstain (balanced)}} \\
+R$\rightarrow$W            & \aRW{9.4} & \aRW{10.6} & \aRW{11.8} & \aRW{13.8} \\
+\quad refused              & \aRW{3.9} &  \aRW{4.8} &  \aRW{3.5} &  \aRW{4.5} \\
+\quad answered wrongly     & \aRW{5.5} &  \aRW{5.8} &  \aRW{8.3} &  \aRW{9.3} \\
+W$\rightarrow$R            & \aWR{1.4} &  \aWR{1.8} &  \aWR{1.9} &  \aWR{3.4} \\
+Net                        &  $-8.0$   &   $-8.9$   &   $-9.9$   &  $-10.4$   \\
+\bottomrule
+\end{tabular}
+\caption{Verdict flips (\%) from the uninstructed prompt to each abstention prompt, paired within-question on the answerable set at oracle pages ($n{=}847$ per cell). R$\rightarrow$W splits into the questions the instruction refuses after answering them correctly and the questions it still answers, wrongly; the refusals are the smaller half at every rung but one.}
+\label{tab:prompting_flips}
+\end{table}

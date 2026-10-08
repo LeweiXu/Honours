@@ -1,0 +1,70 @@
+% Columns end where their content does, instead of stretching to the page bottom.
+\raggedbottom
+\section{Additional Experimental Details}
+\label{app:full_experimental_detail}
+
+This appendix supplements \S\ref{sec:methodology} with the prompts, settings and evaluation rubrics that the main text does not give.
+
+%% ---------------------------------------------------------------------------
+\subsection{Pipeline}
+\label{app:attribution}
+
+\input{appendix/tables/reasoner_prompt}
+
+The pipeline of \S\ref{sec:attribution} has three stages, each run once per question.
+
+\paragraph{(1) Encoding.}
+Each page is rasterised at 200\,DPI, and its embedded text layer is extracted with PyMuPDF. A document parser converts the rendered page to markdown, one page at a time, and the result is stored so that every condition reads the same parse. Page images are downsampled to the pixel cap of the resolution preset before they reach the reasoner. The representation then determines which of these artifacts form the context (Table~\ref{tab:app_representations}).
+
+\paragraph{(2) Retrieval.}
+A retriever scores every page of the question's document against the question and returns the top $k$ pages. Text retrievers rank page text and visual retrievers rank page images. The controlled experiments replace this stage with constructed page sets: representation and reasoning conditions supply the annotated gold pages, and selection conditions remove gold pages or add non-gold ones. ColQwen3 is used only to order pages where a condition depends on rank, and BM25 only to supply three pages for unanswerable questions, which have no gold evidence.
+
+\paragraph{(3) Inference.}
+The reasoner receives the selected pages, the question and an instruction in the template of Figure~\ref{fig:app_reasoner_template}, and answers in a single pass without tools or follow-up turns. Pages are restored to document order, whatever their rank. Under \textbf{TLV}, the text of all supplied pages forms one block, followed by their images in the same order. Decoding is greedy, with no sampling parameters and no cap on input tokens, so an output is determined by its question, page set, representation, reasoner, resolution and prompt mode.
+
+\paragraph{Comparisons.}
+Every intervention is compared with its baseline on the same questions, and a question that cannot satisfy a condition is excluded from that comparison. A \emph{single-hop} question has one gold page and cites one evidence source; every other answerable question is \emph{multi-hop}.
+
+%% ---------------------------------------------------------------------------
+\subsection{Representation Settings}
+\label{app:representation}
+
+\input{appendix/tables/representations}
+\input{appendix/tables/fidelity}
+
+Table~\ref{tab:app_representations} defines the representations and Table~\ref{tab:app_fidelity} the fidelity settings. Parsers emit page-level markdown, and no layout coordinates reach the reasoner. \textbf{T} reads the PDF's embedded text layer, which is usually empty on scanned documents. The image presets cap a page at 313,600 (\texttt{low}), 501,760 (\texttt{med}) and 752,640 (\texttt{high}) pixels, and the token counts in Table~\ref{tab:app_fidelity} are Qwen3-VL's median visual tokens per page.
+
+%% ---------------------------------------------------------------------------
+\subsection{Prompt Modes}
+\label{app:reasoning}
+
+\input{appendix/tables/prompts}
+
+Table~\ref{tab:app_reasoning_prompts} gives the instruction for each prompt mode, including three that appear only in Appendix~\ref{app:additional_results}. Both \texttt{cot} and \texttt{abstain} include the \texttt{grounded} sentence. Under the modes that request reasoning, the text after the last \texttt{Answer:} marker is extracted as the answer before judging.
+
+%% ---------------------------------------------------------------------------
+\subsection{Datasets}
+\label{app:datasets_evaluation}
+
+\input{appendix/tables/mmlb_composition}
+\input{appendix/tables/ldu_composition}
+
+Tables~\ref{tab:mmlb_composition} and~\ref{tab:ldu_composition} summarise the two benchmarks. On MMLongBench-Doc, a question is unanswerable when its gold answer is \emph{Not answerable}, and a document is considered scanned when its pages carry no usable text layer. Evidence source is multi-label on both benchmarks, so a question citing two sources counts under both and source counts exceed the number of questions. LongDocURL's documents are born-digital.
+
+%% ---------------------------------------------------------------------------
+\subsection{Evaluation}
+\label{app:evaluation}
+
+\input{appendix/tables/judge_prompt}
+\input{appendix/tables/judge_prompt_taxonomy}
+\input{appendix/tables/judge_error_cats}
+\input{appendix/tables/judge_agreement}
+
+\paragraph{Rubrics.}
+Gemini-2.5-Flash judges every response under one of two rubrics, the first returning \emph{correct} or \emph{incorrect} only, while the second allows for an additional \emph{abstained} outcome. The \emph{accuracy rubric} (Figure~\ref{fig:app_judge_prompt}) states only the correctness rule. The \emph{taxonomy rubric} (Figure~\ref{fig:app_judge_prompt_taxonomy}) adds a definition of abstention and assigns each incorrect response the first category of Table~\ref{tab:app_error_taxonomy} that applies. Because it recognises refusals however they are worded, it reports more refusals, and its answerable accuracy is two to three points lower. Levels are therefore compared only within a rubric. The taxonomy rubric scores Tables~\ref{tab:abstention_rungs}, \ref{tab:deploy_rungs} and~\ref{tab:app_prompt_results} and Figures~\ref{fig:app_reasoning_cot}--\ref{fig:app_error_sources}; every other result uses the accuracy rubric.
+
+\paragraph{Metrics.}
+On unanswerable questions an abstention is correct. On answerable questions it is incorrect and counts as a false refusal. Refusal rates are computed separately for the two pools.
+
+\paragraph{Judge Validation.}
+Table~\ref{tab:app_judge_agreement} reports agreement with two references. On 500 stratified responses, Gemini-2.5-Flash agrees with GPT-4o on 96.0\% of verdicts (Cohen's $\kappa = 0.918$), and on a 120-response subset it agrees with a human annotator on 98.3\% ($\kappa = 0.966$).

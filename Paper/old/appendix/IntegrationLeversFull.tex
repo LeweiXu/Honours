@@ -1,0 +1,47 @@
+% IntegrationLeversFull.tex — reasoning interventions at TLV: single vs multi accuracy, the integration deficit, and how
+% each intervention moves it. Flat rows (none baseline + 5 prompts + TLVi), single column.
+% S, M = accuracy (teal, [0,70] capped 60%); M-S = deficit (warm on magnitude, [0,26] capped 55%);
+% ΔGap = row (M-S) minus the none baseline (M-S = -25.0); positive = the intervention NARROWED the deficit.
+% Blanks are pending finer-grained builder pulls.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+\newcommand{\lacc}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-0)/(70-0)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+\newcommand{\lgap}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(26-0)*55))}\edef\t{recwarm!\s}\expandafter\cellcolor\expandafter{\t}$-$#1}
+% \providecommand, not \newcommand: PromptingFull is \input earlier in
+% additional_findings.tex and defines \bl too, which made the appendix fail to build.
+\providecommand{\bl}{}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+\adjustbox{max width=\columnwidth}{%
+\begin{tabular}{l rr r r}
+\toprule
+\textbf{Condition} & \textbf{S} & \textbf{M} & \textbf{M$-$S} & \textbf{$\Delta$Gap} \\
+\midrule
+none (baseline)   & \lacc{63.5} & \lacc{38.5} & \lgap{25.0} & \phantom{$+$}0.0 \\
+grounded          & \lacc{55.8} & \lacc{33.0} & \lgap{22.9} & $+$2.1 \\
+abstain           & \lacc{50.8} & \lacc{29.9} & \lgap{20.9} & $+$4.1 \\
+abstain\_balanced & \lacc{52.1} & \lacc{31.0} & \lgap{21.1} & $+$3.9 \\
+cot               & \lacc{60.6} & \lacc{44.1} & \lgap{16.5} & $+$8.5 \\
+extract\_cot      & \lacc{57.5} & \lacc{41.5} & \lgap{16.0} & $+$9.0 \\
+TLVi (interleaved) & \lacc{65.4} & \lacc{41.9} & \lgap{23.5} & $+$1.5 \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Single-page (S) and multi-page (M) accuracy (\%) at the TLV rung on the answerable pool, oracle pages;
+% teal deepens with accuracy. \textbf{M$-$S} is the integration deficit in points (negative $=$ multi worse),
+% warm-shaded on its magnitude. \textbf{$\Delta$Gap} is this row's deficit minus the \emph{none} baseline
+% deficit ($-25.0$); a positive value means the intervention narrowed the multi-page deficit, and a value near zero
+% means it shifted the accuracy level without closing the gap. All rows are the same questions and oracle
+% pages; only the instruction (or, for TLVi, the page ordering) changes. TLVi is measured against its own
+% paired baseline elsewhere, so its $\Delta$Gap here is computed against \emph{none} for a common reference.
+% The chain-of-thought prompts narrow the deficit most ($+8.5$, $+9.0$), while interleaving and grounding
+% move it little; the abstain rows lift $\Delta$Gap only because false abstention depresses single-page
+% accuracy, not through genuine integration.\par}
+\caption{Reasoning interventions at TLV: how each prompt and page ordering moves the integration deficit. Teal deepens with accuracy, warm with the deficit; $\Delta$Gap isolates the interventions that narrow the gap (chain-of-thought) from those that only shift the level.}
+\label{tab:levers}
+\end{table}

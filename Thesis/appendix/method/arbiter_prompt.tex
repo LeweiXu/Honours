@@ -1,36 +1,37 @@
-\begin{figure}[h]
+\begin{figure*}[h]
 \centering
-\fbox{%
-\begin{minipage}{0.94\linewidth}
-\small
-\textbf{\texttt{ARBITER} prompt (abridged)}
-\vspace{0.5em}
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+A reader gathered evidence from a long document, and a synthesizer
+proposed an answer. Decide whether the gathered evidence is sufficient
+to answer the QUESTION. You may inspect the reader's records and the
+flagged pages shown in full. Your task is to decide whether to end or
+read more pages; you cannot replace the proposed answer.\\[0.5em]
 
-\ttfamily
-A reader inspected pages from a long document and a synthesizer produced a candidate answer.
+Think step by step. Identify the facts the question requires, where
+the evidence supplies them, and any specific fact still missing.
+Inspect the parsed text and images when a record may have omitted a
+relevant detail.\\[0.5em]
 
-Your job is not to answer the QUESTION. Decide whether the accumulated evidence is sufficient to support an answer or whether additional pages should be read.
+Write DECISION: CONTINUE only if a required fact is missing and further
+reading could plausibly find it. Name that fact after MISSING:. If the
+evidence is sufficient but the proposed answer is mistaken, additional
+reading is not a substitute for correcting the answer: write
+DECISION: END. When the proposed answer is ``Not answerable'' and pages
+remain, check especially whether more reading could resolve the gap.\\[0.5em]
 
-Think step by step:
+REASONING: <assessment of evidential sufficiency>\\
+MISSING: <specific missing fact, or exactly ``none''>\\
+DECISION: <CONTINUE or END>\\[0.5em]
 
-\begin{itemize}
-    \item What facts does the QUESTION require?
-    \item Which required facts are present in the accumulated evidence?
-    \item Does the proposed answer rely on information not supported by that evidence?
-\end{itemize}
-
-If a specific required fact is missing and unread pages remain, request further reading. If the evidence is complete, terminate even if the proposed answer itself is incorrect; additional pages cannot repair a reasoning error over already sufficient evidence.
-
-A proposed \texttt{Not answerable} while unread pages remain is evidence that further reading may be required.
-
-\vspace{0.5em}
-\textbf{OUTPUT}
-
-\texttt{REASONING: <reasoning>}\\
-\texttt{MISSING: <specific missing fact or none>}\\
-\texttt{DECISION: <CONTINUE/END>}
-\end{minipage}%
-}
-\caption{Abridged prompt for the \texttt{arbiter} role. The arbiter evaluates evidence sufficiency but cannot replace the candidate answer.}
-\label{fig:method_arbiter_prompt}
-\end{figure}
+QUESTION: \{question\}\\
+RECORDS: \{accumulated reader records\}\\
+FLAGGED PAGES: \{parser text and medium-resolution images\}\\
+PROPOSED ANSWER: \{synthesizer answer\}\\
+PAGES LEFT: \{number of unread pages available\}
+\end{tcolorbox}
+\caption{Arbiter prompt structure for iteration 7. A \texttt{CONTINUE} decision resumes reading at the next unread ranked page; the arbiter has no channel for issuing a replacement answer.}
+\label{fig:app_arbiter_prompt}
+\end{figure*}

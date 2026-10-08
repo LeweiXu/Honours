@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}l
+  >{\raggedright\arraybackslash}p{\dimexpr 0.50\columnwidth-6pt\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.36\columnwidth-6pt\relax}@{}}
+\toprule
+\textbf{Rep.} & \textbf{Text channel} & \textbf{Image channel} \\
+\midrule
+T   & PyMuPDF embedded text (no parsing) & -- \\
+TL  & PaddleOCR-VL markdown              & -- \\
+TV  & PyMuPDF embedded text (no parsing) & Page image (\texttt{med}) \\
+TLV & PaddleOCR-VL markdown              & Page image (\texttt{med}) \\
+V   & --                                 & Page image (\texttt{med}) \\
+\bottomrule
+\end{tabular}
+\caption{Page representations.}
+\label{tab:app_representations}
+\end{table}

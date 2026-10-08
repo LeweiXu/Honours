@@ -1,0 +1,72 @@
+% Reasoner.tex — deployment: precision, scale, matched budget, family, reasoning variant.
+% Accuracy (%) on oracle pages, med resolution, full pool. GB = model weight footprint (not peak VRAM).
+% Rebuilt on the full 847-question pool (supersedes the V100 survivor-pool numbers).
+%
+% Heat shading matches Ladder.tex: teal deepens with accuracy on the SAME fixed [14,74]
+% scale capped at 60%, so a cell here reads against a cell there. Macros are named
+% \rshade/\rcell to avoid colliding with Ladder.tex's \hshade/\hcell.
+% The GB column carries its own warm scale (recwarm, the same hue as Ladder.tex's delta
+% strip), deepening with weight footprint: it is a cost, not an accuracy, so it must not
+% share the teal ramp. Scale [4,25] capped 55%, chosen so the 4.3-20.0 GB range where
+% every deployable config sits actually spreads; the 32B's 66.7 GB saturates the ramp,
+% which is the point (it is the one config that does not fit a commodity card).
+% Uncoloured by design: the reasoning-variant block (M-S point differences, which the
+% accuracy scale cannot express).
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+% \rshade{value} : paints the cell by accuracy; \pgfmathtruncatemacro forces the integer xcolor's ! mixing needs.
+\newcommand{\rshade}[1]{%
+  \pgfmathtruncatemacro{\rshadeval}{max(0,min(60,(#1-14)/(74-14)*65))}%
+  \edef\rtmpcol{accteal!\rshadeval}%
+  \expandafter\cellcolor\expandafter{\rtmpcol}%
+}
+\newcommand{\rcell}[1]{\rshade{#1}#1}
+% \rwt{value} : warm wash deepens with the weight footprint in GB.
+\newcommand{\rwt}[1]{%
+  \pgfmathtruncatemacro{\rgbshade}{max(0,min(55,(#1-4)/(25-4)*55))}%
+  \edef\rgbcol{recwarm!\rgbshade}%
+  \expandafter\cellcolor\expandafter{\rgbcol}#1%
+}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Model / config} & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} & \textbf{GB} \\
+\midrule
+
+\multicolumn{6}{l}{\emph{Scale} (Qwen3-VL, bf16)} \\
+  \quad 2B  & \rcell{24.7} & \rcell{31.9} & \rcell{38.3} & \rcell{31.9} & \rwt{4.3} \\
+  \quad 4B  & \rcell{32.3} & \rcell{38.6} & \rcell{50.4} & \rcell{42.4} & \rwt{8.9} \\
+  \quad 8B  & \rcell{31.9} & \rcell{38.4} & \rcell{52.4} & \rcell{45.5} & \rwt{17.5} \\
+  \quad 32B & \rcell{35.5} & \rcell{43.9} & \rcell{59.6} & \rcell{56.7} & \rwt{66.7} \\
+\cmidrule(lr){1-6}
+\multicolumn{6}{l}{\emph{Precision} (Qwen3-VL-8B)} \\
+  \quad 16-bit & \rcell{31.9} & \rcell{38.4} & \rcell{52.4} & \rcell{45.5} & \rwt{17.5} \\
+  \quad 8-bit  & \rcell{32.5} & \rcell{37.9} & \rcell{53.6} & \rcell{45.7} & \rwt{10.3}$^{\sim}$ \\
+  \quad 4-bit  & \rcell{31.8} & \rcell{39.4} & \rcell{51.8} & \rcell{45.5} & \rwt{6.8}$^{\sim}$ \\
+
+\cmidrule(lr){1-6}
+\multicolumn{6}{l}{\emph{Matched budget} ($\sim$17--20\,GB)} \\
+  \quad 8B, 16-bit  & \rcell{31.9} & \rcell{38.4} & \rcell{52.4} & \rcell{45.5} & \rwt{17.5} \\
+  \quad 32B, 4-bit  & \rcell{37.0} & \rcell{42.1} & \rcell{59.1} & \rcell{52.3} & \rwt{20.0}$^{\sim}$ \\
+\cmidrule(lr){1-6}
+\multicolumn{6}{l}{\emph{Family} (8B class, bf16)} \\
+  \quad Qwen3-VL-8B  & \rcell{31.9} & \rcell{38.4} & \rcell{52.4} & \rcell{45.5} & \rwt{17.5} \\
+  \quad InternVL3-8B & \rcell{19.3} & \rcell{25.3} & \rcell{32.6} & \rcell{24.1} & \rwt{15.9} \\
+% \cmidrule(lr){1-6}
+% \multicolumn{6}{l}{\emph{Reasoning variant} (M$-$S, negative $=$ multi worse)} \\
+%   \quad Qwen3-VL-8B       & $-$11.7 & $-$13.9 & $-$25.8 & $-$21.5 & \rwt{17.5} \\
+%   \quad Qwen3-VL-8B-Think & $-$2.1 & $-$3.3 & $-$8.0 & $-$10.8 & -- \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages at medium resolution, full answerable pool ($n=847$); per-cell $n$ omitted for space (807--847, thinnest at TLV where OOM attrition is largest). \textbf{GB} is the model weight footprint ($^{\sim}$derived for quantized variants); peak VRAM was device-0 only and is not reported. The bottom block reports the multi$-$single deficit, not accuracy, and the thinking variant has no annotated weight footprint. At a matched memory budget the quantized 32B beats the 16-bit 8B at every rung, and the thinking variant nearly closes the integration deficit.\par}
+\caption{Reasoner accuracy across precision, scale, matched budget, family, and a reasoning variant.}
+% with teal deepening with accuracy on the same scale as Table~\ref{tab:ladder}. Scale helps most on the visual rungs, 4-bit quantization is nearly free, family choice costs more than precision, and the thinking variant sharply narrows the multi-page deficit. The weight column carries its own warm scale, since a footprint is a cost rather than an accuracy; the M$-$S block is a point difference and is left unshaded.}
+\label{tab:reasoner}
+\end{table}

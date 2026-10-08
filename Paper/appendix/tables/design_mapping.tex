@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.36\columnwidth-4pt\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.38\columnwidth-4pt\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.26\columnwidth-4pt\relax}@{}}
+\toprule
+\textbf{Design implication} & \textbf{Applied as} & \textbf{Related mechanism} \\
+\midrule
+Pair text with vision & TLV at reading and synthesis & Parallel text and image agents~\citep{han2025mdocagent} \\
+Prioritize conversion fidelity & Strongest parser; high-resolution reading & -- \\
+Prioritize evidence coverage & Minimum reading depth; flag when uncertain & Iterative retrieval~\citep{jain2025simpledoc} \\
+Acquire broadly, present selectively & Flagged pages in full; others as records & -- \\
+Use CoT where evidence must be integrated & Stepwise synthesis over multi-page records & Common practice \\
+Calibrate refusal to evidence sufficiency & Name the missing fact; arbiter resumes reading but cannot replace the answer & Answer adjudication~\citep{zhu2026doclens} \\
+\bottomrule
+\end{tabular}
+\caption{Design implications and their application.}
+\label{tab:design_mapping}
+\end{table}

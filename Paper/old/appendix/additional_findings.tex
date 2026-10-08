@@ -1,0 +1,68 @@
+\newpage
+
+\input{appendix/LadderFull}
+\input{appendix/ParserFull}
+
+\section{Full Representation Details}
+\label{app:add_representation}
+
+\subsection{Domain, Source, Resolution}
+\label{app:ladder_strata}
+
+Table~\ref{tab:ladder_source_res} resolves the ladder by document domain and by evidence source, and adds the resolution sweep the main text refers to but does not show. Two patterns hold across the strata. The combined encoding wins on six of the seven domains, and the one exception is instructive: on financial reports parser text alone is the best rung ($52.8$ against $51.9$), and it is the domain where the image adds least, since a filing carries its content in tables and running text that the parser already recovers. Read by evidence source, the image earns its accuracy on the graphical sources, where the text channel recovers least over vision alone (Chart and Figure show a text-recovery margin of only $2.2$ and $4.5$ points), and the text channel earns its accuracy on the textual ones (Pure-text and Table recover $11.0$ and $10.6$ points). The resolution wings confirm that this is a property of the visual channel rather than of its resolution: raising the render resolution lifts the pixel-limited sources most, moving the image-only rung on Table from $25.3$ at low resolution to $42.4$ at high and on Chart from $34.3$ to $48.3$, while text-carried sources such as Pure-text barely move. Higher resolution therefore buys legibility on dense and graphical content, not a uniform gain, and even at the highest resolution the image-only rung stays below the combined encoding, which places the shortfall in the channel and not the pixels.
+
+\subsection{Parser Fidelity}
+\label{app:parser_fidelity}
+
+Table~\ref{tab:parser_fidelity} extends the parser comparison to every evidence source and to scanned pages, and reports the paired verdict transitions across the vision step. The convergence the main text reports pooled holds within each source: the three layout parsers and the raw embedded-text channel spread widely on text alone and close once the page image is added, and the recovery direction dominates the regression direction at every parser, with the vision step flipping far more wrong answers to right (W$\rightarrow$R) than right to wrong (R$\rightarrow$W). Two source-level details are worth noting. The recovery concentrates on the graphical sources and is smallest on tabular evidence, so the image compensates most exactly where the parser preserves least: adding the page image repairs $20.8$ and $21.2$ percent of previously wrong Chart and Figure answers under the baseline parser, against $4.9$ percent on Table, where the parser was already reading the content correctly and the image has little left to add. Scanned pages behave differently by parser: the three OCR parsers recover usable text from the rendered page and hold accuracy, while PyMuPDF, which only reads an embedded text layer, collapses to the token floor on scans ($4.0$ against $40.6$ on digital pages) and depends almost entirely on the image to answer, repairing $54.2$ percent of its scanned Chart answers once the page is visible. The scanned per-source cells are thin and should be read for direction rather than precise value.
+
+\input{appendix/RetrievalFull}
+\input{appendix/SelectionFull}
+\input{appendix/SelectionWithholding}
+\input{appendix/SelectionDistractors}
+
+\section{Full Selection Details}
+\label{app:add_selection}
+
+\subsection{Retrieval Sweep}
+\label{app:retrieval_sweep}
+
+Table~\ref{tab:retrievers} gives the full page-level retrieval sweep behind the recall claim in Section~\ref{sec:design}. Across every depth the vision retrievers lead the text ones, and the best single-page operating point is $k{=}1$ for every retriever, since precision falls faster than recall rises as the depth grows. The recall-tuned reading the design discussion recommends is visible in the curve: the strongest vision retriever climbs from $54.1$ recall at $k{=}1$ to $87.4$ at $k{=}10$, buying coverage the reasoner can use at a precision cost the reasoner tolerates. Joint text-and-vision retrieval raises recall further at shallow depth, reaching $58.7$ at $k{=}1$ where the best vision arm alone reaches $54.1$, which is why it is the better choice when the pipeline reads only a few pages, but its advantage narrows as the vision retriever catches up with depth. The practical implication for selection is that a recall-tuned vision or joint retriever reaches full coverage of the required pages within the distractor range the reasoner absorbs, so retrieval and reasoning compose rather than compete.
+
+\subsection{Rankers and Encodings}
+\label{app:selection_sweep}
+
+Table~\ref{tab:app_selection} gives the full page-set sweep, over both rankers and every rung. The withholding block confirms that the collapse is indifferent to which page is removed and to how it is ranked: dropping the highest-ranked gold page, dropping the lowest-ranked one, and isolating a single gold page all fall to within a few points of each other at every rung, so retrieval rank is not a proxy for evidential necessity. Isolating a single page falls furthest, since it removes the most evidence, which is consistent with the loss scaling with how much required evidence is withheld rather than with its rank. The distractor block confirms the other half of the asymmetry: adding one, two, or three non-evidence pages to a fixed gold set leaves accuracy at its oracle level throughout, for both a one-page and a two-page gold set, and the small movements that do appear are within the confidence intervals. The two blocks are not comparable to each other, since they differ in both evidence and length, but read down each block the message is the one the main text draws.
+
+\subsection{Verdict Transitions}
+\label{app:selection_transitions}
+
+Tables~\ref{tab:selection_withholding} and~\ref{tab:selection_distractors} report the per-question verdict transitions behind the asymmetry, resolved by evidence source, and give both directions of the flip: right$\rightarrow$wrong is the share of oracle-correct answers a change to the page set breaks, and wrong$\rightarrow$right the share it repairs. Read together the two directions separate the mechanisms in a way neither does alone. Withholding a gold page breaks a fifth to a third of previously correct answers at every source, from $19.2$ on Chart to $31.3$ on Pure-text, and repairs at most $10.0$ in return, so the change is a near one-way loss rather than a churn. Adding distractor pages breaks under a tenth and repairs almost exactly as many as it breaks: pooled over sources, three added pages cost $9.7$ and recover $8.2$ at one gold page, and $11.4$ against $6.0$ across two and three. That the two directions nearly cancel is the stronger statement, since a raw regression rate of $9.7$ read alone would suggest a real cost, and it is only the matching repair rate that shows the reasoner is churning rather than losing. The source breakdown adds one detail the pooled numbers hide: the omission cost is slightly higher on the text-carried sources than on the graphical ones, consistent with textual multi-page questions depending more often on one specific withheld page, though the gap is small.
+
+\input{appendix/IntegrationFull}
+\input{appendix/PromptingFull}
+\input{appendix/PromptingFlips}
+\input{appendix/IntegrationLeversFull}
+
+\section{Full Reasoning Details}
+\label{app:add_reasoning}
+
+\subsection{Deficit by Stratum}
+\label{app:integration_strata}
+
+Table~\ref{tab:integration_full} resolves the integration deficit by evidence source and by document domain across the ladder. The widening the main text reports pooled holds almost everywhere: single-page and multi-page accuracy both rise as the encoding improves, but single-page rises faster, so the deficit deepens most on the sources and domains where the image helps single-page questions the most. Two strata run against the pooled pattern and are worth noting. Academic pages carry a positive deficit at every rung, meaning multi-page questions there outperform single-page ones, which likely reflects the structured cross-referencing of academic documents suiting multi-page evidence. The administrative and financial domains show the deepest deficits at the combined rung ($-52.8$ and $-54.1$), where single-page accuracy is high and multi-page accuracy is not, so the integration failure is sharpest exactly where the single-page ceiling is highest. Across the sources the deficit is present under every condition, which is what places the loss in cross-page integration rather than in any single representation.
+
+\subsection{Prompting by Source}
+\label{app:prompting_source}
+
+Table~\ref{tab:prompting_full} gives the full prompting sweep by evidence source, for answerable accuracy, false abstention, and correct abstention on unanswerable questions, across all four rungs. The coupled abstention trade the main text reports pooled holds within each source: the instruction that raises correct refusal on unanswerable questions also raises false refusal on answerable ones, and no source escapes the coupling. The reasoning prompts behave differently from the abstention ones, leaving both abstention rates near the uninstructed baseline while moving accuracy, so they act on the answer rather than on the model's willingness to give one. The per-source view corrects an impression the pooled numbers leave. Chain-of-thought lifts pooled accuracy at the combined encoding by only $0.6$ points, which reads as a null result, but the pooled figure averages a $6.9$ point gain on Table against movements within a point on every other source. The gain therefore concentrates on tabular evidence, where answering typically requires reading several cells and relating them, rather than on the graphical sources where the image already does the work. This is the same selectivity the hop split shows: the reasoning prompt helps where an answer has to be assembled from parts, and does nothing where it has to be read off.
+
+\subsection{What the Abstention Instruction Breaks}
+\label{app:prompting_flips}
+
+Table~\ref{tab:prompting_flips} pairs each answerable question with itself across prompt modes, so it isolates what the abstention instruction costs on questions the reasoner could already answer. The pages are the oracle evidence pages under both modes and only the instruction changes, which makes every flip attributable to the instruction rather than to what the model was shown. The loss runs one way: at the combined encoding the instruction breaks $12.9$ percent of the paired questions and repairs $1.8$, and the same asymmetry holds at all four rungs. What the split adds is that most of the loss is not refusal. Of the $12.9$ points, $4.8$ are questions the reasoner had answered correctly and now declines to answer, while $8.0$ are questions it still answers and now answers wrongly. The instruction therefore does two separable things, and only one of them is the cautious behaviour it was written to produce; the other is a perturbation of the answer itself, which the abstention rates alone do not reveal. Read the other way, the refusals are better aimed than the pooled false-abstention rate suggests. Of the $232$ false abstentions at the combined encoding, $17.7$ percent land on questions the uninstructed prompt answered correctly, against the $52.5$ percent a refusal blind to correctness would hit, so the model does refuse preferentially where it was already failing. The balanced wording acts on this half and not the other: it lowers the refusal component from $4.8$ to $3.5$ points at the combined encoding while leaving the wrong-answer component where it was ($8.0$ against $8.3$), which recovers about a point of accuracy overall. Softening the instruction therefore buys back refusals, not answers, and the answer-perturbing half of the cost survives every version of the instruction we test.
+
+\subsection{Moving the Deficit}
+\label{app:deficit_interventions}
+
+Table~\ref{tab:levers} isolates which prompt and page-ordering interventions move the integration deficit rather than merely shifting the accuracy level. The distinction matters, because an intervention can raise single- and multi-page accuracy together and leave the gap untouched, which is a weaker effect than repairing integration. The chain-of-thought prompts narrow the deficit most, by $8.5$ and $9.0$ points, and the narrowing comes from the multi-page side, so they act on integration directly. Interleaving each page's text with its own image narrows the gap only slightly ($1.5$ points), so presentation order matters far less than the reasoning prompt. The two abstention prompts show a positive gap movement, but this is an artefact of their depressing single-page accuracy through false abstention on the answerable pool rather than a genuine integration gain, and it should not be read as one. Reasoner scale belongs in the same comparison and is the clearest negative case: as Section~\ref{app:scale_integration} shows, a four-fold increase in parameters raises both hop classes and leaves the deficit no smaller, so of the interventions we test only the reasoning prompt reaches the loss.

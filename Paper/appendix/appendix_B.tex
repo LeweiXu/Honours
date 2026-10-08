@@ -1,0 +1,97 @@
+\section{Additional Results}
+\label{app:additional_results}
+
+This appendix extends the results of \S\ref{sec:findings}--\S\ref{sec:deployment}. Unless stated otherwise, results use Qwen3-VL-8B at \textbf{TLV} with gold pages on MMLongBench-Doc.
+
+% The floats of B.1 to B.3 are declared here, ahead of their text and in the order of the
+% subsections (representation, selection, reasoning), so they sit at the tops of text pages.
+\input{appendix/tables/parser_sources}
+\input{appendix/tables/resolution_sources}
+\input{appendix/tables/ldu_types}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{appendix/figures/retrieval.pdf}
+\caption{Page-level recall on MMLongBench-Doc by retrieval depth, split by gold-page count and by scan status.}
+\label{fig:app_retrieval}
+\end{figure*}
+
+\input{appendix/tables/ldu_coverage}
+\input{appendix/tables/distractor_steps}
+\input{appendix/tables/ldu_distractor}
+
+\input{appendix/tables/reasoner_configs}
+\input{appendix/tables/gemma_hops}
+\input{appendix/tables/prompt_hops}
+\input{appendix/tables/prompt_results}
+
+%% ---------------------------------------------------------------------------
+\subsection{Representation}
+\label{app:results_representation}
+
+\paragraph{Parsers by Evidence Source.}
+Table~\ref{tab:app_parser_sources} breaks the parser comparison of Figure~\ref{fig:fidelity} down by evidence source. The page image helps most where text extraction loses the evidence: chart and figure questions gain 13 to 26 points on born-digital documents under every text source, while table questions change by under 6 points and lose slightly under three of the four. On scanned documents embedded text answers almost nothing, and the image recovers 45 points or more for every source.
+
+\paragraph{Resolution by Evidence Source.}
+Table~\ref{tab:app_resolution_sources} extends the resolution sweep to all evidence sources. From \texttt{low} to \texttt{high}, \textbf{V} gains 12.4 points overall and 17.1 on tables, against 5.5 and 0.0 for \textbf{TLV}. Chart questions are the exception: they gain about 10 points under \textbf{TLV} as well, and parser text adds nothing to them at \texttt{med} or \texttt{high}.
+
+\paragraph{LongDocURL by Question Type.}
+Table~\ref{tab:app_ldu_types} splits the LongDocURL results of Table~\ref{tab:ldu_rungs} by question type. Accuracy varies far more across question types than across representations: \texttt{summary2tab} stays below 20\% under every representation, while \texttt{extract} never falls below 74\%. Parser text alone is the best representation for two of the locating types, and \textbf{V} is weakest on \texttt{calculate} and \texttt{compare}, which depend on exact values.
+
+%% ---------------------------------------------------------------------------
+\subsection{Selection}
+\label{app:results_selection}
+
+\paragraph{Retrieval Recall.}
+Figure~\ref{fig:app_retrieval} compares three text and three visual retrievers. Visual retrievers lead at every depth, and ColQwen3 is the strongest, which is why it orders pages in the selection experiments. Text retrieval over the embedded text layer collapses on scanned documents, and ranking parser text instead recovers much of the gap. Even ColQwen3 leaves gold pages outside the top ten, more often for questions with two gold pages.
+
+\paragraph{Coverage on LongDocURL.}
+Table~\ref{tab:app_ldu_coverage} repeats the coverage experiment of Figure~\ref{fig:coverage} on LongDocURL. Omission again breaks far more answers than it repairs. Unlike on MMLongBench-Doc, retrieval rank is informative here: removing the highest-ranked gold page breaks 43.2\% of answers, against 19.6\% for the lowest-ranked page.
+
+\paragraph{Distractor Transitions by Step.}
+Table~\ref{tab:app_distractor_steps} gives the paired transitions behind Figures~\ref{fig:distractor_k} and~\ref{fig:distractor_transfer_family}, comparing each depth with the one before it. The first three added pages break 12 to 14\% of answers for both reasoners and both question groups, well above any later step (at most 7.9\%). Every step also repairs answers, at 2 to 9\%, so the accuracy curve is the net of two opposing movements. After the first step the two roughly cancel for Qwen3-VL-8B, while broken answers continue to outnumber repaired ones at most steps for Gemma-3-12B on single-hop questions.
+
+\paragraph{Distractors on LongDocURL.}
+Table~\ref{tab:app_ldu_distractor} repeats the distractor sweep on LongDocURL with Qwen3-VL-8B. This experiment is still running, and the table reports the depths completed so far. On single-hop questions the first three added pages lower accuracy from 77.2\% to 68.5\%, breaking 13.5\% of answers and repairing 4.8\%, close to the first step on MMLongBench-Doc.
+
+%% ---------------------------------------------------------------------------
+\subsection{Reasoning}
+\label{app:results_reasoning}
+
+\paragraph{Further Reasoner Configurations.}
+Table~\ref{tab:app_reasoner_configs} adds two comparisons to Table~\ref{tab:deploy_reasoner}. Gemma-3 improves with scale at every representation, as Qwen3-VL does, reaching 52.0\% at \textbf{TLV} with 27B. The Thinking variant of Qwen3-VL-8B reaches 62.2\% at \textbf{TLV}, 9.8 points above the Instruct model at the same weight footprint and above the 32B Instruct model.
+
+\paragraph{Gemma-3 Scale by Hop.}
+Table~\ref{tab:app_gemma_hops} repeats the scale comparison of Figure~\ref{fig:integration_scale} for Gemma-3. Multi-hop accuracy rises from 31.9\% at 4B to 43.3\% at 27B, and single-hop accuracy rises alongside it, so the gap between them does not narrow (19.6 points at 4B, 22.6 at 27B), as with Qwen3-VL.
+
+\paragraph{Prompt Modes by Hop.}
+Table~\ref{tab:app_prompt_hops} splits the prompt modes by evidence structure. The near-zero overall effect of \texttt{cot} reported in \S\ref{sec:findings_reasoning} hides two opposite ones: it raises multi-hop accuracy by 3.1 points and lowers single-hop accuracy by 2.8. \texttt{abstain} costs accuracy on both, and multi-hop questions are refused more often (28.1\% against 22.0\%). \texttt{abstain\_cot} recovers most of that loss on both.
+
+\paragraph{Prompt Modes by Evidence Source.}
+Table~\ref{tab:app_prompt_results} reports six prompt modes by evidence source under the taxonomy rubric. Its refusal rates are higher than those of Table~\ref{tab:app_prompt_hops} and Figure~\ref{fig:reasoning_abstain_cot}, which use the accuracy rubric, but the pattern is the same: \texttt{abstain} raises unanswerable refusal from 45.5\% to 74.6\% and answerable refusal from 6.2\% to 27.7\%, with figure and table questions refused most. Adding a sentence against declining supported questions (\texttt{abstain\_balanced}) recovers little, and \texttt{grounded} alone lowers accuracy without improving refusal.
+
+%% ---------------------------------------------------------------------------
+\subsection{Error Analysis}
+\label{app:results_errors}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.72\textwidth]{appendix/figures/error_profile.pdf}
+\caption{Error categories by prompt mode on answerable and unanswerable questions.}
+\label{fig:app_error_profile}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.69\textwidth]{appendix/figures/error_sources.pdf}
+\caption{Error categories by evidence source on answerable questions with no instruction.}
+\label{fig:app_error_sources}
+\end{figure*}
+
+The taxonomy rubric assigns each incorrect response one error category (Table~\ref{tab:app_error_taxonomy}). Figures~\ref{fig:app_error_profile} and~\ref{fig:app_error_sources} show the share of each category, with responses that commit to no answer on the left and wrong answers on the right.
+
+\paragraph{By Prompt Mode.}
+The abstention instructions change the kind of error more than its amount (Figure~\ref{fig:app_error_profile}). Under \texttt{abstain}, refusals on answerable questions rise from 6.1\% to 27.6\% while every wrong-answer category shrinks, and answers to unanswerable questions fall from 53.7\% to 25.4\%. \texttt{grounded} moves in the opposite direction, removing unfinished responses but adding wrong values and counts.
+
+\paragraph{By Evidence Source.}
+Wrong counts dominate layout and figure questions, at 28.8\% and 24.1\% (Figure~\ref{fig:app_error_sources}). Table and chart questions fail mainly on values, and table questions most often end without stating an answer.

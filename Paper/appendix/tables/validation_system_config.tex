@@ -1,0 +1,26 @@
+\label{app:setup_details}
+
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}p{0.27\textwidth}p{0.22\textwidth}p{0.40\textwidth}@{}}
+\toprule
+Setting & Value & Function \\
+\midrule
+Retriever & ColQwen3.5 & Ranks all pages once per question \\
+Parser & Unlimited-OCR & Supplies the text channel \\
+Shared backbone & Qwen3-VL-8B-Instruct & One resident model implements all three roles \\
+Precision and decoding & 4-bit NF4, FP16 compute, greedy & Runs on one NVIDIA V100 16\,GB GPU \\
+Reader pages & \textbf{TLV}, \texttt{high} & Parser text and images capped at 752,640 pixels per page \\
+Synthesizer and arbiter pages & \textbf{TLV}, \texttt{med} & Flagged pages in full, with images capped at 501,760 pixels per page \\
+$B$ / $p$ & 30 / 1 & Maximum pages read / pages per reader turn \\
+$k$ / $m$ & 6 / 4 & Initial stopping floor / minimum further turns after reopening \\
+Reader / synthesizer / arbiter limits & 8192 / 4096 / 4096 & Maximum generated tokens per role turn \\
+Completion limit / $C$ & 1024 / 3 & Tokens per completion pass / maximum completion passes per turn \\
+Full-page fallback & Two pages & Highest-ranked inspected pages when none is flagged \\
+\bottomrule
+\end{tabular}
+\caption{Configuration of the iteration 7 MMLongBench-Doc full run. Flagged pages have no fixed count limit; if their full presentation exceeds memory, the lowest-ranked flagged pages are removed from the multimodal payload while their reader records remain.}
+\label{tab:app_validation_config}
+\end{table*}

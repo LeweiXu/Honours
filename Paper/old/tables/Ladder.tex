@@ -1,0 +1,59 @@
+% Ladder.tex — representation ladder by domain and evidence source, with heat-shaded accuracy.
+% Two sequential hues, one per quantity: teal = accuracy (fixed [14,74] scale, capped 60% —
+% teal is high-luminance, so black digits stay readable even at the cap),
+% warm = |ΔV| (text recovery over vision alone, fixed [2,13] scale, capped 55%).
+% Bold marks the winning rung in each row ("the winning rung depends on the domain").
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+% \hshade{value} : paints the cell by accuracy; \pgfmathtruncatemacro forces the INTEGER xcolor's ! mixing needs.
+\newcommand{\hshade}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(60,(#1-14)/(74-14)*65))}%
+  \edef\tmpcol{accteal!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}%
+}
+\newcommand{\hcell}[1]{\hshade{#1}#1}
+\newcommand{\hbest}[1]{\hshade{#1}\textbf{#1}}
+% \dcell{magnitude} : warm wash deepens with the text channel's recovery over V; prints the signed value.
+\newcommand{\dcell}[1]{%
+  \pgfmathtruncatemacro{\shadeval}{max(0,min(55,(#1-2)/(13-2)*55))}%
+  \edef\tmpcol{recwarm!\shadeval}%
+  \expandafter\cellcolor\expandafter{\tmpcol}$-$#1%
+}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l rrrr @{\hskip 14pt} r}
+\toprule
+%  & \multicolumn{4}{c}{\textbf{Accuracy by rung (\%)}} & \\
+% \cmidrule(lr){2-5}
+ & \textbf{T} & \textbf{TL} & \textbf{TLV} & \textbf{V} & \textbf{$\Delta$V} \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{By document domain}} \\
+Academic paper       & \hcell{36.4} & \hcell{33.1} & \hbest{42.9} & \hcell{33.8} & \dcell{9.1} \\
+Admin / Industry     & \hcell{50.0} & \hcell{56.2} & \hbest{67.2} & \hcell{54.7} & \dcell{12.5} \\
+Brochure             & \hcell{28.6} & \hcell{32.5} & \hbest{45.5} & \hcell{40.3} & \dcell{5.2} \\
+Financial report     & \hcell{49.1} & \hbest{52.8} & \hcell{51.9} & \hcell{38.9} & \dcell{13.0} \\
+Guidebook            & \hcell{35.8} & \hcell{40.0} & \hbest{51.7} & \hcell{45.0} & \dcell{6.7} \\
+Research / Intro     & \hcell{22.6} & \hcell{27.4} & \hbest{47.6} & \hcell{45.3} & \dcell{2.3} \\
+Tutorial / Workshop  & \hcell{14.3} & \hcell{48.2} & \hbest{73.2} & \hcell{67.9} & \dcell{5.3} \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{By evidence source}} \\
+Chart                & \hcell{18.5} & \hcell{19.1} & \hbest{45.5} & \hcell{43.3} & \dcell{2.2} \\
+Figure               & \hcell{15.5} & \hcell{23.8} & \hbest{44.8} & \hcell{40.3} & \dcell{4.5} \\
+Generalized-text     & \hcell{28.0} & \hcell{37.3} & \hbest{50.8} & \hcell{44.1} & \dcell{6.7} \\
+Pure-text            & \hcell{39.2} & \hcell{47.8} & \hbest{55.3} & \hcell{44.3} & \dcell{11.0} \\
+Table                & \hcell{40.6} & \hbest{48.4} & \hbest{48.4} & \hcell{37.8} & \dcell{10.6} \\
+\midrule
+\textbf{All}         & \hcell{31.9} & \hcell{38.8} & \hbest{52.5} & \hcell{45.6} & \dcell{6.9} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+% {\footnotesize\raggedright
+% Accuracy (\%) on oracle pages at medium resolution, Qwen3-VL-8B bf16, full answerable pool ($n=847$). Teal deepens with accuracy on a fixed scale, and bold marks each row's winning rung. The $\Delta$V column ($\Delta$V = V$-$TLV) is a point difference, not an accuracy, so it carries its own warm shading, deepening with the accuracy the text channel recovers over vision alone. The four rungs run from text alone (T), through parser layout (TL), parser layout with the page image (TLV), to the image alone (V). Domain rows partition the pool; evidence-source rows overlap, since a question citing several sources appears under each, so their counts do not sum and the \textbf{All} row pools each question once. The text channel's recovery over vision is largest on text-carried sources (Pure-text, Table) and smallest on graphical ones (Chart, Figure), where vision already carries the signal.\par}
+\caption{Representation accuracy by domain and evidence source ($\Delta$V = V$-$TLV).}
+\label{tab:ladder}
+\end{table}

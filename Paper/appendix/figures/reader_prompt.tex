@@ -1,0 +1,40 @@
+\begin{figure*}[t]
+\centering
+\begin{tcolorbox}[
+  colback=gray!5,colframe=gray!50,boxrule=0.4pt,
+  fontupper=\small\ttfamily,left=6pt,right=6pt
+]
+You are reading a long document one page at a time to answer a question.
+Pages arrive in retrieval-ranked order, not document order. You have no
+memory of earlier turns beyond NOTES. A later turn will not see the current
+page, so record any relevant evidence it contains.\\[0.5em]
+
+Think step by step. Then output these markers on separate lines:\\
+REASONING: <your assessment of the page and notes>\\
+RECORD: <evidence from this page, or exactly ``none''>\\
+ANSWER PAGE: <true or false>\\
+DECISION: <CONTINUE or STOP>\\[0.5em]
+
+Record only what the CURRENT PAGE adds. Preserve names, numbers, units,
+table headers, and the details needed to interpret visual evidence. For a
+count or list, identify matching items on this page and where each appears;
+end the record with COUNT ON THIS PAGE: <number> (<what was counted>).
+Do not copy evidence already in NOTES.\\[0.5em]
+
+Mark ANSWER PAGE: true whenever the answer may depend on this page,
+including when it supplies only part of a multi-page answer or you are
+uncertain of its relevance. Flagged pages will be shown to the synthesizer
+in full.\\[0.5em]
+
+Before the applicable reading floor, write DECISION: CONTINUE. After that
+floor, write DECISION: STOP only when the accumulated evidence appears
+sufficient to answer the question completely. A later ranked page may
+still contribute to a count or list.\\[0.5em]
+
+QUESTION: \{question\}\\
+NOTES: \{reader records from earlier pages\}\\
+CURRENT PAGE: \{document page number, parser text, page image\}
+\end{tcolorbox}
+\caption{Reader prompt structure for iteration 7. The stopping instruction uses the initial floor $k$ or the resumed floor $m$, as appropriate.}
+\label{fig:app_reader_prompt}
+\end{figure*}

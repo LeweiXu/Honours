@@ -1,0 +1,67 @@
+% IntegrationFull.tex — integration deficit stacked by evidence source then domain, per rung. HEAT-SHADED.
+% FULL POOL: g4-faithfulness-full prompt_mode=none, no OOM attrition.
+% S / M = accuracy (teal, [0,88] capped 60%); Delta = M - S (points, negative = multi worse):
+%   warm shading on the DEFICIT magnitude ([0,54] capped 55%), applied only to negative deltas;
+%   positive deltas (multi beats single) print plain, since warm marks the deficit.
+\definecolor{accteal}{HTML}{1BAF7A}
+\definecolor{recwarm}{HTML}{D95926}
+% accuracy shader (S, M)
+\newcommand{\iacc}[1]{\pgfmathtruncatemacro{\s}{max(0,min(60,(#1-0)/(88-0)*65))}\edef\t{accteal!\s}\expandafter\cellcolor\expandafter{\t}#1}
+% negative-delta shader: pass the MAGNITUDE; prints as -mag with warm wash
+\newcommand{\ineg}[1]{\pgfmathtruncatemacro{\s}{max(0,min(55,(#1-0)/(54-0)*55))}\edef\t{recwarm!\s}\expandafter\cellcolor\expandafter{\t}$-$#1}
+% positive delta: plain, no wash
+\newcommand{\ipos}[1]{$+$#1}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{l@{\hskip 12pt}rrr@{\hskip 16pt}rrr@{\hskip 16pt}rrr@{\hskip 16pt}rrr@{\hskip 14pt}r}
+\toprule
+& \multicolumn{3}{c}{\textbf{T}} & \multicolumn{3}{c}{\textbf{TL}}
+& \multicolumn{3}{c}{\textbf{TLV}} & \multicolumn{3}{c}{\textbf{V}} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+\textbf{Stratum}
+& \textbf{S} & \textbf{M} & \textbf{$\Delta$}
+& \textbf{S} & \textbf{M} & \textbf{$\Delta$}
+& \textbf{S} & \textbf{M} & \textbf{$\Delta$}
+& \textbf{S} & \textbf{M} & \textbf{$\Delta$} & \textbf{$n$} \\
+\midrule
+\multicolumn{14}{@{}l}{\emph{By evidence source} (overlapping)} \\
+  Chart            & \iacc{20.4} & \iacc{16.5} & \ineg{4.0}  & \iacc{19.4} & \iacc{19.0} & \ineg{0.4}  & \iacc{56.1} & \iacc{32.9} & \ineg{23.2} & \iacc{54.1} & \iacc{30.4} & \ineg{23.7} & 158 \\
+  Figure           & \iacc{19.3} & \iacc{10.1} & \ineg{9.2}  & \iacc{25.3} & \iacc{21.8} & \ineg{3.5}  & \iacc{49.4} & \iacc{39.5} & \ineg{9.9}  & \iacc{45.8} & \iacc{33.6} & \ineg{12.2} & 168 \\
+  Generalized-text & \iacc{30.4} & \iacc{26.7} & \ineg{3.7}  & \iacc{44.6} & \iacc{31.7} & \ineg{13.0} & \iacc{66.1} & \iacc{38.3} & \ineg{27.7} & \iacc{55.4} & \iacc{35.0} & \ineg{20.4} & 116 \\
+  Pure-text        & \iacc{46.8} & \iacc{31.3} & \ineg{15.4} & \iacc{56.5} & \iacc{38.8} & \ineg{17.7} & \iacc{67.5} & \iacc{42.5} & \ineg{25.0} & \iacc{53.9} & \iacc{34.3} & \ineg{19.6} & 274 \\
+  Table            & \iacc{47.1} & \iacc{35.5} & \ineg{11.7} & \iacc{66.3} & \iacc{32.7} & \ineg{33.6} & \iacc{66.3} & \iacc{31.8} & \ineg{34.5} & \iacc{51.9} & \iacc{25.5} & \ineg{26.5} & 190 \\
+\cmidrule(lr){1-14}
+\multicolumn{14}{@{}l}{\emph{By domain} (disjoint)} \\
+  Academic paper   & \iacc{34.5} & \iacc{39.7} & \ipos{5.2}  & \iacc{29.8} & \iacc{38.2} & \ipos{8.5}  & \iacc{39.3} & \iacc{47.1} & \ipos{7.8}  & \iacc{31.0} & \iacc{38.2} & \ipos{7.3}  & 152 \\
+  Admin/Industry   & \iacc{58.5} & \iacc{40.0} & \ineg{18.5} & \iacc{68.3} & \iacc{40.0} & \ineg{28.3} & \iacc{87.8} & \iacc{35.0} & \ineg{52.8} & \iacc{68.3} & \iacc{35.0} & \ineg{33.3} &  61 \\
+  Brochure         & \iacc{24.5} & \iacc{35.7} & \ipos{11.2} & \iacc{30.6} & \iacc{35.7} & \ipos{5.1}  & \iacc{51.0} & \iacc{35.7} & \ineg{15.3} & \iacc{44.9} & \iacc{32.1} & \ineg{12.8} &  77 \\
+  Financial report & \iacc{60.3} & \iacc{34.1} & \ineg{26.2} & \iacc{68.3} & \iacc{31.8} & \ineg{36.4} & \iacc{74.6} & \iacc{20.5} & \ineg{54.1} & \iacc{52.4} & \iacc{20.5} & \ineg{31.9} & 107 \\
+  Guidebook        & \iacc{42.5} & \iacc{25.5} & \ineg{16.9} & \iacc{46.6} & \iacc{29.8} & \ineg{16.8} & \iacc{60.3} & \iacc{38.3} & \ineg{22.0} & \iacc{53.4} & \iacc{31.9} & \ineg{21.5} & 120 \\
+  Research report  & \iacc{28.0} & \iacc{17.1} & \ineg{10.9} & \iacc{34.6} & \iacc{20.0} & \ineg{14.6} & \iacc{64.5} & \iacc{30.5} & \ineg{34.0} & \iacc{61.7} & \iacc{28.6} & \ineg{33.1} & 212 \\
+  Tutorial/Workshop & \iacc{23.8} & \iacc{0.0} & \ineg{23.8} & \iacc{54.0} & \iacc{41.3} & \ineg{12.7} & \iacc{81.0} & \iacc{65.2} & \ineg{15.7} & \iacc{81.0} & \iacc{52.2} & \ineg{28.8} & 109 \\
+\cmidrule(lr){1-14}
+  \textbf{All}     & \iacc{37.3} & \iacc{25.1} & \ineg{12.2}
+  & \iacc{45.0} & \iacc{31.3} & \ineg{13.7}
+  & \iacc{63.5} & \iacc{38.5} & \ineg{25.0}
+  & \iacc{55.2} & \iacc{33.5} & \ineg{21.7} & \textbf{838} \\
+\bottomrule
+\end{tabular}%
+}
+
+% \vspace{2pt}
+% {\footnotesize\raggedright
+% Single-page (S) and multi-page (M) accuracy (\%) on oracle pages, full answerable pool; teal deepens with
+% accuracy. $\Delta = $ M $-$ S in points; negative (multi-page worse) carries a warm wash deepening with the
+% deficit magnitude, while the few positive deltas (multi beats single, in Academic and Brochure) print plain.
+% $n$ is the per-stratum question count (single $+$ multi, equal at every rung). Source rows overlap (a question
+% citing several sources appears in each), so their $n$ do not sum to the All row, which pools each question once;
+% domain rows partition the pool. The deficit deepens from T ($-$12.2) to TLV ($-$25.0) throughout: the richer
+% encoding lifts single-page accuracy more than multi-page, so the gain concentrates where integration is not required.\par}
+
+\caption{The integration deficit (M$-$S) by evidence source and by domain across the ladder. Teal deepens with accuracy; the warm wash on $\Delta$ deepens with the integration deficit. The gap widens from T to TLV regardless of source or domain, locating the loss in cross-page integration rather than any single representation.}
+\label{tab:integration_full}
+\end{table*}

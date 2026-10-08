@@ -1,0 +1,11 @@
+\begin{figure}[h]
+\centering
+\begin{tcolorbox}[colback=gray!5,colframe=gray!50,boxrule=0.4pt,fontupper=\small\ttfamily]
+$\langle$judge rubric of Figure~\ref{fig:judge_prompt}, plus key error\_category$\rangle$\\[0.5em]
+ERROR CATEGORY\\
+Decide the verdict FIRST, using only the rules above, and do not revisit it. The error category explains a verdict you have already reached; it never changes one. In particular, a response that states the gold answer in its own words, or surrounds it with explanation, is still correct.\\[0.5em]
+$\langle$the eleven categories of Table~\ref{tab:error_taxonomy}, in priority order$\rangle$
+\end{tcolorbox}
+\caption{Judge analysis rubric.}
+\label{fig:judge_prompt_errcat}
+\end{figure}
