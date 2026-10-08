@@ -7,68 +7,77 @@
 
 ## Slide 1: Title
 
-- Hello everyone, my name is Lewei.
-- This year I have been working on document understanding, and in particular on long documents with many pages.
+- Hello everyone, my name is Lewei, and my thesis looks at long document understanding.
 
 ## Slide 2: Table of contents
 
-- I will start with a short introduction to the problem.
-- Then I will go through the two papers that make up the thesis: a survey of the field, and an empirical study of where these systems fail.
-- I will finish with a conclusion, and if there is time, a small proof of concept that puts the findings to work.
+- First, I’ll briefly introduce the problem and some background.
+- Then I’ll cover the two papers that make up my thesis.
+- The first is a survey of the field, and the second is an empirical study of where these systems fail and how we can improve them.
 
 ## Slide 3: Multi-page visually rich documents
 
-- A document is more than its text.
-- Its pages carry tables, charts, figures, photographs and handwriting, and the way these are laid out on the page also carries meaning.
-- That mix is what we mean by visually rich.
-- Multi-page adds one more layer. Meaning also runs between pages, for example when a sentence points to a figure many pages away.
-- The research paper is born digital, so its text can be read straight from the file.
-- The signed form is a scan with handwriting, so there is no text to read until something recognises it.
+- So, what is a visually rich document?
+- Documents carry meaning not just through text, but also through visual information, such as charts, figures and handwriting, as you can see in these examples.
+- Layout also matters: how information is arranged in the two-dimensional space of a page carries meaning too.
+- That combination of text, visual information and layout is what we mean by visually rich.
+- Multi-page documents add another layer of complexity, because meaning can run across pages.
+- For example, a sentence might refer to a figure several pages away.
 
 ## Slide 4: What is document understanding?
 
-- One broad definition is that a system can answer a question about the document accurately.
-- To do that it first has to work out what is on each page. On the left, every coloured box is one element: a title, a paragraph, a chart, a table, a caption.
-- Then it has to work out how the whole document is organised: which section a figure belongs to, and which caption goes with which table. That is the outline on the right.
-- Now take the example question. Does the model that humans rated best in Table 6 also have the best citation recall in Table 3?
-- Table 6 is on this page and Table 3 is on the previous one, so neither table answers it alone.
+- So, what is document understanding?
+- It includes tasks such as information extraction and recovering a document’s structure. But for this talk, we’ll focus on answering natural-language questions about a document.
+- To answer a question, a system needs to identify the relevant content and connect the evidence, either within one page or across multiple pages.
+- For example, the question here compares two tables on different pages, so neither table alone is enough.
 
 ## Slide 5: Large language model assistants
 
-- You have all used systems that do this.
-- Here I gave Claude my thesis, which is almost one hundred pages, and asked it a difficult question.
-- On the left you can see what it does. It plans, works out which pages it needs, and then reads them.
-- On the right is the interesting part. It renders those pages and reads them as images, the way we would look at them.
+- You may already have used this kind of document question answering yourselves: you upload a document to a language model assistant and ask it questions.
+- Here, I gave Claude my thesis, which is almost one hundred pages, and asked it a particularly difficult question. It still did quite well.
+- What I want to highlight is how it approaches the question. It uses an agentic workflow: it plans, locates the relevant pages, and inspects them before answering.
+- You can also see it rendering those pages as images, so it reads the document visually as well as through text.
+- This is a familiar example of document-understanding research reaching consumer-facing products. But it is only one part of how document understanding is used in practice.
 
 ## Slide 6: Real-world constraints
 
-- But many real settings cannot use that product.
-- Think of a hospital, a mining company or a law firm, with tens of thousands of documents to classify, summarise or extract from.
-- Calling a commercial service fails for three reasons. The documents are private and cannot leave. The cost per call adds up at that volume. And their documents are unusual types the general model was not built for.
-- So they run an open-weight model locally, and that means a fixed compute budget. Which pages we read, at what resolution, and how many times, all have to fit inside it.
-- So the question behind this thesis is how to do document understanding under a fixed compute budget.
+- In real-world and industrial settings, the task might be to classify, summarise or extract information from thousands, or even millions, of documents.
+- These could be sensitive medical, financial, legal or operational records. Privacy or data-residency requirements may prevent organisations from sending them to third-party services.
+- At that volume, commercial API costs can also become prohibitive. And specialised document types may require adapting the model to the task.
+- Organisations may therefore need to run open-weight models locally, under fixed memory and compute budgets.
+- In that setting, we care about both accuracy and efficiency: which pages to read, at what resolution, and how many times.
+- That motivates the central question of my thesis: how can we improve document understanding under a fixed compute budget?
 
 ## Slide 7: Table of contents, survey
 
-- The first part is the survey, which has been accepted at the EMNLP 2026 main conference.
+- So, moving on to the first part: our survey, which has been accepted at the EMNLP main conference.
 
 ## Slide 8: Survey, research gap and contributions
 
-- The gap is simple to state.
-- Systems for multi-page documents were built along parallel lines. Each line used its own terminology, and there was little comparison between them.
-- Our survey does three things.
-- It defines the problem as evidence management: deciding which evidence to select and reason over when the document cannot all be held at once.
-- It gives a taxonomy with four architectural families.
-- And it brings together the datasets and the open challenges.
+- A lot of multi-page document-understanding systems developed along parallel lines, with different terminology and little comparison between them.
+- Our survey brings them together through the idea of evidence management: how these systems manage relevant evidence across a very long document.
+- We organise these systems into four architectural families, which I’ll go through next.
 
 ## Slide 9: Multi-page architectural overview
 
-- These are the four families, and they appeared roughly in this order.
-- Page-to-document encoding models came first, from late 2023. They encode each page separately and then combine the pages inside one model.
-- Then the field moved to large pretrained multimodal language models. The second family adapts such a model so that many pages fit inside its context.
-- The third family is retrieval-augmented pipelines. They retrieve the relevant pages first, and only those pages go to the model.
-- The fourth family, from 2025, is adaptive-trajectory pipelines. Here the model works in a loop. It decides what to look at next, and when it has seen enough to answer.
-- Each family also has a typical weakness, shown in red at the bottom. I will come back to those with one example of each.
+- In the survey, we identified four architectural families. They emerged roughly in this order, although their development overlaps.
+
+- First are page-to-document encoding models. Each page is encoded separately, combining its text, visual information and layout into a page representation.
+- A cross-page mechanism, such as cross-page attention, connects these representations. A decoder then uses that information to generate an answer to the question. These systems are generally trained end to end.
+- The problem is that cost grows with the number of pages, and compressing pages into small representations can lose fine detail.
+
+- The second family takes a different approach: it adapts a pretrained large vision-language model to accept a multi-page document directly.
+- The document goes through preprocessing, and all its pages are fed into the model’s context, rather than first retrieving a subset. This preprocessing can include compressing the visual tokens to make them fit.
+- These systems build on the pretrained model’s capabilities, with further training on document data, either fine-tuning the model or training smaller adaptation modules.
+- But longer documents are still difficult: the input is limited by the context window, and performance can fall even before that window is full.
+
+- This motivates the third family, retrieval-augmented pipelines. We first retrieve evidence relevant to the question, then give that selected evidence to a model to answer.
+- Retrieval can involve several stages, including reranking or multiple components described as agents. The important point is that the workflow is fixed in advance.
+- This lets us handle documents that would not fit into the model all at once. But because the reasoner sees only selected evidence, anything missed by retrieval cannot be recovered during answering.
+
+- That motivates the final family, adaptive-trajectory pipelines. Here, a language model controls the process, deciding what to inspect next based on what it has already found.
+- It can retrieve more evidence or inspect another page before answering, rather than following a fixed sequence.
+- The trade-off is that this trajectory can take many steps. Without explicit limits, the cost is hard to bound, and answering can become expensive and slow.
 
 ## Slide 10: Surveyed systems at a glance
 
@@ -83,42 +92,37 @@
 
 ## Slide 11: Page-to-document encoding, Hi-VT5
 
-- Hi-VT5 was introduced in 2023 together with the first multi-page benchmark, Multi-Page DocVQA. That benchmark has about forty-six thousand questions over six thousand scanned documents of up to twenty pages.
-- The model is built on T5, which is a text encoder and decoder.
-- Each page goes through the encoder separately. The encoder receives the question, the recognised words on that page with their positions, and patches of the page image.
-- It also receives ten learnable page tokens. Their job is to summarise whatever on that page matters for the question.
-- The decoder never sees the full pages. It only reads the page tokens from all the pages, joined together, and writes the answer.
-- The weakness is compression. A whole page is squeezed into ten tokens, so fine detail is lost, and memory still grows with every page added.
+- Hi-VT5 is an example of page-to-document encoding. It builds on T5, a text encoder-decoder, and adds visual and layout information.
+- Each page is encoded separately, together with the question, the recognised words and their positions, and patches of the page image.
+- Ten learnable page tokens summarise the information on that page relevant to the question.
+- Those tokens from all the pages are joined together and passed to the decoder to generate the answer. So the decoder reads the page summaries, rather than the full pages.
+
+<!-- Reference, not spoken: https://arxiv.org/pdf/2212.05935 -->
 
 ## Slide 12: Adaptation of multimodal language models, Docopilot
 
-- Docopilot takes the opposite approach to retrieval. The whole document goes into the model's context and the model reads it directly.
-- Their real contribution is data. Existing models were trained on single images, so they built a dataset called Doc-750K.
-- It has about seven hundred and fifty thousand question and answer pairs and over three million page images, taken from papers on Sci-Hub and arXiv and from reviews on OpenReview. That is the pipeline in the figure.
-- They then fine-tune an existing model, InternVL2, on this data, in two sizes of two billion and eight billion parameters.
-- The weakness is the context window. A document that does not fit cannot be read at all, and accuracy already falls well before that limit.
+- Docopilot is an example of adapting a pretrained multimodal model to read a multi-page document directly, without retrieval.
+- The main idea is to teach it document-level dependencies through better training data. The authors build Doc-750K, with about 750,000 question-answer pairs from scientific papers and reviews.
+- They fine-tune InternVL2 on a data mixture that includes this dataset. At inference time, page images and the question go into the model together, and it generates the answer directly.
+
+<!-- Reference, not spoken: https://arxiv.org/html/2507.14675v1 -->
 
 ## Slide 13: Retrieval-augmented pipelines, MoLoRAG
 
-- MoLoRAG is a retrieval method. Its starting point is that ordinary retrieval only finds pages that look similar to the question.
-- But some pages are needed for the answer without looking similar at all. The authors call this logical relevance.
-- First, every page is embedded with a visual retriever called ColPali. Two pages are linked whenever their embeddings are similar enough, which gives a graph of pages.
-- For a question, the search starts from the few most similar pages.
-- A small vision-language model then looks at each of those pages and scores how logically relevant it is to the question. That score is combined with the similarity score.
-- The search then moves out to the neighbours of the best pages, and repeats for a fixed number of steps.
-- At the end, all visited pages are ranked again and the top few go to a frozen model that writes the answer.
-- The weakness is shared by the whole family. A page the search never reaches cannot be recovered later.
+- MoLoRAG is an example of a retrieval-augmented pipeline. There are three main parts.
+- First, it builds a graph-based index: a visual retriever represents each page, and pages are connected based on their similarity.
+- Second, it searches that graph, starting from pages similar to the question. A small vision-language model helps score their relevance, and the search selects the top K pages.
+- Third, those top K pages are passed to a separate vision-language model, the reasoner, to answer the question.
 
-## Slide 14: Adaptive-trajectory pipelines, DocLens
+<!-- Reference, not spoken: https://aclanthology.org/2025.emnlp-main.708/ -->
 
-- DocLens is built from four agents arranged in two modules, and it relies on document parsing tools.
-- The first module is the lens. Its page navigator runs optical character recognition on every page, then shows a model the question together with the page images and their text, and asks which pages hold the evidence.
-- It asks several times and keeps every page that was named, which gives ninety-seven percent recall of the evidence pages.
-- Then the element localiser runs layout detection on those pages and crops out each figure, chart and table, so the model can look at them closely.
-- The second module does the reasoning. An answer sampler writes several answers, each with its reasoning.
-- Then an adjudicator compares those lines of reasoning and chooses the most consistent one.
-- Paired with Gemini 2.5 Pro, it scores 67.6 percent on MMLongBench-Doc, the first system above human experts on that benchmark.
-- The weakness is cost. It makes many calls to a large model for every question, which is hard to bound and does not suit the local setting.
+## Slide 14: Tool-augmented multi-agent pipelines, DocLens
+
+- Finally, DocLens is a tool-augmented multi-agent framework from researchers at Google and Peking University.
+- It has two main modules. The lens module first finds the evidence: a page navigator uses page images and OCR text to identify relevant pages, and an element localiser crops figures, charts and tables on those pages for closer inspection.
+- The reasoning module then samples several candidate answers from that evidence. An adjudicator compares their reasoning and synthesises the final answer.
+- So the main idea is to find the pages, zoom in on their elements, and compare candidate answers.
+
 
 ## Slide 15: Table of contents, empirical study
 
