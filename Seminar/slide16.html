@@ -77,24 +77,25 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 16 ================= */
-  .s16 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s16 .lab{font-size:14px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px;}
   .s16 ul{list-style:none;}
-  .s16 b{font-weight:600;}
+  .s16 ul li{position:relative; padding-left:26px; margin-bottom:13px; font-size:21px; line-height:1.4;}
+  .s16 ul li::before{content:""; position:absolute; left:0; top:14px; width:11px; height:2px; background:var(--navy);}
   .s16 img{display:block;}
-  .s16 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s16 .cols{display:grid; grid-template-columns:470px 1fr; gap:60px; align-items:start;}
-  .s16 .gapbox{border-top:3px solid var(--accent); padding-top:14px;}
-  .s16 .dia{border:1.5px solid var(--line); margin:6px 0 18px; padding:18px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;}
-  .s16 .tag{font-size:18.5px; border:1.5px solid var(--ink); padding:6px 10px; white-space:nowrap;}
-  .s16 .row{display:flex; align-items:center; gap:10px; width:100%; justify-content:center;}
-  .s16 .vs{font-size:14.5px; font-weight:600; color:var(--accent);}
-  .s16 .lines{display:flex; gap:26px; justify-content:center; width:100%; margin-top:4px;}
-  .s16 .lines i{display:block; width:2px; height:34px; background:var(--navy);}
-  .s16 .gap{font-size:25.5px; line-height:1.42;}
-  .s16 .con{border-top:3px solid var(--navy); padding-top:14px;}
-  .s16 ol{list-style:none; counter-reset:c; margin-top:6px;}
-  .s16 ol li{counter-increment:c; position:relative; padding-left:44px; margin-bottom:24px; font-size:25.5px; line-height:1.4;}
-  .s16 ol li::before{content:counter(c); position:absolute; left:0; top:1px; width:28px; height:28px; border:1.5px solid var(--navy); font-size:16.5px; font-weight:600; display:flex; align-items:center; justify-content:center;}
+  .s16 .cols{display:grid; grid-template-columns:480px 1fr; gap:56px; align-items:start;}
+  .s16 .gapbox, .s16 .con{border-top:3px solid var(--navy); padding-top:14px;}
+  .s16 .gapbox{border-top-color:var(--accent);}
+  .s16 .g{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:20px;}
+  .s16 .g > i, .s16 ol li::before{width:28px; height:28px; border:1.5px solid var(--navy); font-style:normal; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+  .s16 .g p, .s16 ol li{font-size:21.5px; line-height:1.38;}
+  .s16 .dia{border:1.5px solid var(--line); margin:10px 0 0; padding:12px; display:flex; flex-direction:column; gap:8px; align-items:center;}
+  .s16 .row{display:flex; align-items:center; gap:10px;}
+  .s16 .tag{font-size:15.5px; border:1.5px solid var(--ink); padding:4px 9px; white-space:nowrap;}
+  .s16 .vs{font-size:13px; font-weight:700; color:var(--accent);}
+  .s16 ol{list-style:none; counter-reset:c;}
+  .s16 ol li{counter-increment:c; position:relative; padding-left:44px; margin-bottom:20px;}
+  .s16 ol li::before{content:counter(c); position:absolute; left:0; top:1px;}
+  .s16 .link{margin-top:6px; font-size:16px; font-style:italic;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -109,23 +110,30 @@
 
 <div class="slide s16">
 
-  <h1>Empirical Study: Research Gap and Contributions</h1>
+  <h1>Empirical Study: Research Gaps and Contributions</h1>
 
   <div class="body">
     <div class="cols">
       <div class="gapbox">
-        <div class="lab">Research gap</div>
-        <div class="dia"><div class="row"><span class="tag">vision only</span><span class="vs">VS</span><span class="tag">text + vision</span></div><div class="row"><span class="tag">retrieve more</span><span class="vs">VS</span><span class="tag">retrieve less</span></div><div class="row"><span class="tag">context limit</span><span class="vs">VS</span><span class="tag">integration</span></div></div>
-        <p class="gap">Papers make <b class="hi">competing claims</b> about what matters, each on a different pipeline and dataset, so none can be compared.</p>
+        <div class="lab">Research gaps</div>
+        <div class="g"><i>1</i><div><p><b>Competing design claims</b>, each tested on a different pipeline and dataset.</p>
+          <div class="dia"><div class="row"><span class="tag">vision only</span><span class="vs">VS</span><span class="tag">text + vision</span></div>
+          <div class="row"><span class="tag">retrieve more</span><span class="vs">VS</span><span class="tag">retrieve less</span></div></div></div></div>
+        <div class="g"><i>2</i><p><b>No end-to-end empirical study</b> of where document understanding systems fail.</p></div>
       </div>
       <div class="con">
         <div class="lab">Contributions</div>
-        <ol><li>Three architecture-independent <b class="hi">failure loci</b>, with six mechanisms.</li><li>Controlled interventions in one pipeline: change one locus, hold the others fixed.</li><li>Transfer across datasets and models, with design implications and cost.</li></ol>
+        <ol>
+          <li>A <b>unified view of failure</b>: three architecture-independent loci, representation, selection and reasoning.</li>
+          <li>Controlled interventions in <b>one pipeline</b>, across document collections and independently developed model families.</li>
+          <li><b>Practical guidance</b> for designing and deploying systems <b>under a compute budget</b>, from qualitative examples and accuracy-cost comparisons.
+            <div class="link">This is the local-deployment setting from the constraints slide.</div></li>
+        </ol>
       </div>
     </div>
   </div>
 
-  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>16</b> / 29</div>
+  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>16</b> / 25</div>
 
 </div>
 </body>

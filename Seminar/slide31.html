@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Retrieval and Navigation</title>
+<title>Datasets</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -79,19 +79,19 @@
   /* ================= SLIDE 31 ================= */
   .s31 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s31 .lead b{font-weight:600; color:var(--ink);}
-  .s31 ul{list-style:none; margin-top:30px;}
-  .s31 ul li{
-    position:relative; padding-left:26px; margin-bottom:19px;
-    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
-    max-width:1110px;
+  .s31 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
+  .s31 .cards h3{
+    font-family:var(--disp); font-size:23px; font-weight:600;
+    letter-spacing:0; padding-bottom:11px;
+    border-bottom:1px solid var(--line); margin-bottom:18px;
   }
-  .s31 ul li::before{
-    content:""; position:absolute; left:0; top:11px;
-    width:10px; height:2px; background:var(--navy);
+  .s31 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s31 .cards .tag{
+    margin-top:14px; font-family:var(--mono); font-size:12px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
   }
-  .s31 ul li b{font-weight:600; color:var(--ink);}
-  .s31 ul li:last-child{margin-bottom:0;}
-  .s31 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+
+  .s31 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s31 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -107,21 +107,33 @@
 
 <div class="slide s31">
 
-  <h1>Retrieval and Navigation</h1>
+  <h1>Datasets</h1>
 
   <div class="body">
-    <p class="lead">Retrieval <b>narrows a long document to compact evidence units</b> (chunks, pages, or graph nodes) for downstream reasoning.</p>
+    <p class="lead">Datasets serve three roles, and the multi-page setting makes all three harder: <b>per-page annotation does not scale</b> to documents of tens or hundreds of pages, and long PDFs are harder to source and license than single pages.</p>
 
-    <ul>
-      <li><b>Similarity-based retrieval.</b> Scores each evidence unit independently against the query and returns the top-ranked subset. Sparse lexical signals such as BM25 are the baseline; dense retrieval uses vision-language late-interaction encoders such as ColPali and ColQwen, often with an LLM reranking stage after.</li>
-      <li><b>Relation-aware retrieval.</b> Retrieves along explicit document structure. Tree-based variants follow section hierarchies and outlines, so chunks keep their parent context; graph-based variants traverse typed edges between headings, entities, and cross-references.</li>
-      <li><b>The trade-off.</b> Independent scoring handles paraphrase and cross-modal queries, but cannot follow cross-page references or multi-hop dependencies. Relation-aware methods can, at the cost of parser dependence and traversal cost.</li>
-    </ul>
+    <div class="cards">
+      <div>
+        <h3>Pretraining</h3>
+        <p>The exception rather than the norm. Confined to a few page-to-document and MLLM-centric systems that do continued pretraining on an existing backbone, because multi-page corpora are still small.</p>
+        <div class="tag">Rare</div>
+      </div>
+      <div>
+        <h3>Fine-tuning</h3>
+        <p>Has converged on LVLM-synthesised supervision over scraped PDFs, with reinforcement learning increasingly layered on top to shape evidence-grounding and trajectory behaviour.</p>
+        <div class="tag">LVLM-synthesised</div>
+      </div>
+      <div>
+        <h3>Benchmarking</h3>
+        <p>Three tiers: single-page extractive baselines, mid-length multi-page suites, and long-document multimodal benchmarks that need cross-page integration. The same small pool of PDFs gets reused.</p>
+        <div class="tag">Contamination risk</div>
+      </div>
+    </div>
 
-    <p class="close">Evidence missed or poorly ranked at retrieval is <b>unrecoverable at generation</b>. What is retrieved still has to be reasoned over.</p>
+    <p class="close"><b>Answer-only accuracy masks retrieval failure</b> and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation as well, but it is not yet standard.</p>
   </div>
 
-  <div class="corner">Backup &middot; Survey</div>
+  <div class="corner">Appendix &middot; Survey</div>
 
 </div>
 </body>

@@ -77,25 +77,33 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 19 ================= */
-  .s19 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s19 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
+  .s19 .lab{font-size:14px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px;}
   .s19 ul{list-style:none;}
-  .s19 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
-  .s19 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
-  .s19 ul li:last-child{margin-bottom:0;}
-  .s19 b{font-weight:600;}
+  .s19 ul li{position:relative; padding-left:26px; margin-bottom:13px; font-size:21px; line-height:1.4;}
+  .s19 ul li::before{content:""; position:absolute; left:0; top:14px; width:11px; height:2px; background:var(--navy);}
   .s19 img{display:block;}
-  .s19 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s19 .pipe{display:flex; align-items:stretch; margin-top:30px;}
-  .s19 .st{flex:1; border:1.5px solid var(--ink); padding:18px 20px 20px; position:relative;}
-  .s19 .st + .st{margin-left:44px;}
-  .s19 .st + .st::before{content:""; position:absolute; left:-36px; top:50%; width:22px; height:2px; background:var(--navy);}
-  .s19 .st + .st::after{content:""; position:absolute; left:-17px; top:50%; margin-top:-4px; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:9px solid var(--navy);}
-  .s19 .st h3{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0;}
-  .s19 .st .lab{margin:2px 0 12px;}
-  .s19 .st p{font-size:20.5px; line-height:1.4;}
-  .s19 .st .cfg{margin-top:12px; font-family:var(--mono); font-size:13px; letter-spacing:.03em; line-height:1.6;}
-  .s19 ul{margin-top:34px;}
+  .s19 .body{padding-top:16px;}
+  .s19 .ask{font-size:21px; font-style:italic; margin-bottom:14px;}
+  .s19 .two{display:grid; grid-template-columns:1fr 1fr; gap:26px;}
+  .s19 .ex{border:1.5px solid var(--line); padding:0 16px 13px;}
+  .s19 .hd{display:flex; justify-content:space-between; align-items:baseline; background:var(--wash); margin:0 -16px 10px; padding:8px 16px;}
+  .s19 .hd b{font-size:21px;}
+  .s19 .hd span{font-size:14.5px; font-style:italic;}
+  .s19 .q, .s19 .gold{font-size:17.5px; line-height:1.32;}
+  .s19 .gold{margin:3px 0 9px;}
+  .s19 .q em, .s19 .gold em{font-style:normal; font-weight:700; margin-right:8px;}
+  .s19 .r{display:grid; grid-template-columns:96px 20px 1fr; gap:4px; align-items:baseline; font-size:16.5px; line-height:1.3; margin-bottom:3px;}
+  .s19 .r span{font-weight:700;}
+  .s19 .r i{font-style:normal; font-weight:700;}
+  .s19 .r i.x{color:#B42318;} .s19 .r i.v{color:#157F3B;}
+  .s19 .fix{font-size:15.5px; font-weight:700; color:var(--accent); margin:7px 0 7px; display:flex; align-items:center; gap:10px;}
+  .s19 .fix::before, .s19 .fix::after{content:""; flex:1; border-top:1.5px dashed var(--accent);}
+  .s19 .fix::before{flex:0 0 14px;}
+  .s19 .find{font-size:16.5px; font-style:italic; line-height:1.32; margin-top:9px; padding-top:8px; border-top:1px solid var(--line);}
+  .s19 .imp{margin-top:15px; border-top:3px solid var(--accent); padding-top:11px; display:grid; grid-template-columns:150px 1fr; gap:14px;}
+  .s19 .imp .lab{margin:4px 0 0;}
+  .s19 .imp ul li{font-size:19px; margin-bottom:6px; line-height:1.34;}
+  .s19 .imp ul li::before{top:12px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -110,22 +118,23 @@
 
 <div class="slide s19">
 
-  <h1>Attribution by Construction</h1>
+  <h1>Representation Failures</h1>
 
   <div class="body">
-    <p class="lead">One simple pipeline. <b class="hi">Change one stage, hold the other two fixed.</b></p>
-    <div class="pipe">
-      <div class="st"><h3>Encode</h3><div class="lab">Representation</div><p>Each page becomes text, an image, or both.</p><div class="cfg">default: parser text + page image</div></div>
-      <div class="st"><h3>Retrieve</h3><div class="lab">Selection</div><p>The top pages for the question reach the model.</p><div class="cfg">or: the annotated gold pages</div></div>
-      <div class="st"><h3>Answer</h3><div class="lab">Reasoning</div><p>One model answers in a single pass.</p><div class="cfg">default: Qwen3-VL-8B</div></div>
-    </div>
-    <ul>
-      <li><b>Gold pages</b> bypass retrieval, so selection can be taken out of the picture.</li>
-      <li><b>MMLongBench-Doc</b>: 135 documents, annotated with evidence pages, evidence type and answerability.</li>
-    </ul>
+    <p class="ask">Is the evidence in the input?</p>
+    <div class="two"><div class="ex">
+        <div class="hd"><b>Modality ceiling</b><span>two inline icons, parsed as &lt;img&gt;</span></div>
+        <p class="q"><em>Q</em>What are the colors of the icons that the users touch to move the app up and remove the app respectively?</p><p class="gold"><em>Gold</em>gray, red</p>
+        <div class="r"><span>T</span><i class="x">&#10007;</i><p>&ldquo;The document does not specify the colors&rdquo;</p></div><div class="r"><span>TL</span><i class="x">&#10007;</i><p>&ldquo;it does not mention any visual details&rdquo;</p></div><div class="fix">&#9660; add the page image</div><div class="r"><span>V</span><i class="v">&#10003;</i><p>&ldquo;The icon is gray. &hellip; The icon is red.&rdquo;</p></div><div class="r"><span>TLV</span><i class="v">&#10003;</i><p>&ldquo;gray (a gray upward arrow) &hellip; red&rdquo;</p></div>
+        <p class="find">Colour exists only in pixels; a text input leaves the reasoner nothing to read.</p></div><div class="ex">
+        <div class="hd"><b>Conversion fidelity</b><span>scanned slide, text by parser</span></div>
+        <p class="q"><em>Q</em>What is the name of the company that created this presentation?</p><p class="gold"><em>Gold</em>AVALAUNCH MEDIA</p>
+        <div class="r"><span>PaddleOCR</span><i class="x">&#10007;</i><p>&ldquo;Asterks&rdquo; (parse: KICK ASTERKS)</p></div><div class="r"><span>MinerU</span><i class="x">&#10007;</i><p>&ldquo;does not provide any evidence&rdquo;</p></div><div class="fix">&#9660; re-convert, or add the image</div><div class="r"><span>Unlimited</span><i class="v">&#10003;</i><p>&ldquo;AVALAUNCH MEDIA&rdquo;</p></div><div class="r"><span>with image</span><i class="v">&#10003;</i><p>&ldquo;Avalaunch Media &hellip; in the banner&rdquo;</p></div>
+        <p class="find">The error sits in the transcript, not the reasoner, and each parser fails differently.</p></div></div>
+    <div class="imp"><div class="lab">Implications</div><ul><li><b>Text and vision are complementary.</b> Start from reliable embedded text, and add the page image when the question needs appearance or the parse looks wrong.</li><li>Images are not free: about <b>26 s of prefill</b> per question with images against 1.8 s for text.</li></ul></div>
   </div>
 
-  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>19</b> / 29</div>
+  <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><i>Method</i><b>19</b> / 25</div>
 
 </div>
 </body>

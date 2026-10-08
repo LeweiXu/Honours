@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Multi-Page Visually Rich Documents</title>
+<title>Agentic Methods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -77,25 +77,22 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 29 ================= */
-  .s29 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s29 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
-  .s29 ul{list-style:none;}
-  .s29 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
-  .s29 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
+  .s29 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s29 .lead b{font-weight:600; color:var(--ink);}
+  .s29 ul{list-style:none; margin-top:30px;}
+  .s29 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
+  }
+  .s29 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
+  }
+  .s29 ul li b{font-weight:600; color:var(--ink);}
   .s29 ul li:last-child{margin-bottom:0;}
-  .s29 b{font-weight:600;}
-  .s29 img{display:block;}
-  .s29 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s29 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:36px;}
-  .s29 .card{border-top:3px solid var(--navy); padding-top:16px;}
-  .s29 .card .no{font-family:var(--mono); font-size:14.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;}
-  .s29 .card h3{font-family:var(--disp); font-size:26.5px; font-weight:600; letter-spacing:0; line-height:1.2; margin:8px 0 12px;}
-  .s29 .card p{font-size:20.5px; line-height:1.45;}
-  .s29 .card .venue{margin-top:14px; display:inline-block; font-family:var(--mono); font-size:13px; letter-spacing:.04em; border:1.5px solid var(--ink); padding:4px 9px;}
-  .s29 .card p{font-size:20px;}
-  .s29 .end{margin-top:44px; padding-top:28px; border-top:1px solid var(--line); display:flex; align-items:baseline; gap:28px;}
-  .s29 .end b{font-family:var(--disp); font-size:48.5px; font-weight:600; letter-spacing:0;}
-  .s29 .end span{font-size:24px;}
+  .s29 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s29 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -110,18 +107,21 @@
 
 <div class="slide s29">
 
-  <h1>Conclusion</h1>
+  <h1>Agentic Methods</h1>
 
   <div class="body">
-    <div class="cards">
-      <div class="card"><div class="no">Survey</div><h3>Organise</h3><p>Multi-page document understanding is a problem of <b class="hi">evidence management</b>.</p></div>
-      <div class="card"><div class="no">Empirical study</div><h3>Locate</h3><p>Failures sit at <b class="hi">representation, selection, or reasoning</b>, and each needs a different fix.</p></div>
-      <div class="card"><div class="no">Proof of concept</div><h3>Validate</h3><p>The findings hold up in a <b class="hi">working, training-free system</b>.</p></div>
-    </div>
-    <div class="end"><b>Thank you</b><span>Questions?</span></div>
+    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
+
+    <ul>
+      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
+      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
+      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+    </ul>
+
+    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
   </div>
 
-  <div class="corner"><i>Background</i><i>Survey</i><i>Empirical</i><i>Method</i><b>29</b> / 29</div>
+  <div class="corner">Appendix &middot; Survey</div>
 
 </div>
 </body>
