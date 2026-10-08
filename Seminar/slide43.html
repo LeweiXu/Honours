@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Training Strategies</title>
+<title>A Simple Adaptive Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -76,24 +76,31 @@
   .slide::before{left:0; top:0;}
   .slide::after{right:0; bottom:0;}
 
-  /* ================= SLIDE 33 ================= */
-  .s33 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s33 .lead b{font-weight:600; color:var(--ink);}
-  .s33 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s33 .cards h3{
-    font-family:var(--disp); font-size:23px; font-weight:600;
-    letter-spacing:0; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
+  /* ================= SLIDE 43 ================= */
+  .s43 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s43 .lead b{font-weight:600; color:var(--ink);}
+  .s43 .maps{margin-top:36px;}
+  .s43 .map{display:grid; grid-template-columns:200px 46px 1fr; gap:0 26px; align-items:center; margin-bottom:26px;}
+  .s43 .map:last-child{margin-bottom:0;}
+  .s43 .from{
+    font-family:var(--mono); font-size:12px; font-weight:500;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--ink);
+    text-align:right;
   }
-  .s33 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s33 .cards p b{font-weight:600; color:var(--ink);}
-  .s33 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:12px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  .s43 .ar{position:relative; height:30px;}
+  .s43 .ar::before{content:""; position:absolute; left:0; right:8px; top:50%; height:1px; background:var(--rule);}
+  .s43 .ar::after{
+    content:""; position:absolute; right:0; top:50%; transform:translateY(-50%);
+    border-top:4.5px solid transparent; border-bottom:4.5px solid transparent;
+    border-left:8px solid var(--navy);
   }
-
-  .s33 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s33 .close b{font-weight:600; color:var(--ink);}
+  .s43 .to h3{
+    font-family:var(--disp); font-size:22px; font-weight:600;
+    letter-spacing:0; margin-bottom:5px;
+  }
+  .s43 .to p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
+  .s43 .close{margin-top:38px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s43 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -106,35 +113,44 @@
 </head>
 <body>
 
-<div class="slide s33">
+<div class="slide s43">
 
-  <h1>Training Strategies</h1>
+  <h1>From Findings to Design</h1>
 
   <div class="body">
-    <p class="lead">Most systems adopt a backbone <b>already pretrained on single-page data</b>, so fine-tuning carries the weight. Training internalises the inference-time evidence-management decisions into model parameters.</p>
+    <p class="lead">The survey and the experiments both point at design principles. I put them together in a <b>deliberately simple system</b>, to see whether they hold up at the level of a whole pipeline rather than one controlled condition.</p>
 
-    <div class="cards">
-      <div>
-        <h3>Trained retrieval</h3>
-        <p><b>Modality-alignment</b> aligns visual page embeddings with OCR-derived text. <b>Cross-page-fusion</b> adds neighbouring-page context to each page representation. <b>Logical-relevance</b> ranks pages by their position in a cross-page reasoning path.</p>
-        <div class="tag">Retriever</div>
+    <div class="maps">
+      <div class="map">
+        <div class="from">Representation</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Keep text and images together</h3>
+          <p>Every page read at the full TLV representation, with a strong parser and high-resolution rendering, since the two channels cover for each other's failures.</p>
+        </div>
       </div>
-      <div>
-        <h3>Trained reasoning</h3>
-        <p><b>Trace-imitation</b> supervises the backbone on demonstration chains in a fixed schema. <b>Reward-driven</b> training then refines it with GRPO, rewarding answer accuracy, evidence-page recall, and format compliance.</p>
-        <div class="tag">Reasoner</div>
+      <div class="map">
+        <div class="from">Selection</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Gather broadly, present selectively</h3>
+          <p>Missing evidence is unrecoverable and moderate distraction is not, so read widely in retrieval-ranked order, but carry most of it forward as compact records rather than as full pages.</p>
+        </div>
       </div>
-      <div>
-        <h3>Trained agentic methods</h3>
-        <p><b>Trajectory-distillation</b> clones a stronger teacher&rsquo;s think-action-observation turns through SFT. <b>Reinforcement-learned</b> variants optimise the policy directly against trajectory-level rewards.</p>
-        <div class="tag">Controller</div>
+      <div class="map">
+        <div class="from">Reasoning</div>
+        <div class="ar"></div>
+        <div class="to">
+          <h3>Check whether the answer is supported</h3>
+          <p>Because the reasoner cannot judge sufficiency on its own, a separate step decides whether to accept the answer or keep reading.</p>
+        </div>
       </div>
     </div>
 
-    <p class="close">Two techniques recur across all three: <b>parameter-efficient tuning</b> (LoRA, adapters) and <b>multi-stage curricula</b> that go from single-page to document-scale supervision. All of it depends on the available datasets.</p>
+    <p class="close">No planner, no tool set, no query reformulation. <b>The point is to validate the principles, not to introduce a complex architecture.</b></p>
   </div>
 
-  <div class="corner">Appendix &middot; Survey</div>
+  <div class="corner">Appendix &middot; Method</div>
 
 </div>
 </body>

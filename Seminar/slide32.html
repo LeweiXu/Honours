@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Multi-Page Visually Rich Documents</title>
+<title>Agentic Methods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -77,18 +77,22 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 32 ================= */
-  .s32 .lab{font-size:14px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px;}
-  .s32 ul{list-style:none;}
-  .s32 ul li{position:relative; padding-left:26px; margin-bottom:13px; font-size:21px; line-height:1.4;}
-  .s32 ul li::before{content:""; position:absolute; left:0; top:14px; width:11px; height:2px; background:var(--navy);}
-  .s32 img{display:block;}
-  .s32 .two{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
-  .s32 .d{border-top:3px solid var(--navy); padding-top:14px;}
-  .s32 .d h3{font-size:27px; font-weight:700;}
-  .s32 .stats{display:flex; gap:30px; margin:14px 0 16px;}
-  .s32 .stats div{font-size:15px;}
-  .s32 .stats b{display:block; font-size:28px;}
-  .s32 .judge{margin-top:26px; padding-top:18px; border-top:1px solid var(--line); font-size:20px; line-height:1.4;}
+  .s32 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
+  .s32 .lead b{font-weight:600; color:var(--ink);}
+  .s32 ul{list-style:none; margin-top:30px;}
+  .s32 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
+  }
+  .s32 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
+  }
+  .s32 ul li b{font-weight:600; color:var(--ink);}
+  .s32 ul li:last-child{margin-bottom:0;}
+  .s32 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s32 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -103,23 +107,21 @@
 
 <div class="slide s32">
 
-  <h1>Datasets and Evaluation</h1>
+  <h1>Agentic Methods</h1>
 
   <div class="body">
-    <div class="two">
-      <div class="d"><div class="lab">Primary</div><h3>MMLongBench-Doc</h3>
-        <div class="stats"><div><b>135</b>documents</div><div><b>48.3</b>mean pages</div><div><b>847</b>answerable</div><div><b>244</b>unanswerable</div></div>
-        <ul><li>Annotated with <b>evidence pages, evidence sources and answerability</b>, which the experiments need.</li>
-        <li>367 of the answerable questions need two or more pages.</li></ul></div>
-      <div class="d"><div class="lab">Complementary</div><h3>LongDocURL</h3>
-        <div class="stats"><div><b>396</b>documents</div><div><b>85.6</b>mean pages</div><div><b>2,325</b>questions</div></div>
-        <ul><li><b>Born-digital only</b>, so answers are often in the text layer, even for figure questions.</li>
-        <li>Used for the modality-ceiling result only: its evidence pages are not a minimal set.</li></ul></div>
-    </div>
-    <p class="judge"><b>Judge:</b> Gemini-2.5-Flash at temperature zero returns correct, incorrect or abstained. Agreement is <b>96.0%</b> with GPT-4o and <b>98.3%</b> with a human annotator.</p>
+    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
+
+    <ul>
+      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
+      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
+      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
+    </ul>
+
+    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
   </div>
 
-  <div class="corner">Appendix &middot; Empirical</div>
+  <div class="corner">Appendix &middot; Survey</div>
 
 </div>
 </body>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Datasets</title>
+<title>Reasoning Strategies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -79,19 +79,19 @@
   /* ================= SLIDE 31 ================= */
   .s31 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
   .s31 .lead b{font-weight:600; color:var(--ink);}
-  .s31 .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:46px; margin-top:38px;}
-  .s31 .cards h3{
-    font-family:var(--disp); font-size:23px; font-weight:600;
-    letter-spacing:0; padding-bottom:11px;
-    border-bottom:1px solid var(--line); margin-bottom:18px;
+  .s31 ul{list-style:none; margin-top:30px;}
+  .s31 ul li{
+    position:relative; padding-left:26px; margin-bottom:19px;
+    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
+    max-width:1110px;
   }
-  .s31 .cards p{font-size:16.5px; font-weight:400; line-height:1.55; color:var(--slate);}
-  .s31 .cards .tag{
-    margin-top:14px; font-family:var(--mono); font-size:12px;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  .s31 ul li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:10px; height:2px; background:var(--navy);
   }
-
-  .s31 .close{margin-top:40px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
+  .s31 ul li b{font-weight:600; color:var(--ink);}
+  .s31 ul li:last-child{margin-bottom:0;}
+  .s31 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
   .s31 .close b{font-weight:600; color:var(--ink);}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
@@ -107,30 +107,18 @@
 
 <div class="slide s31">
 
-  <h1>Datasets</h1>
+  <h1>Reasoning Strategies</h1>
 
   <div class="body">
-    <p class="lead">Datasets serve three roles, and the multi-page setting makes all three harder: <b>per-page annotation does not scale</b> to documents of tens or hundreds of pages, and long PDFs are harder to source and license than single pages.</p>
+    <p class="lead">Reasoning strategies act over a <b>single evidence buffer assembled before the reasoning call</b>: the full document representation, a retrieved subset, or evidence from an agentic step. None updates model parameters.</p>
 
-    <div class="cards">
-      <div>
-        <h3>Pretraining</h3>
-        <p>The exception rather than the norm. Confined to a few page-to-document and MLLM-centric systems that do continued pretraining on an existing backbone, because multi-page corpora are still small.</p>
-        <div class="tag">Rare</div>
-      </div>
-      <div>
-        <h3>Fine-tuning</h3>
-        <p>Has converged on LVLM-synthesised supervision over scraped PDFs, with reinforcement learning increasingly layered on top to shape evidence-grounding and trajectory behaviour.</p>
-        <div class="tag">LVLM-synthesised</div>
-      </div>
-      <div>
-        <h3>Benchmarking</h3>
-        <p>Three tiers: single-page extractive baselines, mid-length multi-page suites, and long-document multimodal benchmarks that need cross-page integration. The same small pool of PDFs gets reused.</p>
-        <div class="tag">Contamination risk</div>
-      </div>
-    </div>
+    <ul>
+      <li><b>Sequential reasoning: Chain-of-Thought.</b> Extends a single reasoning thread. CoT binds evidence from different pages into one chain and decomposes multi-hop questions into single-hop steps.</li>
+      <li><b>Sequential reasoning: Self-Reflection.</b> The model evaluates its own draft answer and revises it across rounds, optionally against a verifier or critic.</li>
+      <li><b>Parallel exploration.</b> Several reasoning paths over the same buffer. Self-Consistency samples multiple chains and takes the majority answer; sampling-adjudication replaces the vote with an LLM judge. Cost scales with the number of samples. Tree-of-Thoughts has seen little uptake.</li>
+    </ul>
 
-    <p class="close"><b>Answer-only accuracy masks retrieval failure</b> and rewards correct answers reached through incorrect reasoning. Newer benchmarks score retrieval and page-localisation as well, but it is not yet standard.</p>
+    <p class="close">A chain can only reason over the evidence already assembled. It <b>cannot recover what retrieval missed</b>.</p>
   </div>
 
   <div class="corner">Appendix &middot; Survey</div>

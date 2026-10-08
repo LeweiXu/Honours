@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Agentic Methods</title>
+<title>Multi-Page Visually Rich Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -77,22 +77,19 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 29 ================= */
-  .s29 .lead{font-size:19px; font-weight:400; line-height:1.5; color:var(--slate); max-width:1130px;}
-  .s29 .lead b{font-weight:600; color:var(--ink);}
-  .s29 ul{list-style:none; margin-top:30px;}
-  .s29 ul li{
-    position:relative; padding-left:26px; margin-bottom:19px;
-    font-size:18.5px; font-weight:400; line-height:1.55; color:var(--slate);
-    max-width:1110px;
-  }
-  .s29 ul li::before{
-    content:""; position:absolute; left:0; top:11px;
-    width:10px; height:2px; background:var(--navy);
-  }
-  .s29 ul li b{font-weight:600; color:var(--ink);}
+  .s29 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .s29 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
+  .s29 ul{list-style:none;}
+  .s29 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
+  .s29 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
   .s29 ul li:last-child{margin-bottom:0;}
-  .s29 .close{margin-top:34px; font-size:18px; font-weight:400; line-height:1.5; color:var(--slate);}
-  .s29 .close b{font-weight:600; color:var(--ink);}
+  .s29 b{font-weight:600;}
+  .s29 img{display:block;}
+  .s29 .lead{font-size:22px; line-height:1.45; max-width:1100px;}
+  .s29 .cols{display:grid; grid-template-columns:repeat(3,1fr); gap:48px; margin-top:38px;}
+  .s29 h3{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; padding-bottom:13px; border-bottom:2px solid var(--navy); margin-bottom:22px;}
+  .s29 p{font-size:21.5px; line-height:1.45; margin-bottom:24px;}
+  .s29 .lab{margin-bottom:7px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -107,18 +104,15 @@
 
 <div class="slide s29">
 
-  <h1>Agentic Methods</h1>
+  <h1>Inference-Time and Training Strategies</h1>
 
   <div class="body">
-    <p class="lead">Agentic methods put one or more <b>LLM controllers</b> in charge: either iterating evidence acquisition under inference-time control, or coordinating across specialised roles.</p>
-
-    <ul>
-      <li><b>ReAct and tool-augmented reasoning.</b> A single controller interleaves thought, action, and observation. Actions are document-side tool calls (retrievers, parsers, OCR engines) or structured navigation over a pre-built document representation.</li>
-      <li><b>Multi-agent orchestration.</b> Modality-specialised decomposition gives text and visual evidence separate controllers plus a synthesis controller. Role-specialised decomposition splits planning, execution, verification, and synthesis.</li>
-      <li><b>What the adaptive trajectory buys.</b> Compute scales with question difficulty rather than document length, the single-step recall ceiling of retrieval-augmented pipelines is lifted, and the action sequence is an inspectable audit trail.</li>
-    </ul>
-
-    <p class="close">The cost is <b>controllability</b>: inference cost is hard to bound, and a controller can commit early to wrong evidence and continue down the wrong trajectory.</p>
+    <p class="lead">Three evidence-management decisions. Each can be <b>prompted around a frozen MLLM</b>, or <b>trained into it</b>.</p>
+    <div class="cols">
+      <div><h3>Retrieval and navigation</h3><div class="lab">Training-free</div><p>Similarity-based or relation-aware retrieval</p><div class="lab">Trained</div><p>Modality-alignment, cross-page-fusion, logical-relevance</p></div>
+      <div><h3>Reasoning strategies</h3><div class="lab">Training-free</div><p>Chain-of-Thought, Self-Reflection, Self-Consistency</p><div class="lab">Trained</div><p>Trace-imitation, then reward-driven (GRPO)</p></div>
+      <div><h3>Agentic methods</h3><div class="lab">Training-free</div><p>ReAct and tool use, multi-agent orchestration</p><div class="lab">Trained</div><p>Trajectory-distillation, reinforcement-learned</p></div>
+    </div>
   </div>
 
   <div class="corner">Appendix &middot; Survey</div>
