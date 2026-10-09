@@ -85,9 +85,12 @@
   .s13 ul li:last-child{margin-bottom:0;}
   .s13 b{font-weight:600;}
   .s13 img{display:block;}
-  .s13 .fig img{width:1152px; height:auto;}
-  .s13 .qs{display:grid; grid-template-columns:repeat(3,1fr); gap:40px; margin-top:34px;}
+  .s13 .fig img{width:1030px; height:auto;}
+  .s13 .qs{display:grid; grid-template-columns:repeat(3,1fr); gap:40px; margin-top:22px;}
   .s13 .qs p{font-size:21.5px; line-height:1.45;}
+  .s13 .six{margin-top:14px; padding-top:12px; border-top:1px solid var(--line); font-size:20px; line-height:1.4;}
+  .s13 .next{position:absolute; left:64px; bottom:24px; font-size:15.5px; font-style:italic; max-width:760px;}
+  .s13 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -111,7 +114,10 @@
       <div><div class="lab">Selection</div><p>Did it actually reach the model?</p></div>
       <div><div class="lab">Reasoning</div><p>Did the model use it correctly?</p></div>
     </div>
+    <p class="six">Each locus has <b>two mechanisms</b>, six in total. Every technique targets one or more of these loci, whatever the architecture.</p>
   </div>
+
+  <div class="next"><b>Next</b>How do we test each one separately?</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>13</b> / 18</div>
 

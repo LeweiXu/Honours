@@ -80,6 +80,7 @@
 
 - The second paper starts from how document understanding is used in industry.
 - There you usually have one specific task, such as classifying or extracting information, over thousands or even millions of documents.
+- For example, a hospital extracting fields from scanned patient records, a mining company classifying and summarising technical and safety reports, a bank pulling figures out of annual reports, or a law firm finding clauses across contracts.
 - Privacy or data-residency requirements can mean that no third-party service is allowed at all.
 - Even without those concerns, the cost of a commercial service adds up at that volume.
 - But the more important point is this. Either way, you cannot upload documents one by one into an online tool.
