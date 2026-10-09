@@ -113,26 +113,27 @@
 - The main benchmark is MMLongBench-Doc, with one hundred and thirty-five long documents. It is the only one we know of that marks, for every question, the evidence pages, the type of evidence, and whether the question can be answered at all.
 - We ran a lot of experiments this way. In the next three slides I will only discuss some of the more interesting and important points.
 
-## Slide 15: Representation, when is visual reading worth its cost?
+## Slide 15: Representation: when is visual reading worth its cost?
 
 - The first point is about representation, and the question is when visual reading is worth its cost.
 - Vision is expensive. Reading from images alone needs high resolution to work well, and every page image costs time. In our measurements, preparing the input took about twenty-six seconds per question with images, against under two seconds with text.
 - Text, on the other hand, works like a cache. The text embedded in the file, or the output of a structure-aware parser, converts the document once into a form that is fast to use at inference time.
-- How much of each you need depends heavily on the document type and the task. You can see that in the figure: the lines for different document domains behave very differently as we move from text to images. There is no one size fits all.
-- And parsers are improving. Newer neural parsers can express visual content directly as text, for example turning a chart into a table. In our own runs the parser left charts as image placeholders, so this is a direction, not something our results show yet.
+- On born-digital documents, text alone is already close: in the lower half of the table, adding images to parsed text gives under three points.
+- So how much of each you need depends heavily on the document type and the task. In the upper half, chart and figure questions are refused far more often from text, and gain more than twenty points from images, while text and table questions gain little. There is no one size fits all.
+- And parsers are improving. Newer neural parsers can express visual content directly as text, for example turning a chart into a table of its values. Our results do not show this yet, so I see it as a direction.
 - So choose the representation for the document type and the task.
 
-## Slide 16: Selection, how much evidence is enough?
+## Slide 16: Selection: how much evidence is enough?
 
 - The second point is about selection.
 - Retrieved evidence can look sufficient. The model produces an answer either way, and it is hard to know whether more context from the document would have changed it.
-- Underneath that is a precision and recall trade-off. On the left, as we retrieve more pages, recall rises from 54 percent to 87 percent, but precision falls from 70 percent to 15 percent.
+- Underneath that is a precision and recall trade-off.
 - If we retrieve too little, required evidence is simply missing. In our experiments, removing one required page halves accuracy.
-- If we retrieve too much, the reasoner struggles to find and combine the evidence. On the right, every required page is present, and accuracy still falls as we add more pages.
+- If we retrieve too much, the reasoner struggles to find and combine the evidence. In the figure, every required page is present, and accuracy still falls as we add more pages, most sharply for multi-hop questions.
 - And there is no clear stopping signal. It is hard to retrieve only what is relevant, and hard to know when you have enough.
 - We need enough evidence to establish the answer, not just enough to generate one.
 
-## Slide 17: Reasoning, does the document support the question in the first place?
+## Slide 17: Reasoning: does the document support the question?
 
 - The third point is about reasoning.
 - A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all. With no instruction, the model answers fluently that it is a clip from Breaking Bad.
