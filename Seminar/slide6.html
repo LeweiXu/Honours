@@ -78,26 +78,23 @@
 
   /* ================= SLIDE 6 ================= */
   .s6 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
-  .s6 .sub{font-family:var(--disp); font-size:27.5px; font-weight:600; letter-spacing:0; line-height:1.25;}
   .s6 ul{list-style:none;}
-  .s6 ul li{position:relative; padding-left:26px; margin-bottom:16px; font-size:21.5px; line-height:1.45;}
-  .s6 ul li::before{content:""; position:absolute; left:0; top:13px; width:11px; height:2px; background:var(--navy);}
-  .s6 ul li:last-child{margin-bottom:0;}
   .s6 b{font-weight:600;}
   .s6 img{display:block;}
   .s6 .lead{font-size:22px; line-height:1.45; max-width:1120px;}
-  .s6 .lane{display:grid; grid-template-columns:250px 46px 1fr; align-items:center; margin-top:30px;}
-  .s6 .who{border:1.5px solid var(--ink); padding:16px 18px; font-family:var(--disp); font-size:23px; font-weight:600; letter-spacing:0; line-height:1.25;}
-  .s6 .who small{display:block; font-family:var(--mono); font-size:12.5px; font-weight:400; letter-spacing:.04em; margin-top:6px;}
-  .s6 .ar{height:2px; background:var(--navy); position:relative; margin:0 6px 0 8px;}
-  .s6 .ar::after{content:""; position:absolute; right:-2px; top:50%; margin-top:-5px; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:9px solid var(--navy);}
-  .s6 .chips{display:flex; gap:14px;}
-  .s6 .chip{flex:1; border:1.5px solid var(--line); padding:13px 16px; font-size:20px; line-height:1.35;}
-  .s6 .chip b{display:block; margin-bottom:3px;}
-  .s6 .no .chip{border-color:var(--accent);}
-  .s6 .no .chip b{color:var(--accent);}
-  .s6 .no .chip b::before{content:"\00d7\00a0";}
-  .s6 .close{margin-top:36px; padding-top:22px; border-top:1px solid var(--line); font-size:23px; line-height:1.4;}
+  .s6 .cols{display:grid; grid-template-columns:470px 1fr; gap:60px; align-items:start;}
+  .s6 .gapbox{border-top:3px solid var(--accent); padding-top:14px;}
+  .s6 .dia{border:1.5px solid var(--line); margin:6px 0 18px; padding:18px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;}
+  .s6 .tag{font-size:18.5px; border:1.5px solid var(--ink); padding:6px 10px; white-space:nowrap;}
+  .s6 .row{display:flex; align-items:center; gap:10px; width:100%; justify-content:center;}
+  .s6 .vs{font-size:14.5px; font-weight:600; color:var(--accent);}
+  .s6 .lines{display:flex; gap:26px; justify-content:center; width:100%; margin-top:4px;}
+  .s6 .lines i{display:block; width:2px; height:34px; background:var(--navy);}
+  .s6 .gap{font-size:25.5px; line-height:1.42;}
+  .s6 .con{border-top:3px solid var(--navy); padding-top:14px;}
+  .s6 ol{list-style:none; counter-reset:c; margin-top:6px;}
+  .s6 ol li{counter-increment:c; position:relative; padding-left:44px; margin-bottom:24px; font-size:25.5px; line-height:1.4;}
+  .s6 ol li::before{content:counter(c); position:absolute; left:0; top:1px; width:28px; height:28px; border:1.5px solid var(--navy); font-size:16.5px; font-weight:600; display:flex; align-items:center; justify-content:center;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -112,28 +109,23 @@
 
 <div class="slide s6">
 
-  <h1>Real-World Constraints</h1>
+  <h1>Survey: Research Gap and Contributions</h1>
 
   <div class="body">
-    <p class="lead">In industry: classify, summarise or extract information from <b>thousands, or even millions, of documents</b>.</p>
-    <div class="lane no">
-      <div class="who">Send them to a third-party service<small>a commercial API</small></div><div class="ar"></div>
-      <div class="chips">
-        <div class="chip"><b>Privacy</b>Sensitive records, with privacy or data-residency requirements.</div>
-        <div class="chip"><b>Cost</b>API costs become prohibitive at that volume.</div>
-        <div class="chip"><b>Fit</b>Specialised document types need the model adapted.</div>
+    <div class="cols">
+      <div class="gapbox">
+        <div class="lab">Research gap</div>
+        <div class="dia"><div class="row"><span class="tag">page-to-document</span><span class="tag">MLLM-centric</span></div><div class="row"><span class="tag">retrieval-augmented</span><span class="tag">adaptive-trajectory</span></div><div class="lines"><i></i><i></i><i></i><i></i></div></div>
+        <p class="gap">Multi-page systems developed along <b class="hi">parallel lines</b>, with different terminology and little comparison between them.</p>
+      </div>
+      <div class="con">
+        <div class="lab">Contributions</div>
+        <ol><li>Brings these systems together through <b class="hi">evidence management</b>: how a system manages the relevant evidence across a very long document.</li><li>Organises them into <b>four architectural families</b>.</li></ol>
       </div>
     </div>
-    <div class="lane">
-      <div class="who">Run open-weight models locally<small>fixed memory and compute budgets</small></div><div class="ar"></div>
-      <div class="chips">
-        <div class="chip"><b>Accuracy and efficiency</b>Which pages to read, at what resolution, and how many times.</div>
-      </div>
-    </div>
-    <p class="close">The central question: how can we improve document understanding <b class="hi">under a fixed compute budget</b>?</p>
   </div>
 
-  <div class="corner"><i class=on>Background</i><i>Survey</i><i>Empirical</i><b>06</b> / 25</div>
+  <div class="corner"><i>Background</i><i class=on>Survey</i><i>Empirical</i><b>06</b> / 18</div>
 
 </div>
 </body>
