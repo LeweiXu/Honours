@@ -403,115 +403,100 @@
   .s14 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ================= SLIDE 15 ================= */
-  .s15 .lab{font-size:15.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
-  .s15 img{display:block;}
-  .s15 .body{padding-top:14px;}
-  .s15 .claim{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; margin-bottom:14px;}
-  .s15 .claim .lab{margin:0;}
-  .s15 .claim .a{font-size:22px; text-decoration:line-through; text-decoration-color:#B42318; text-decoration-thickness:2px;}
-  .s15 .claim .f{font-size:23px; font-weight:700;}
-  .s15 .mid{display:grid; grid-template-columns:1fr 372px; gap:18px;}
-  .s15 .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-  .s15 .tile{border:1.5px solid var(--line); padding:11px 13px 12px;}
-  .s15 .tile h4{font-size:18.5px; font-weight:700; line-height:1.22; min-height:42px; margin-bottom:8px;}
-  .s15 .b{margin-bottom:8px;}
+  .s15 .body{padding-top:12px;}
+  .s15 .locus{font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;}
+  .s15 .cols{display:grid; grid-template-columns:500px 1fr; gap:34px; align-items:start;}
+  .s15 .pt{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:15px;}
+  .s15 .pt > i{width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .s15 .pt h3{font-size:23px; font-weight:700; line-height:1.22; margin-bottom:4px;}
+  .s15 .pt p{font-size:19.5px; line-height:1.36;}
+  .s15 .ev{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .s15 .tile{border:1.5px solid var(--line); padding:11px 14px 12px;}
+  .s15 .tile.wide{grid-column:1 / -1;}
+  .s15 .tile h4{font-size:19px; font-weight:700; line-height:1.22; margin-bottom:8px;}
+  .s15 .b{margin-bottom:7px;}
   .s15 .b span{display:block; font-size:16px; line-height:1.2; margin-bottom:3px;}
-  .s15 .b i{display:inline-block; height:15px; background:var(--accent); vertical-align:middle;}
-  .s15 .b i.alt{background:#9DB7DB;}
+  .s15 .b i{display:inline-block; height:15px; background:#9DB7DB; vertical-align:middle;}
+  .s15 .b i.alt{background:var(--accent);}
   .s15 .b em{font-style:normal; font-weight:700; font-size:18.5px; margin-left:7px; vertical-align:middle; white-space:nowrap;}
-  .s15 .b:has(i[style*="100%"]) i{max-width:62%;}
-  .s15 .b i{max-width:62%;}
-  .s15 .tile p{font-size:16px; line-height:1.28; margin-top:8px; font-style:italic;}
-  .s15 .ex{border:1.5px solid var(--line); padding:0 13px 11px;}
-  .s15 .ex .hd{background:var(--wash); margin:0 -13px 9px; padding:6px 13px; font-size:15.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
-  .s15 .ex .q{font-size:17.5px; line-height:1.3;}
-  .s15 .ex .g{font-size:17.5px; margin:4px 0 8px;}
-  .s15 .ex em{font-style:normal; font-weight:700; margin-right:7px;}
-  .s15 .r{display:grid; grid-template-columns:104px 18px 1fr; gap:3px; align-items:baseline; font-size:17px; line-height:1.28; margin-bottom:3px;}
+  .s15 .tile > p{font-size:16px; line-height:1.3; margin-top:7px; font-style:italic;}
+  .s15 .tile p.q{font-style:normal; font-size:17.5px; margin:0 0 7px;}
+  .s15 .r{display:grid; grid-template-columns:96px 18px 1fr; gap:3px; align-items:baseline; font-size:16.5px; line-height:1.28; margin-bottom:3px;}
   .s15 .r span{font-weight:700;}
   .s15 .r i{font-style:normal; font-weight:700;}
   .s15 .r i.x{color:#B42318;} .s15 .r i.v{color:#157F3B;}
-  .s15 .do{margin-top:14px; border-top:3px solid var(--accent); padding-top:10px;}
-  .s15 .flow{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:stretch; margin-top:2px;}
-  .s15 .flow > div{border:1.5px solid var(--navy); padding:9px 12px 10px; font-size:18.5px; line-height:1.3;}
-  .s15 .flow > div b{display:block; font-size:20px; margin-bottom:3px;}
-  .s15 .flow > i{position:relative;}
-  .s15 .flow > i::after{content:""; position:absolute; left:8px; top:50%; margin-top:-6px; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid var(--navy);}
-  .s15 .dep{margin-top:10px; font-size:19.5px; line-height:1.34;}
+  .s15 table{border-collapse:collapse; width:100%; font-size:16.5px;}
+  .s15 th, .s15 td{text-align:right; padding:3px 6px; border-bottom:1px solid var(--line);}
+  .s15 th:first-child, .s15 td:first-child{text-align:left;}
+  .s15 th{font-weight:700;}
+  .s15 td.g{color:var(--accent); font-weight:700;}
+  .s15 .take{margin-top:14px; border-left:5px solid var(--accent); padding:8px 0 8px 16px; font-size:24px; font-weight:700; font-style:italic; line-height:1.3;}
+  .s15 .next{position:absolute; left:64px; bottom:24px; font-size:16.5px; font-style:italic; max-width:760px;}
+  .s15 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ================= SLIDE 16 ================= */
-  .s16 .lab{font-size:15.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
-  .s16 img{display:block;}
-  .s16 .body{padding-top:14px;}
-  .s16 .claim{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; margin-bottom:14px;}
-  .s16 .claim .lab{margin:0;}
-  .s16 .claim .a{font-size:22px; text-decoration:line-through; text-decoration-color:#B42318; text-decoration-thickness:2px;}
-  .s16 .claim .f{font-size:23px; font-weight:700;}
-  .s16 .mid{display:grid; grid-template-columns:1fr 372px; gap:18px;}
-  .s16 .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-  .s16 .tile{border:1.5px solid var(--line); padding:11px 13px 12px;}
-  .s16 .tile h4{font-size:18.5px; font-weight:700; line-height:1.22; min-height:42px; margin-bottom:8px;}
-  .s16 .b{margin-bottom:8px;}
+  .s16 .body{padding-top:12px;}
+  .s16 .locus{font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;}
+  .s16 .cols{display:grid; grid-template-columns:500px 1fr; gap:34px; align-items:start;}
+  .s16 .pt{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:15px;}
+  .s16 .pt > i{width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .s16 .pt h3{font-size:23px; font-weight:700; line-height:1.22; margin-bottom:4px;}
+  .s16 .pt p{font-size:19.5px; line-height:1.36;}
+  .s16 .ev{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .s16 .tile{border:1.5px solid var(--line); padding:11px 14px 12px;}
+  .s16 .tile.wide{grid-column:1 / -1;}
+  .s16 .tile h4{font-size:19px; font-weight:700; line-height:1.22; margin-bottom:8px;}
+  .s16 .b{margin-bottom:7px;}
   .s16 .b span{display:block; font-size:16px; line-height:1.2; margin-bottom:3px;}
-  .s16 .b i{display:inline-block; height:15px; background:var(--accent); vertical-align:middle;}
-  .s16 .b i.alt{background:#9DB7DB;}
+  .s16 .b i{display:inline-block; height:15px; background:#9DB7DB; vertical-align:middle;}
+  .s16 .b i.alt{background:var(--accent);}
   .s16 .b em{font-style:normal; font-weight:700; font-size:18.5px; margin-left:7px; vertical-align:middle; white-space:nowrap;}
-  .s16 .b:has(i[style*="100%"]) i{max-width:62%;}
-  .s16 .b i{max-width:62%;}
-  .s16 .tile p{font-size:16px; line-height:1.28; margin-top:8px; font-style:italic;}
-  .s16 .ex{border:1.5px solid var(--line); padding:0 13px 11px;}
-  .s16 .ex .hd{background:var(--wash); margin:0 -13px 9px; padding:6px 13px; font-size:15.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
-  .s16 .ex .q{font-size:17.5px; line-height:1.3;}
-  .s16 .ex .g{font-size:17.5px; margin:4px 0 8px;}
-  .s16 .ex em{font-style:normal; font-weight:700; margin-right:7px;}
-  .s16 .r{display:grid; grid-template-columns:104px 18px 1fr; gap:3px; align-items:baseline; font-size:17px; line-height:1.28; margin-bottom:3px;}
+  .s16 .tile > p{font-size:16px; line-height:1.3; margin-top:7px; font-style:italic;}
+  .s16 .tile p.q{font-style:normal; font-size:17.5px; margin:0 0 7px;}
+  .s16 .r{display:grid; grid-template-columns:96px 18px 1fr; gap:3px; align-items:baseline; font-size:16.5px; line-height:1.28; margin-bottom:3px;}
   .s16 .r span{font-weight:700;}
   .s16 .r i{font-style:normal; font-weight:700;}
   .s16 .r i.x{color:#B42318;} .s16 .r i.v{color:#157F3B;}
-  .s16 .do{margin-top:14px; border-top:3px solid var(--accent); padding-top:10px;}
-  .s16 .flow{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:stretch; margin-top:2px;}
-  .s16 .flow > div{border:1.5px solid var(--navy); padding:9px 12px 10px; font-size:18.5px; line-height:1.3;}
-  .s16 .flow > div b{display:block; font-size:20px; margin-bottom:3px;}
-  .s16 .flow > i{position:relative;}
-  .s16 .flow > i::after{content:""; position:absolute; left:8px; top:50%; margin-top:-6px; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid var(--navy);}
-  .s16 .dep{margin-top:10px; font-size:19.5px; line-height:1.34;}
+  .s16 table{border-collapse:collapse; width:100%; font-size:16.5px;}
+  .s16 th, .s16 td{text-align:right; padding:3px 6px; border-bottom:1px solid var(--line);}
+  .s16 th:first-child, .s16 td:first-child{text-align:left;}
+  .s16 th{font-weight:700;}
+  .s16 td.g{color:var(--accent); font-weight:700;}
+  .s16 .take{margin-top:14px; border-left:5px solid var(--accent); padding:8px 0 8px 16px; font-size:24px; font-weight:700; font-style:italic; line-height:1.3;}
+  .s16 .next{position:absolute; left:64px; bottom:24px; font-size:16.5px; font-style:italic; max-width:760px;}
+  .s16 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ================= SLIDE 17 ================= */
-  .s17 .lab{font-size:15.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
-  .s17 img{display:block;}
-  .s17 .body{padding-top:14px;}
-  .s17 .claim{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; margin-bottom:14px;}
-  .s17 .claim .lab{margin:0;}
-  .s17 .claim .a{font-size:22px; text-decoration:line-through; text-decoration-color:#B42318; text-decoration-thickness:2px;}
-  .s17 .claim .f{font-size:23px; font-weight:700;}
-  .s17 .mid{display:grid; grid-template-columns:1fr 372px; gap:18px;}
-  .s17 .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-  .s17 .tile{border:1.5px solid var(--line); padding:11px 13px 12px;}
-  .s17 .tile h4{font-size:18.5px; font-weight:700; line-height:1.22; min-height:42px; margin-bottom:8px;}
-  .s17 .b{margin-bottom:8px;}
+  .s17 .body{padding-top:12px;}
+  .s17 .locus{font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;}
+  .s17 .cols{display:grid; grid-template-columns:500px 1fr; gap:34px; align-items:start;}
+  .s17 .pt{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:15px;}
+  .s17 .pt > i{width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .s17 .pt h3{font-size:23px; font-weight:700; line-height:1.22; margin-bottom:4px;}
+  .s17 .pt p{font-size:19.5px; line-height:1.36;}
+  .s17 .ev{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .s17 .tile{border:1.5px solid var(--line); padding:11px 14px 12px;}
+  .s17 .tile.wide{grid-column:1 / -1;}
+  .s17 .tile h4{font-size:19px; font-weight:700; line-height:1.22; margin-bottom:8px;}
+  .s17 .b{margin-bottom:7px;}
   .s17 .b span{display:block; font-size:16px; line-height:1.2; margin-bottom:3px;}
-  .s17 .b i{display:inline-block; height:15px; background:var(--accent); vertical-align:middle;}
-  .s17 .b i.alt{background:#9DB7DB;}
+  .s17 .b i{display:inline-block; height:15px; background:#9DB7DB; vertical-align:middle;}
+  .s17 .b i.alt{background:var(--accent);}
   .s17 .b em{font-style:normal; font-weight:700; font-size:18.5px; margin-left:7px; vertical-align:middle; white-space:nowrap;}
-  .s17 .b:has(i[style*="100%"]) i{max-width:62%;}
-  .s17 .b i{max-width:62%;}
-  .s17 .tile p{font-size:16px; line-height:1.28; margin-top:8px; font-style:italic;}
-  .s17 .ex{border:1.5px solid var(--line); padding:0 13px 11px;}
-  .s17 .ex .hd{background:var(--wash); margin:0 -13px 9px; padding:6px 13px; font-size:15.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
-  .s17 .ex .q{font-size:17.5px; line-height:1.3;}
-  .s17 .ex .g{font-size:17.5px; margin:4px 0 8px;}
-  .s17 .ex em{font-style:normal; font-weight:700; margin-right:7px;}
-  .s17 .r{display:grid; grid-template-columns:104px 18px 1fr; gap:3px; align-items:baseline; font-size:17px; line-height:1.28; margin-bottom:3px;}
+  .s17 .tile > p{font-size:16px; line-height:1.3; margin-top:7px; font-style:italic;}
+  .s17 .tile p.q{font-style:normal; font-size:17.5px; margin:0 0 7px;}
+  .s17 .r{display:grid; grid-template-columns:96px 18px 1fr; gap:3px; align-items:baseline; font-size:16.5px; line-height:1.28; margin-bottom:3px;}
   .s17 .r span{font-weight:700;}
   .s17 .r i{font-style:normal; font-weight:700;}
   .s17 .r i.x{color:#B42318;} .s17 .r i.v{color:#157F3B;}
-  .s17 .do{margin-top:14px; border-top:3px solid var(--accent); padding-top:10px;}
-  .s17 .flow{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:stretch; margin-top:2px;}
-  .s17 .flow > div{border:1.5px solid var(--navy); padding:9px 12px 10px; font-size:18.5px; line-height:1.3;}
-  .s17 .flow > div b{display:block; font-size:20px; margin-bottom:3px;}
-  .s17 .flow > i{position:relative;}
-  .s17 .flow > i::after{content:""; position:absolute; left:8px; top:50%; margin-top:-6px; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid var(--navy);}
-  .s17 .dep{margin-top:10px; font-size:19.5px; line-height:1.34;}
+  .s17 table{border-collapse:collapse; width:100%; font-size:16.5px;}
+  .s17 th, .s17 td{text-align:right; padding:3px 6px; border-bottom:1px solid var(--line);}
+  .s17 th:first-child, .s17 td:first-child{text-align:left;}
+  .s17 th{font-weight:700;}
+  .s17 td.g{color:var(--accent); font-weight:700;}
+  .s17 .take{margin-top:14px; border-left:5px solid var(--accent); padding:8px 0 8px 16px; font-size:24px; font-weight:700; font-style:italic; line-height:1.3;}
+  .s17 .next{position:absolute; left:64px; bottom:24px; font-size:16.5px; font-style:italic; max-width:760px;}
+  .s17 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ================= SLIDE 18 ================= */
   .s18 .lab{font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
@@ -1323,7 +1308,7 @@
     </ul>
   </div>
 
-  <div class="next"><b>Next</b>What we found, one failure mode at a time.</div>
+  <div class="next"><b>Next</b>We ran many experiments. The next three slides cover only the most interesting and important points.</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>14</b> / 18</div>
 
@@ -1331,19 +1316,23 @@
 
 <div class="slide s15">
 
-  <h1>Representation: What Should the Model Read?</h1>
+  <h1>When Is Visual Reading Worth Its Cost?</h1>
 
   <div class="body">
-    <div class="claim"><div class="lab">Assumption</div><div class="a">Give the model the richest input, or perfect one modality.</div><div class="lab">Finding</div><div class="f">Text and vision cover for each other, so neither has to be perfect.</div></div>
-    <div class="mid">
-      <div class="tiles"><div class="tile"><h4>Accuracy spread across parsers</h4><div class="b"><span>text alone</span><i style="width:100%"></i><em>15.7 pts</em></div><div class="b"><span>with page image</span><i style="width:27%" class=alt></i><em>4.2 pts</em></div><p>The image recovers what the parser lost.</p></div><div class="tile"><h4>Same accuracy, fewer input tokens</h4><div class="b"><span>parser text + image</span><i style="width:100%"></i><em>1,333</em></div><div class="b"><span>embedded text + image</span><i style="width:72%" class=alt></i><em>959</em></div><p>49.5% against 50.1%, and no parser needed.</p></div><div class="tile"><h4>Time to prepare the input</h4><div class="b"><span>text only</span><i style="width:7%"></i><em>1.8 s</em></div><div class="b"><span>with images</span><i style="width:100%" class=alt></i><em>26.3 s</em></div><p>Per question. Images are not free.</p></div></div>
-      <div class="ex"><div class="hd">Example</div><p class="q"><em>Q</em>What are the colors of the icons that the users touch to move the app up and remove the app?</p><p class="g"><em>Gold</em>gray, red</p><div class="r"><span>Text only</span><i class="x">&#10007;</i><p>&ldquo;The document does not specify the colors&rdquo;</p></div><div class="r"><span>With image</span><i class="v">&#10003;</i><p>&ldquo;gray (a gray upward arrow) &hellip; red&rdquo;</p></div></div>
+    <div class="locus">Representation</div>
+    <div class="cols">
+      <div><div class="pt"><i>1</i><div><h3>Visual reading has a cost</h3><p>Many surveyed systems read page images. Rendering, sending and processing them adds overhead, more so when an agentic workflow inspects pages repeatedly.</p></div></div><div class="pt"><i>2</i><div><h3>Text can already be sufficient</h3><p>Embedded text or a reliable parser may preserve everything a text-based question needs. Vision matters when the answer depends on appearance, layout, or something lost in extraction.</p></div></div><div class="pt"><i>3</i><div><h3>Spend the visual budget selectively</h3><p>Start from what the task requires. Use page images or targeted crops where text cannot reliably preserve the evidence.</p></div></div></div>
+      <div class="ev"><div class="tile wide"><h4>What page images add, and what they cost</h4>
+      <table><tr><th></th><th>Parsed text</th><th>+ page images</th><th>Gain</th></tr>
+      <tr><td>Born-digital documents (LongDocURL)</td><td>64.5%</td><td>67.3%</td><td class="g">+2.8</td></tr>
+      <tr><td>Chart questions</td><td>16.9%</td><td>42.7%</td><td class="g">+25.8</td></tr>
+      <tr><td>Scanned documents</td><td>32.8%</td><td>61.2%</td><td class="g">+28.4</td></tr>
+      <tr><td>Time to prepare the input, per question</td><td>1.8 s</td><td>26.3 s</td><td class="g">&times;15</td></tr></table></div><div class="tile ex"><h4>Text is enough</h4><p class="q">What is the name of the company that created this presentation?</p><div class="r"><span>Good parser</span><i class="v">&#10003;</i><p>&ldquo;AVALAUNCH MEDIA&rdquo;</p></div><p>A weaker parser read &ldquo;Asterks&rdquo;: the text has to be reliable.</p></div><div class="tile ex"><h4>Vision is necessary</h4><p class="q">What are the colors of the icons &hellip;?</p><div class="r"><span>Text only</span><i class="x">&#10007;</i><p>&ldquo;does not specify the colors&rdquo;</p></div><div class="r"><span>With image</span><i class="v">&#10003;</i><p>&ldquo;gray &hellip; red&rdquo;</p></div></div></div>
     </div>
-    <div class="do"><div class="lab">Designing and deploying under a budget</div>
-      <div class="flow"><div><b>Start from embedded text</b>It is cheap, and often reliable on born-digital documents.</div><i></i><div><b>Add the page image</b>When the task needs appearance, or the text looks unreliable.</div><i></i><div><b>Re-parse only if needed</b>When the existing text is inadequate, such as on scans.</div></div>
-      <p class="dep">Richer input costs time and memory on every page, so <b>choose the modality and the number of pages together</b>.</p>
-    </div>
+    <div class="take">Visual reading is valuable when it preserves necessary evidence, not automatically for every page and every question.</div>
   </div>
+
+  <div class="next"><b>Next</b>Once the pages are readable, which ones should the model see?</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>15</b> / 18</div>
 
@@ -1351,19 +1340,18 @@
 
 <div class="slide s16">
 
-  <h1>Selection: Which Pages Should the Model See?</h1>
+  <h1>A Plausible Answer Does Not Mean the Evidence Is Complete</h1>
 
   <div class="body">
-    <div class="claim"><div class="lab">Assumption</div><div class="a">Retrieving more pages is always safer.</div><div class="lab">Finding</div><div class="f">Missing evidence is costly, but extra pages hurt too.</div></div>
-    <div class="mid">
-      <div class="tiles"><div class="tile"><h4>Remove one required page</h4><div class="b"><span>all required pages</span><i style="width:100%"></i><em>38.6%</em></div><div class="b"><span>one missing</span><i style="width:48%" class=alt></i><em>18.4%</em></div><p>Retrieval rank does not show which page is safe to drop.</p></div><div class="tile"><h4>Add three unneeded pages</h4><div class="b"><span>required pages only</span><i style="width:100%"></i><em>43.9%</em></div><div class="b"><span>plus three more</span><i style="width:80%" class=alt></i><em>35.1%</em></div><p>Multi-hop questions, with every required page still present.</p></div><div class="tile"><h4>Recall at five pages</h4><div class="b"><span>BM25, on CPU</span><i style="width:72%"></i><em>58.1%</em></div><div class="b"><span>ColQwen3, on GPU</span><i style="width:100%" class=alt></i><em>81.0%</em></div><p>0.3 ms against 110 ms per query.</p></div></div>
-      <div class="ex"><div class="hd">Example</div><p class="q"><em>Q</em>How many chapter authors of this report come from Columbia University?</p><p class="g"><em>Gold</em>3</p><div class="r"><span>Page 13</span><i class="x">&#10007;</i><p>&ldquo;two&rdquo;</p></div><div class="r"><span>Page 14</span><i class="x">&#10007;</i><p>&ldquo;one&rdquo;</p></div><div class="r"><span>Both pages</span><i class="v">&#10003;</i><p>&ldquo;three&rdquo;</p></div></div>
+    <div class="locus">Selection</div>
+    <div class="cols">
+      <div><div class="pt"><i>1</i><div><h3>Retrieved evidence can look sufficient</h3><p>A page may support a reasonable answer while an unseen page adds an exception, a qualification, or another fact that changes it. Producing an answer is not proof that retrieval is complete.</p></div></div><div class="pt"><i>2</i><div><h3>Retrieving more creates another risk</h3><p>Missing a required page is damaging. But adding unnecessary pages also lowers accuracy.</p></div></div><div class="pt"><i>3</i><div><h3>Aim for complete, focused evidence</h3><p>Keep all the necessary context while limiting distraction and cost. Stop when the question&rsquo;s requirements are covered, not when an answer can be produced.</p></div></div></div>
+      <div class="ev"><div class="tile ex wide"><h4>Each page gives a confident, wrong answer</h4><p class="q">How many chapter authors of this report come from Columbia University? (Gold: 3)</p><div class="r"><span>Page 13 only</span><i class="x">&#10007;</i><p>&ldquo;two&rdquo;</p></div><div class="r"><span>Page 14 only</span><i class="x">&#10007;</i><p>&ldquo;one&rdquo;</p></div><div class="r"><span>Both pages</span><i class="v">&#10003;</i><p>&ldquo;three&rdquo;</p></div><p>The author list runs across two pages.</p></div><div class="tile"><h4>Remove one required page</h4><div class="b"><span>all required pages</span><i style="width:58%"></i><em>38.6%</em></div><div class="b"><span>one missing</span><i style="width:28%" class=alt></i><em>18.4%</em></div><p>Retrieval rank does not show which page is safe to drop.</p></div><div class="tile"><h4>Add three unneeded pages</h4><div class="b"><span>required pages only</span><i style="width:58%"></i><em>43.9%</em></div><div class="b"><span>plus three more</span><i style="width:46%" class=alt></i><em>35.1%</em></div><p>Multi-hop questions, every required page still present.</p></div></div>
     </div>
-    <div class="do"><div class="lab">Designing and deploying under a budget</div>
-      <div class="flow"><div><b>Retrieve broadly</b>Coverage first: a missed page cannot be recovered later.</div><i></i><div><b>Filter or rerank</b>Control what actually reaches the model.</div><i></i><div><b>Judge the set</b>Is the whole set sufficient? If not, retrieve again.</div></div>
-      <p class="dep">A strong visual retriever pays off on collections queried often. A light text retriever suits tight budgets. <b>Judge by final answers and latency, not recall alone.</b></p>
-    </div>
+    <div class="take">We need enough evidence to establish the answer, not just enough to generate one.</div>
   </div>
+
+  <div class="next"><b>Next</b>And when the evidence is there, does it support the question at all?</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>16</b> / 18</div>
 
@@ -1371,19 +1359,18 @@
 
 <div class="slide s17">
 
-  <h1>Reasoning: Can the Model Use What It Sees?</h1>
+  <h1>Does the Document Support the Question in the First Place?</h1>
 
   <div class="body">
-    <div class="claim"><div class="lab">Assumption</div><div class="a">A larger model fixes reasoning.</div><div class="lab">Finding</div><div class="f">Scale lifts everything, but the multi-hop gap stays, and refusal is a trade-off.</div></div>
-    <div class="mid">
-      <div class="tiles"><div class="tile"><h4>Gap between single-hop and multi-hop</h4><div class="b"><span>at 2B parameters</span><i style="width:90%"></i><em>22.0 pts</em></div><div class="b"><span>at 32B parameters</span><i style="width:100%" class=alt></i><em>24.5 pts</em></div><p>Both improve by over 20 points. The gap does not close.</p></div><div class="tile"><h4>Refusing answerable questions</h4><div class="b"><span>no instruction</span><i style="width:22%"></i><em>6.2%</em></div><div class="b"><span>may abstain</span><i style="width:100%" class=alt></i><em>27.7%</em></div><div class="b"><span>reason, then abstain</span><i style="width:72%" class=alt></i><em>19.9%</em></div><p>Helps one model family far more than the other.</p></div><div class="tile"><h4>Storing the 8B model at 4-bit</h4><div class="b"><span>memory, 16-bit</span><i style="width:100%"></i><em>17.5 GB</em></div><div class="b"><span>memory, 4-bit</span><i style="width:39%" class=alt></i><em>6.8 GB</em></div><p>Accuracy 52.4% to 51.8%, but slightly slower.</p></div></div>
-      <div class="ex"><div class="hd">Example</div><p class="q"><em>Q</em>How much lower is the accuracy of GPT-4 on SituatedQA compared to MMLU Chemistry?</p><p class="g"><em>Gold</em>16.7%</p><div class="r"><span>May abstain</span><i class="x">&#10007;</i><p>&ldquo;Not answerable&rdquo;</p></div><div class="r"><span>Reason first</span><i class="v">&#10003;</i><p>&ldquo;79.9% &minus; 63.2% = 16.7%&rdquo;</p></div></div>
+    <div class="locus">Reasoning</div>
+    <div class="cols">
+      <div><div class="pt"><i>1</i><div><h3>Questions can contain unsupported premises</h3><p>A model may give a fluent, assertive answer even when the document does not support the question. Accepting a false premise and inventing an explanation is a form of hallucination.</p></div></div><div class="pt"><i>2</i><div><h3>Task-specific prompts change this behaviour</h3><p>Explicitly permitting abstention improves rejection of unanswerable questions, but also increases refusal of answerable ones. Prompt refinement has to balance the two.</p></div></div><div class="pt"><i>3</i><div><h3>Further reasoning methods are options</h3><p>Reflexion revises an answer using feedback. Self-consistency samples several reasoning paths and aggregates them. Both add computation, and we did not test them.</p></div></div></div>
+      <div class="ev"><div class="tile ex wide"><h4>The document mentions no video</h4><p class="q">Which YouTube does the slides use to show the consequence of having a weak data leadership?</p><div class="r"><span>No instruction</span><i class="x">&#10007;</i><p>&ldquo;The slides use a YouTube clip from the TV show <em>Breaking Bad</em> &hellip;&rdquo;</p></div><div class="r"><span>May abstain</span><i class="v">&#10003;</i><p>&ldquo;Not answerable&rdquo;</p></div><p>One page shows a man holding stacks of money. The model built a show and a character from it.</p></div><div class="tile"><h4>Unanswerable questions refused</h4><div class="b"><span>no instruction</span><i style="width:35%"></i><em>45.5%</em></div><div class="b"><span>may abstain</span><i style="width:58%" class=alt></i><em>74.6%</em></div><p>Correct refusals go up.</p></div><div class="tile"><h4>Answerable questions refused</h4><div class="b"><span>no instruction</span><i style="width:13%"></i><em>6.2%</em></div><div class="b"><span>may abstain</span><i style="width:58%" class=alt></i><em>27.7%</em></div><p>So do false refusals.</p></div></div>
     </div>
-    <div class="do"><div class="lab">Designing and deploying under a budget</div>
-      <div class="flow"><div><b>Choose the backbone on your task</b>Model family matters as much as size.</div><i></i><div><b>Quantise to fit memory</b>A larger model at lower precision, if time allows.</div><i></i><div><b>Spend reasoning selectively</b>Extra steps and verification only for complex or uncertain cases.</div></div>
-      <p class="dep"><b>Calibrate refusal on the model you deploy</b>, and report false refusals alongside accuracy.</p>
-    </div>
+    <div class="take">Before asking whether the answer is correct, ask whether the evidence supports giving that answer.</div>
   </div>
+
+  <div class="next"><b>Next</b>To conclude.</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>17</b> / 18</div>
 

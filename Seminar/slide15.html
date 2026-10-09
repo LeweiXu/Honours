@@ -77,41 +77,36 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 15 ================= */
-  .s15 .lab{font-size:15.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
-  .s15 img{display:block;}
-  .s15 .body{padding-top:14px;}
-  .s15 .claim{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; margin-bottom:14px;}
-  .s15 .claim .lab{margin:0;}
-  .s15 .claim .a{font-size:22px; text-decoration:line-through; text-decoration-color:#B42318; text-decoration-thickness:2px;}
-  .s15 .claim .f{font-size:23px; font-weight:700;}
-  .s15 .mid{display:grid; grid-template-columns:1fr 372px; gap:18px;}
-  .s15 .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-  .s15 .tile{border:1.5px solid var(--line); padding:11px 13px 12px;}
-  .s15 .tile h4{font-size:18.5px; font-weight:700; line-height:1.22; min-height:42px; margin-bottom:8px;}
-  .s15 .b{margin-bottom:8px;}
+  .s15 .body{padding-top:12px;}
+  .s15 .locus{font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;}
+  .s15 .cols{display:grid; grid-template-columns:500px 1fr; gap:34px; align-items:start;}
+  .s15 .pt{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:15px;}
+  .s15 .pt > i{width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .s15 .pt h3{font-size:23px; font-weight:700; line-height:1.22; margin-bottom:4px;}
+  .s15 .pt p{font-size:19.5px; line-height:1.36;}
+  .s15 .ev{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .s15 .tile{border:1.5px solid var(--line); padding:11px 14px 12px;}
+  .s15 .tile.wide{grid-column:1 / -1;}
+  .s15 .tile h4{font-size:19px; font-weight:700; line-height:1.22; margin-bottom:8px;}
+  .s15 .b{margin-bottom:7px;}
   .s15 .b span{display:block; font-size:16px; line-height:1.2; margin-bottom:3px;}
-  .s15 .b i{display:inline-block; height:15px; background:var(--accent); vertical-align:middle;}
-  .s15 .b i.alt{background:#9DB7DB;}
+  .s15 .b i{display:inline-block; height:15px; background:#9DB7DB; vertical-align:middle;}
+  .s15 .b i.alt{background:var(--accent);}
   .s15 .b em{font-style:normal; font-weight:700; font-size:18.5px; margin-left:7px; vertical-align:middle; white-space:nowrap;}
-  .s15 .b:has(i[style*="100%"]) i{max-width:62%;}
-  .s15 .b i{max-width:62%;}
-  .s15 .tile p{font-size:16px; line-height:1.28; margin-top:8px; font-style:italic;}
-  .s15 .ex{border:1.5px solid var(--line); padding:0 13px 11px;}
-  .s15 .ex .hd{background:var(--wash); margin:0 -13px 9px; padding:6px 13px; font-size:15.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
-  .s15 .ex .q{font-size:17.5px; line-height:1.3;}
-  .s15 .ex .g{font-size:17.5px; margin:4px 0 8px;}
-  .s15 .ex em{font-style:normal; font-weight:700; margin-right:7px;}
-  .s15 .r{display:grid; grid-template-columns:104px 18px 1fr; gap:3px; align-items:baseline; font-size:17px; line-height:1.28; margin-bottom:3px;}
+  .s15 .tile > p{font-size:16px; line-height:1.3; margin-top:7px; font-style:italic;}
+  .s15 .tile p.q{font-style:normal; font-size:17.5px; margin:0 0 7px;}
+  .s15 .r{display:grid; grid-template-columns:96px 18px 1fr; gap:3px; align-items:baseline; font-size:16.5px; line-height:1.28; margin-bottom:3px;}
   .s15 .r span{font-weight:700;}
   .s15 .r i{font-style:normal; font-weight:700;}
   .s15 .r i.x{color:#B42318;} .s15 .r i.v{color:#157F3B;}
-  .s15 .do{margin-top:14px; border-top:3px solid var(--accent); padding-top:10px;}
-  .s15 .flow{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:stretch; margin-top:2px;}
-  .s15 .flow > div{border:1.5px solid var(--navy); padding:9px 12px 10px; font-size:18.5px; line-height:1.3;}
-  .s15 .flow > div b{display:block; font-size:20px; margin-bottom:3px;}
-  .s15 .flow > i{position:relative;}
-  .s15 .flow > i::after{content:""; position:absolute; left:8px; top:50%; margin-top:-6px; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid var(--navy);}
-  .s15 .dep{margin-top:10px; font-size:19.5px; line-height:1.34;}
+  .s15 table{border-collapse:collapse; width:100%; font-size:16.5px;}
+  .s15 th, .s15 td{text-align:right; padding:3px 6px; border-bottom:1px solid var(--line);}
+  .s15 th:first-child, .s15 td:first-child{text-align:left;}
+  .s15 th{font-weight:700;}
+  .s15 td.g{color:var(--accent); font-weight:700;}
+  .s15 .take{margin-top:14px; border-left:5px solid var(--accent); padding:8px 0 8px 16px; font-size:24px; font-weight:700; font-style:italic; line-height:1.3;}
+  .s15 .next{position:absolute; left:64px; bottom:24px; font-size:16.5px; font-style:italic; max-width:760px;}
+  .s15 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -126,19 +121,23 @@
 
 <div class="slide s15">
 
-  <h1>Representation: What Should the Model Read?</h1>
+  <h1>When Is Visual Reading Worth Its Cost?</h1>
 
   <div class="body">
-    <div class="claim"><div class="lab">Assumption</div><div class="a">Give the model the richest input, or perfect one modality.</div><div class="lab">Finding</div><div class="f">Text and vision cover for each other, so neither has to be perfect.</div></div>
-    <div class="mid">
-      <div class="tiles"><div class="tile"><h4>Accuracy spread across parsers</h4><div class="b"><span>text alone</span><i style="width:100%"></i><em>15.7 pts</em></div><div class="b"><span>with page image</span><i style="width:27%" class=alt></i><em>4.2 pts</em></div><p>The image recovers what the parser lost.</p></div><div class="tile"><h4>Same accuracy, fewer input tokens</h4><div class="b"><span>parser text + image</span><i style="width:100%"></i><em>1,333</em></div><div class="b"><span>embedded text + image</span><i style="width:72%" class=alt></i><em>959</em></div><p>49.5% against 50.1%, and no parser needed.</p></div><div class="tile"><h4>Time to prepare the input</h4><div class="b"><span>text only</span><i style="width:7%"></i><em>1.8 s</em></div><div class="b"><span>with images</span><i style="width:100%" class=alt></i><em>26.3 s</em></div><p>Per question. Images are not free.</p></div></div>
-      <div class="ex"><div class="hd">Example</div><p class="q"><em>Q</em>What are the colors of the icons that the users touch to move the app up and remove the app?</p><p class="g"><em>Gold</em>gray, red</p><div class="r"><span>Text only</span><i class="x">&#10007;</i><p>&ldquo;The document does not specify the colors&rdquo;</p></div><div class="r"><span>With image</span><i class="v">&#10003;</i><p>&ldquo;gray (a gray upward arrow) &hellip; red&rdquo;</p></div></div>
+    <div class="locus">Representation</div>
+    <div class="cols">
+      <div><div class="pt"><i>1</i><div><h3>Visual reading has a cost</h3><p>Many surveyed systems read page images. Rendering, sending and processing them adds overhead, more so when an agentic workflow inspects pages repeatedly.</p></div></div><div class="pt"><i>2</i><div><h3>Text can already be sufficient</h3><p>Embedded text or a reliable parser may preserve everything a text-based question needs. Vision matters when the answer depends on appearance, layout, or something lost in extraction.</p></div></div><div class="pt"><i>3</i><div><h3>Spend the visual budget selectively</h3><p>Start from what the task requires. Use page images or targeted crops where text cannot reliably preserve the evidence.</p></div></div></div>
+      <div class="ev"><div class="tile wide"><h4>What page images add, and what they cost</h4>
+      <table><tr><th></th><th>Parsed text</th><th>+ page images</th><th>Gain</th></tr>
+      <tr><td>Born-digital documents (LongDocURL)</td><td>64.5%</td><td>67.3%</td><td class="g">+2.8</td></tr>
+      <tr><td>Chart questions</td><td>16.9%</td><td>42.7%</td><td class="g">+25.8</td></tr>
+      <tr><td>Scanned documents</td><td>32.8%</td><td>61.2%</td><td class="g">+28.4</td></tr>
+      <tr><td>Time to prepare the input, per question</td><td>1.8 s</td><td>26.3 s</td><td class="g">&times;15</td></tr></table></div><div class="tile ex"><h4>Text is enough</h4><p class="q">What is the name of the company that created this presentation?</p><div class="r"><span>Good parser</span><i class="v">&#10003;</i><p>&ldquo;AVALAUNCH MEDIA&rdquo;</p></div><p>A weaker parser read &ldquo;Asterks&rdquo;: the text has to be reliable.</p></div><div class="tile ex"><h4>Vision is necessary</h4><p class="q">What are the colors of the icons &hellip;?</p><div class="r"><span>Text only</span><i class="x">&#10007;</i><p>&ldquo;does not specify the colors&rdquo;</p></div><div class="r"><span>With image</span><i class="v">&#10003;</i><p>&ldquo;gray &hellip; red&rdquo;</p></div></div></div>
     </div>
-    <div class="do"><div class="lab">Designing and deploying under a budget</div>
-      <div class="flow"><div><b>Start from embedded text</b>It is cheap, and often reliable on born-digital documents.</div><i></i><div><b>Add the page image</b>When the task needs appearance, or the text looks unreliable.</div><i></i><div><b>Re-parse only if needed</b>When the existing text is inadequate, such as on scans.</div></div>
-      <p class="dep">Richer input costs time and memory on every page, so <b>choose the modality and the number of pages together</b>.</p>
-    </div>
+    <div class="take">Visual reading is valuable when it preserves necessary evidence, not automatically for every page and every question.</div>
   </div>
+
+  <div class="next"><b>Next</b>Once the pages are readable, which ones should the model see?</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>15</b> / 18</div>
 

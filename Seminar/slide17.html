@@ -77,41 +77,36 @@
   .slide::after{right:0; bottom:0;}
 
   /* ================= SLIDE 17 ================= */
-  .s17 .lab{font-size:15.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
-  .s17 img{display:block;}
-  .s17 .body{padding-top:14px;}
-  .s17 .claim{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:baseline; margin-bottom:14px;}
-  .s17 .claim .lab{margin:0;}
-  .s17 .claim .a{font-size:22px; text-decoration:line-through; text-decoration-color:#B42318; text-decoration-thickness:2px;}
-  .s17 .claim .f{font-size:23px; font-weight:700;}
-  .s17 .mid{display:grid; grid-template-columns:1fr 372px; gap:18px;}
-  .s17 .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-  .s17 .tile{border:1.5px solid var(--line); padding:11px 13px 12px;}
-  .s17 .tile h4{font-size:18.5px; font-weight:700; line-height:1.22; min-height:42px; margin-bottom:8px;}
-  .s17 .b{margin-bottom:8px;}
+  .s17 .body{padding-top:12px;}
+  .s17 .locus{font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;}
+  .s17 .cols{display:grid; grid-template-columns:500px 1fr; gap:34px; align-items:start;}
+  .s17 .pt{display:grid; grid-template-columns:34px 1fr; gap:10px; margin-bottom:15px;}
+  .s17 .pt > i{width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .s17 .pt h3{font-size:23px; font-weight:700; line-height:1.22; margin-bottom:4px;}
+  .s17 .pt p{font-size:19.5px; line-height:1.36;}
+  .s17 .ev{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .s17 .tile{border:1.5px solid var(--line); padding:11px 14px 12px;}
+  .s17 .tile.wide{grid-column:1 / -1;}
+  .s17 .tile h4{font-size:19px; font-weight:700; line-height:1.22; margin-bottom:8px;}
+  .s17 .b{margin-bottom:7px;}
   .s17 .b span{display:block; font-size:16px; line-height:1.2; margin-bottom:3px;}
-  .s17 .b i{display:inline-block; height:15px; background:var(--accent); vertical-align:middle;}
-  .s17 .b i.alt{background:#9DB7DB;}
+  .s17 .b i{display:inline-block; height:15px; background:#9DB7DB; vertical-align:middle;}
+  .s17 .b i.alt{background:var(--accent);}
   .s17 .b em{font-style:normal; font-weight:700; font-size:18.5px; margin-left:7px; vertical-align:middle; white-space:nowrap;}
-  .s17 .b:has(i[style*="100%"]) i{max-width:62%;}
-  .s17 .b i{max-width:62%;}
-  .s17 .tile p{font-size:16px; line-height:1.28; margin-top:8px; font-style:italic;}
-  .s17 .ex{border:1.5px solid var(--line); padding:0 13px 11px;}
-  .s17 .ex .hd{background:var(--wash); margin:0 -13px 9px; padding:6px 13px; font-size:15.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
-  .s17 .ex .q{font-size:17.5px; line-height:1.3;}
-  .s17 .ex .g{font-size:17.5px; margin:4px 0 8px;}
-  .s17 .ex em{font-style:normal; font-weight:700; margin-right:7px;}
-  .s17 .r{display:grid; grid-template-columns:104px 18px 1fr; gap:3px; align-items:baseline; font-size:17px; line-height:1.28; margin-bottom:3px;}
+  .s17 .tile > p{font-size:16px; line-height:1.3; margin-top:7px; font-style:italic;}
+  .s17 .tile p.q{font-style:normal; font-size:17.5px; margin:0 0 7px;}
+  .s17 .r{display:grid; grid-template-columns:96px 18px 1fr; gap:3px; align-items:baseline; font-size:16.5px; line-height:1.28; margin-bottom:3px;}
   .s17 .r span{font-weight:700;}
   .s17 .r i{font-style:normal; font-weight:700;}
   .s17 .r i.x{color:#B42318;} .s17 .r i.v{color:#157F3B;}
-  .s17 .do{margin-top:14px; border-top:3px solid var(--accent); padding-top:10px;}
-  .s17 .flow{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:stretch; margin-top:2px;}
-  .s17 .flow > div{border:1.5px solid var(--navy); padding:9px 12px 10px; font-size:18.5px; line-height:1.3;}
-  .s17 .flow > div b{display:block; font-size:20px; margin-bottom:3px;}
-  .s17 .flow > i{position:relative;}
-  .s17 .flow > i::after{content:""; position:absolute; left:8px; top:50%; margin-top:-6px; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid var(--navy);}
-  .s17 .dep{margin-top:10px; font-size:19.5px; line-height:1.34;}
+  .s17 table{border-collapse:collapse; width:100%; font-size:16.5px;}
+  .s17 th, .s17 td{text-align:right; padding:3px 6px; border-bottom:1px solid var(--line);}
+  .s17 th:first-child, .s17 td:first-child{text-align:left;}
+  .s17 th{font-weight:700;}
+  .s17 td.g{color:var(--accent); font-weight:700;}
+  .s17 .take{margin-top:14px; border-left:5px solid var(--accent); padding:8px 0 8px 16px; font-size:24px; font-weight:700; font-style:italic; line-height:1.3;}
+  .s17 .next{position:absolute; left:64px; bottom:24px; font-size:16.5px; font-style:italic; max-width:760px;}
+  .s17 .next b{font-style:normal; font-weight:700; margin-right:6px;}
 
   /* ---------- PRINT: one landscape page per slide ---------- */
   @page{ size:1280px 720px; margin:0; }
@@ -126,19 +121,18 @@
 
 <div class="slide s17">
 
-  <h1>Reasoning: Can the Model Use What It Sees?</h1>
+  <h1>Does the Document Support the Question in the First Place?</h1>
 
   <div class="body">
-    <div class="claim"><div class="lab">Assumption</div><div class="a">A larger model fixes reasoning.</div><div class="lab">Finding</div><div class="f">Scale lifts everything, but the multi-hop gap stays, and refusal is a trade-off.</div></div>
-    <div class="mid">
-      <div class="tiles"><div class="tile"><h4>Gap between single-hop and multi-hop</h4><div class="b"><span>at 2B parameters</span><i style="width:90%"></i><em>22.0 pts</em></div><div class="b"><span>at 32B parameters</span><i style="width:100%" class=alt></i><em>24.5 pts</em></div><p>Both improve by over 20 points. The gap does not close.</p></div><div class="tile"><h4>Refusing answerable questions</h4><div class="b"><span>no instruction</span><i style="width:22%"></i><em>6.2%</em></div><div class="b"><span>may abstain</span><i style="width:100%" class=alt></i><em>27.7%</em></div><div class="b"><span>reason, then abstain</span><i style="width:72%" class=alt></i><em>19.9%</em></div><p>Helps one model family far more than the other.</p></div><div class="tile"><h4>Storing the 8B model at 4-bit</h4><div class="b"><span>memory, 16-bit</span><i style="width:100%"></i><em>17.5 GB</em></div><div class="b"><span>memory, 4-bit</span><i style="width:39%" class=alt></i><em>6.8 GB</em></div><p>Accuracy 52.4% to 51.8%, but slightly slower.</p></div></div>
-      <div class="ex"><div class="hd">Example</div><p class="q"><em>Q</em>How much lower is the accuracy of GPT-4 on SituatedQA compared to MMLU Chemistry?</p><p class="g"><em>Gold</em>16.7%</p><div class="r"><span>May abstain</span><i class="x">&#10007;</i><p>&ldquo;Not answerable&rdquo;</p></div><div class="r"><span>Reason first</span><i class="v">&#10003;</i><p>&ldquo;79.9% &minus; 63.2% = 16.7%&rdquo;</p></div></div>
+    <div class="locus">Reasoning</div>
+    <div class="cols">
+      <div><div class="pt"><i>1</i><div><h3>Questions can contain unsupported premises</h3><p>A model may give a fluent, assertive answer even when the document does not support the question. Accepting a false premise and inventing an explanation is a form of hallucination.</p></div></div><div class="pt"><i>2</i><div><h3>Task-specific prompts change this behaviour</h3><p>Explicitly permitting abstention improves rejection of unanswerable questions, but also increases refusal of answerable ones. Prompt refinement has to balance the two.</p></div></div><div class="pt"><i>3</i><div><h3>Further reasoning methods are options</h3><p>Reflexion revises an answer using feedback. Self-consistency samples several reasoning paths and aggregates them. Both add computation, and we did not test them.</p></div></div></div>
+      <div class="ev"><div class="tile ex wide"><h4>The document mentions no video</h4><p class="q">Which YouTube does the slides use to show the consequence of having a weak data leadership?</p><div class="r"><span>No instruction</span><i class="x">&#10007;</i><p>&ldquo;The slides use a YouTube clip from the TV show <em>Breaking Bad</em> &hellip;&rdquo;</p></div><div class="r"><span>May abstain</span><i class="v">&#10003;</i><p>&ldquo;Not answerable&rdquo;</p></div><p>One page shows a man holding stacks of money. The model built a show and a character from it.</p></div><div class="tile"><h4>Unanswerable questions refused</h4><div class="b"><span>no instruction</span><i style="width:35%"></i><em>45.5%</em></div><div class="b"><span>may abstain</span><i style="width:58%" class=alt></i><em>74.6%</em></div><p>Correct refusals go up.</p></div><div class="tile"><h4>Answerable questions refused</h4><div class="b"><span>no instruction</span><i style="width:13%"></i><em>6.2%</em></div><div class="b"><span>may abstain</span><i style="width:58%" class=alt></i><em>27.7%</em></div><p>So do false refusals.</p></div></div>
     </div>
-    <div class="do"><div class="lab">Designing and deploying under a budget</div>
-      <div class="flow"><div><b>Choose the backbone on your task</b>Model family matters as much as size.</div><i></i><div><b>Quantise to fit memory</b>A larger model at lower precision, if time allows.</div><i></i><div><b>Spend reasoning selectively</b>Extra steps and verification only for complex or uncertain cases.</div></div>
-      <p class="dep"><b>Calibrate refusal on the model you deploy</b>, and report false refusals alongside accuracy.</p>
-    </div>
+    <div class="take">Before asking whether the answer is correct, ask whether the evidence supports giving that answer.</div>
   </div>
+
+  <div class="next"><b>Next</b>To conclude.</div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>17</b> / 18</div>
 

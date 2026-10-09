@@ -2,7 +2,7 @@
 
 - **Duration:** 15 minutes, plus 5 minutes of questions.
 - **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
-- **Length:** slides 1 to 18 come to about 1,710 words, which is about 11 minutes at 150 words a minute.
+- **Length:** slides 1 to 18 come to about 1,800 words, which is about 12 minutes at 150 words a minute.
 - Written to be spoken. Short forms are spelled out. Model, benchmark and conference names are left as they are.
 
 ## Slide 1: Title
@@ -111,35 +111,38 @@
 - Each experiment changes one stage and holds the other two fixed.
 - We can also hand the model the annotated gold pages directly, which takes retrieval out of the picture.
 - The main benchmark is MMLongBench-Doc, with one hundred and thirty-five long documents. It is the only one we know of that marks, for every question, the evidence pages, the type of evidence, and whether the question can be answered at all.
+- We ran a lot of experiments this way. In the next three slides I will only discuss some of the more interesting and important points.
 
-## Slide 15: Representation, what should the model read?
+## Slide 15: Representation, when is visual reading worth its cost?
 
-- First, representation. A common assumption is that you should give the model the richest input you can, or perfect one modality.
-- What we find is that text and vision cover for each other, so neither has to be perfect.
-- With text alone, the choice of parser changes accuracy by 15.7 points. Add the page image and that shrinks to 4.2, because the image recovers what the parser lost.
-- The plain text already embedded in the file, together with the image, matches parsed text with the image, using about a quarter fewer tokens and no parser.
-- But images are not free. Preparing the input takes about twenty-six seconds per question with images, against under two seconds for text.
-- The example shows why vision is still needed: colour exists only in pixels, so with text only the model cannot answer.
-- So in practice: start from embedded text, add the page image when the task needs appearance or the text looks unreliable, and only parse again when the text is inadequate. And choose the modality and the number of pages together.
+- The first point is about representation, and the question is when visual reading is worth its cost.
+- In the survey we saw that many systems read page images, sometimes alongside text. That has a cost. The images have to be rendered, sent and processed, and an agentic workflow may inspect the same pages several times.
+- In our measurements, preparing the input took about twenty-six seconds per question with images, against under two seconds with text.
+- And text can already be sufficient. On born-digital documents, adding page images to parsed text improves accuracy by only 2.8 points.
+- Vision earns its cost when the answer depends on appearance or layout, or when extraction loses something. On chart questions and on scanned documents, images add more than twenty-five points.
+- The two examples show both sides. The company name is answered from text, as long as the parser is reliable. The colour of an icon exists only in pixels.
+- So start from what the task requires, and use page images, or targeted crops, where text cannot reliably preserve the evidence.
+- Visual reading is valuable when it preserves necessary evidence, not automatically for every page and every question.
 
-## Slide 16: Selection, which pages should the model see?
+## Slide 16: Selection, a plausible answer does not mean the evidence is complete
 
-- Second, selection. The assumption is that retrieving more pages is always safer.
-- Missing evidence is indeed costly. Remove a single required page and accuracy falls from 38.6 percent to 18.4 percent, and the retriever's ranking does not tell you which page is safe to drop.
-- But extra pages hurt too. With every required page still present, adding just three more drops accuracy on multi-hop questions from 43.9 percent to 35.1 percent.
-- In the example, the author list runs over two pages. Either page alone gives the wrong count. The answer belongs to the set of pages.
-- So in practice: retrieve broadly, because a missed page cannot be recovered later. Then filter or rerank what reaches the model, and judge whether the whole set is sufficient.
-- For deployment, a strong visual retriever raises recall from 58 percent to 81 percent, but needs a graphics card and far more time per query. It pays off on collections that are queried often. Judge it by final answers and latency, not recall alone.
+- The second point is about selection.
+- Retrieved evidence can look sufficient when it is not. In this example the question asks how many authors come from Columbia University, and the list runs across two pages.
+- Given one page, the model confidently says two. Given the other, it says one. Only with both pages does it say three. So producing an answer is not proof that retrieval is complete.
+- More generally, an unseen page might add an exception or a qualification that changes the answer.
+- The obvious response is to retrieve more, but that creates another risk. Removing one required page halves accuracy, from 38.6 percent to 18.4 percent. But adding three unnecessary pages also lowers it, from 43.9 percent to 35.1 percent, even though every required page is still there.
+- So the aim is complete but focused evidence. A system should stop when the requirements of the question are covered, not as soon as it is able to produce an answer.
+- We need enough evidence to establish the answer, not just enough to generate one.
 
-## Slide 17: Reasoning, can the model use what it sees?
+## Slide 17: Reasoning, does the document support the question in the first place?
 
-- Third, reasoning. The assumption is that a larger model fixes it.
-- Going from two billion to thirty-two billion parameters improves both single-hop and multi-hop questions by over twenty points. But the gap between them does not close.
-- Refusal is a trade-off. If we allow the model to say not answerable, it wrongly refuses 27.7 percent of answerable questions, up from 6.2 percent. Asking it to reason first brings that down to 19.9 percent, but this helps one model family far more than the other.
-- The example shows that: allowed to refuse, the model says not answerable. Asked to reason first, it finds both numbers and subtracts them.
-- So in practice: choose the backbone on your own task, because model family matters as much as size.
-- Storing the model at lower precision cuts memory from 17.5 to 6.8 gigabytes with almost no loss in accuracy, but it is not faster.
-- And spend extra reasoning and verification only on complex or uncertain cases. Calibrate refusal on the model you actually deploy.
+- The third point is about reasoning.
+- A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all.
+- With no instruction, the model answers fluently that it is a clip from Breaking Bad. One page shows a man holding stacks of money, and the model built a show and a character out of it. That is a form of hallucination.
+- Task-specific prompts change this behaviour. If we explicitly allow the model to say not answerable, it correctly refuses far more unanswerable questions, from 45.5 percent to 74.6 percent.
+- But it also refuses more answerable ones, from 6.2 percent to 27.7 percent. So refining the prompt means balancing unsupported answers against unnecessary refusals.
+- There are further options, such as Reflexion, which revises an answer using feedback, and self-consistency, which samples several reasoning paths and aggregates them. Both add computation, and we did not test them in this study.
+- Before asking whether the answer is correct, ask whether the evidence supports giving that answer.
 
 ## Slide 18: Conclusion
 
