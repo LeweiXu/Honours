@@ -2,7 +2,7 @@
 
 - **Duration:** 15 minutes, plus 5 minutes of questions.
 - **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
-- **Length:** slides 1 to 18 come to about 1,800 words, which is about 12 minutes at 150 words a minute.
+- **Length:** slides 1 to 18 come to about 1,730 words, which is about 12 minutes at 150 words a minute.
 - Written to be spoken. Short forms are spelled out. Model, benchmark and conference names are left as they are.
 
 ## Slide 1: Title
@@ -116,32 +116,29 @@
 ## Slide 15: Representation, when is visual reading worth its cost?
 
 - The first point is about representation, and the question is when visual reading is worth its cost.
-- In the survey we saw that many systems read page images, sometimes alongside text. That has a cost. The images have to be rendered, sent and processed, and an agentic workflow may inspect the same pages several times.
-- In our measurements, preparing the input took about twenty-six seconds per question with images, against under two seconds with text.
-- And text can already be sufficient. On born-digital documents, adding page images to parsed text improves accuracy by only 2.8 points.
-- Vision earns its cost when the answer depends on appearance or layout, or when extraction loses something. On chart questions and on scanned documents, images add more than twenty-five points.
-- The two examples show both sides. The company name is answered from text, as long as the parser is reliable. The colour of an icon exists only in pixels.
-- So start from what the task requires, and use page images, or targeted crops, where text cannot reliably preserve the evidence.
-- Visual reading is valuable when it preserves necessary evidence, not automatically for every page and every question.
+- Vision is expensive. Reading from images alone needs high resolution to work well, and every page image costs time. In our measurements, preparing the input took about twenty-six seconds per question with images, against under two seconds with text.
+- Text, on the other hand, works like a cache. The text embedded in the file, or the output of a structure-aware parser, converts the document once into a form that is fast to use at inference time.
+- How much of each you need depends heavily on the document type and the task. You can see that in the figure: the lines for different document domains behave very differently as we move from text to images. There is no one size fits all.
+- And parsers are improving. Newer neural parsers can express visual content directly as text, for example turning a chart into a table. In our own runs the parser left charts as image placeholders, so this is a direction, not something our results show yet.
+- So choose the representation for the document type and the task.
 
-## Slide 16: Selection, a plausible answer does not mean the evidence is complete
+## Slide 16: Selection, how much evidence is enough?
 
 - The second point is about selection.
-- Retrieved evidence can look sufficient when it is not. In this example the question asks how many authors come from Columbia University, and the list runs across two pages.
-- Given one page, the model confidently says two. Given the other, it says one. Only with both pages does it say three. So producing an answer is not proof that retrieval is complete.
-- More generally, an unseen page might add an exception or a qualification that changes the answer.
-- The obvious response is to retrieve more, but that creates another risk. Removing one required page halves accuracy, from 38.6 percent to 18.4 percent. But adding three unnecessary pages also lowers it, from 43.9 percent to 35.1 percent, even though every required page is still there.
-- So the aim is complete but focused evidence. A system should stop when the requirements of the question are covered, not as soon as it is able to produce an answer.
+- Retrieved evidence can look sufficient. The model produces an answer either way, and it is hard to know whether more context from the document would have changed it.
+- Underneath that is a precision and recall trade-off. On the left, as we retrieve more pages, recall rises from 54 percent to 87 percent, but precision falls from 70 percent to 15 percent.
+- If we retrieve too little, required evidence is simply missing. In our experiments, removing one required page halves accuracy.
+- If we retrieve too much, the reasoner struggles to find and combine the evidence. On the right, every required page is present, and accuracy still falls as we add more pages.
+- And there is no clear stopping signal. It is hard to retrieve only what is relevant, and hard to know when you have enough.
 - We need enough evidence to establish the answer, not just enough to generate one.
 
 ## Slide 17: Reasoning, does the document support the question in the first place?
 
 - The third point is about reasoning.
-- A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all.
-- With no instruction, the model answers fluently that it is a clip from Breaking Bad. One page shows a man holding stacks of money, and the model built a show and a character out of it. That is a form of hallucination.
-- Task-specific prompts change this behaviour. If we explicitly allow the model to say not answerable, it correctly refuses far more unanswerable questions, from 45.5 percent to 74.6 percent.
+- A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all. With no instruction, the model answers fluently that it is a clip from Breaking Bad.
+- Prompts change this behaviour. If we explicitly allow the model to say not answerable, it correctly refuses far more unanswerable questions, from 45.5 percent to 74.6 percent.
 - But it also refuses more answerable ones, from 6.2 percent to 27.7 percent. So refining the prompt means balancing unsupported answers against unnecessary refusals.
-- There are further options, such as Reflexion, which revises an answer using feedback, and self-consistency, which samples several reasoning paths and aggregates them. Both add computation, and we did not test them in this study.
+- There are further options, such as Reflexion and self-consistency, which spend more computation on reasoning.
 - Before asking whether the answer is correct, ask whether the evidence supports giving that answer.
 
 ## Slide 18: Conclusion
