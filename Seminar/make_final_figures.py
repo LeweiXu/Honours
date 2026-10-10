@@ -226,41 +226,52 @@ def complement():
 
 # ---------------------------------------------------------- slide 15: reasoning
 
+#: Per reasoner and prompt: answerable correct (results.jsonl), answerable refused and
+#: unanswerable refused (results.errcat.jsonl). From the mmlongbench and analysis copies of
+#: prompt_operating_points_backbone.csv.
+PROMPTS = (("Qwen3-VL-8B", ((52.5, 6.2, 45.5), (53.1, 6.6, 43.0), (41.4, 27.7, 74.6), (53.0, 19.9, 85.5))),
+           ("Gemma-3-12B", ((45.2, 6.3, 43.9), (40.8, 9.1, 43.4), (34.5, 35.1, 73.4), (35.6, 32.5, 70.1))))
+
 def prompt_modes():
-    """Qwen3-VL-8B under four prompts, gold pages. Answerable: correct (accuracy judge) under
-    refused (taxonomy judge). Unanswerable: refused. From prompt_operating_points_backbone.csv."""
+    """Two reasoners under four prompts, gold pages. Answerable: correct under refused.
+    Unanswerable: refused."""
     W, H = 403, 317
     p = []
-    modes = (("none", 52.5, 6.2, 45.5), ("cot", 53.1, 6.6, 43.0), ("abstain", 41.4, 27.7, 74.6), ("abstain\n+ cot", 53.0, 19.9, 85.5))
-    yb, yt = 256, 30
-    Y = lambda v: yb - v / 100 * (yb - yt)
-    for g, (title, gx) in enumerate((("Answerable", 28), ("Unanswerable", 226))):
-        gw = 172
-        for v in (25, 50, 75, 100):
-            p.append(L(gx, Y(v), gx + gw, Y(v)))
-        p.append(L(gx, yb, gx + gw, yb, MUTE, 1.2))
-        p.append(T(gx + 2, yt - 10, title, 13, "start", MUTE, 400, "italic"))
-        slot = gw / 4
-        for i, (name, corr, ref, unans) in enumerate(modes):
-            cx, w = gx + slot * (i + .5), slot * .72
+    names = ("none", "cot", "abstain", "abstain\n+ cot")
+    for row, (model, modes) in enumerate(PROMPTS):
+        yt = 24 + row * 132
+        yb = yt + 106
+        Y = lambda v: yb - v / 100 * (yb - yt)
+        for g, (title, gx) in enumerate((("Answerable", 28), ("Unanswerable", 226))):
+            gw = 172
+            for v in (50, 100):
+                p.append(L(gx, Y(v), gx + gw, Y(v)))
+            p.append(L(gx, yb, gx + gw, yb, MUTE, 1.2))
+            p.append(T(gx + 2, yt - 8, title, 12.5, "start", MUTE, 400, "italic"))
             if g == 0:
-                p.append(R(cx - w / 2, Y(corr), w, yb - Y(corr), PALE))
-                p.append(R(cx - w / 2, Y(corr + ref), w, Y(corr) - Y(corr + ref), NAVY))
-                p.append(T(cx, (Y(corr) + yb) / 2 + 4, f"{corr:.1f}", 12.5))
-                if ref > 12:
-                    p.append(T(cx, (Y(corr + ref) + Y(corr)) / 2 + 4, f"{ref:.1f}", 12.5, "middle", "#fff", 700))
+                p.append(T(gx + 70, yt - 8, model, 12.5, "start", INK, 700))
+            slot = gw / 4
+            for i, (corr, ref, unans) in enumerate(modes):
+                cx, w = gx + slot * (i + .5), slot * .72
+                if g == 0:
+                    p.append(R(cx - w / 2, Y(corr), w, yb - Y(corr), PALE))
+                    p.append(R(cx - w / 2, Y(corr + ref), w, Y(corr) - Y(corr + ref), NAVY))
+                    p.append(T(cx, (Y(corr) + yb) / 2 + 4, f"{corr:.1f}", 12))
+                    if ref > 15:
+                        p.append(T(cx, (Y(corr + ref) + Y(corr)) / 2 + 4, f"{ref:.1f}", 12, "middle", "#fff", 700))
+                    else:
+                        p.append(T(cx, Y(corr + ref) - 4, f"{ref:.1f}", 12, "middle", NAVY, 700))
                 else:
-                    p.append(T(cx, Y(corr + ref) - 5, f"{ref:.1f}", 12.5, "middle", NAVY, 700))
-            else:
-                p.append(R(cx - w / 2, Y(unans), w, yb - Y(unans), NAVY))
-                p.append(T(cx, (Y(unans) + yb) / 2 + 4, f"{unans:.1f}", 12.5, "middle", "#fff", 700))
-            for k, part in enumerate(name.split("\n")):
-                p.append(T(cx, yb + 15 + k * 12.5, part, 12))
-    for v in (0, 50, 100):
-        p.append(T(23, Y(v) + 3.5, str(v), 10.5, "end", MUTE))
+                    p.append(R(cx - w / 2, Y(unans), w, yb - Y(unans), NAVY))
+                    p.append(T(cx, (Y(unans) + yb) / 2 + 4, f"{unans:.1f}", 12, "middle", "#fff", 700))
+                if row == len(PROMPTS) - 1:
+                    for k, part in enumerate(names[i].split("\n")):
+                        p.append(T(cx, yb + 14 + k * 12, part, 11.5))
+        for v in (0, 50, 100):
+            p.append(T(23, Y(v) + 3.5, str(v), 10.5, "end", MUTE))
     lx = 96
-    p.append(R(lx, H - 14, 11, 11, PALE)); p.append(T(lx + 16, H - 4.5, "answered correctly", 12, "start"))
-    p.append(R(lx + 132, H - 14, 11, 11, NAVY)); p.append(T(lx + 148, H - 4.5, "refused", 12, "start"))
+    p.append(R(lx, H - 12, 11, 11, PALE)); p.append(T(lx + 16, H - 2.5, "answered correctly", 12, "start"))
+    p.append(R(lx + 132, H - 12, 11, 11, NAVY)); p.append(T(lx + 148, H - 2.5, "refused", 12, "start"))
     render("prompt_modes", W, H, svg(W, H, p))
 
 def strategies():
