@@ -85,13 +85,13 @@
   .s11 .c.key{border:2.5px solid var(--accent);}
   .s11 .c h3{font-size:22px; font-weight:700; margin-bottom:6px;}
   .s11 .c.key h3{color:var(--accent);}
-  .s11 .c p{font-size:18.5px; line-height:1.36;}
+  .s11 .c p{font-size:17.5px; line-height:1.36;}
   .s11 .c .so{margin-top:9px; font-weight:700;}
   .s11 .down{height:24px; position:relative;}
   .s11 .down::before{content:""; position:absolute; left:50%; top:4px; bottom:8px; width:2px; margin-left:-1px; background:var(--navy);}
   .s11 .down::after{content:""; position:absolute; left:50%; bottom:1px; margin-left:-6px; border-left:6px solid transparent; border-right:6px solid transparent; border-top:9px solid var(--navy);}
   .s11 .pipe{border:2.5px solid var(--ink); padding:14px 18px; display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center;}
-  .s11 .pipe p{font-size:21px; line-height:1.36;}
+  .s11 .pipe p{font-size:19.5px; line-height:1.36;}
   .s11 .stages{display:flex; align-items:center; gap:8px; font-size:16px;}
   .s11 .stages span{border:1.5px solid var(--navy); padding:5px 10px;}
   .s11 .stages i{width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid var(--navy);}
@@ -117,7 +117,7 @@
   <h1>Real-World Constraints</h1>
 
   <div class="body">
-    <p class="lead">In industry: one specific task, over <b>thousands to millions of documents</b>.</p>
+    <p class="lead">Assistants are one application. In industry: one or a few specific tasks, over <b>thousands to millions of documents</b>.</p>
     <div class="dom">
       <div><b>Healthcare</b>Extract fields from scanned patient records and referrals.</div>
       <div><b>Mining and resources</b>Classify and summarise technical and safety reports.</div>
@@ -125,16 +125,16 @@
       <div><b>Legal</b>Find the relevant clauses across contracts.</div>
     </div>
     <div class="three">
-      <div class="c"><h3>Privacy</h3><p>Privacy and data-residency requirements.</p><p class="so">No third-party API.</p></div>
-      <div class="c"><h3>Cost</h3><p>Even without privacy concerns, API costs add up at this volume.</p></div>
-      <div class="c key"><h3>Scale</h3><p>Either way, you cannot upload documents <b>one by one</b> into an online tool.</p></div>
+      <div class="c"><h3>Privacy</h3><p>Privacy or data-residency requirements may rule out a third-party service.</p></div>
+      <div class="c"><h3>Cost</h3><p>Even without privacy concerns, a commercial API is very expensive at this volume.</p></div>
+      <div class="c key"><h3>Scale</h3><p>Uploading documents <b>one by one</b> to an assistant is not feasible. You may also need <b>structured output</b> for another system.</p></div>
     </div>
     <div class="down"></div>
     <div class="pipe">
-      <p>API or local model, you have to <b>build your own document understanding pipeline</b> that orchestrates a vision-language model, <b>under a compute budget</b>.</p>
-      <div class="stages"><span>Encode</span><i></i><span>Retrieve</span><i></i><span>Answer</span></div>
+      <p>API or local model, you still have to <b>implement and deploy your own system</b>, tailored to your task, documents and output. API access does not give you the workflow behind the consumer assistant.</p>
+      <div class="stages"><span>Convert</span><i></i><span>Retrieve</span><i></i><span>Use evidence</span></div>
     </div>
-    <p class="close">So where do such pipelines fail? We formalise failure into <b>three failure modes</b>.</p>
+    <p class="close">These design and deployment choices, <b>within a fixed compute budget</b>, motivate our empirical study.</p>
   </div>
 
   <div class="corner"><i>Background</i><i>Survey</i><i class=on>Empirical</i><b>11</b> / 18</div>

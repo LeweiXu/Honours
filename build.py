@@ -211,14 +211,80 @@ def theme_xml():
         '<a:objectDefaults/><a:extraClrSchemeLst/></a:theme>')
 
 
-def build_pptx(images, out):
+# ----------------------------------------------------------------------- notes
+
+def read_notes(root):
+    """notes.md beside the slides: text under each `## Slide N: ...` heading, by N."""
+    path = root / 'notes.md'
+    if not path.exists():
+        return {}
+    out = {}
+    for sec in re.split(r'(?m)^(?=#{1,2} )', path.read_text(encoding='utf-8')):
+        m = re.match(r'## Slide (\d+):', sec)
+        if not m:
+            continue
+        lines = []
+        for ln in sec.splitlines()[1:]:
+            ln = re.sub(r'<!--.*?-->', '', ln).strip()
+            if not ln or ln == '---':
+                continue
+            ln = re.sub(r'^- ', '', ln)
+            ln = re.sub(r'\*\*(.+?)\*\*', r'\1', ln)
+            lines.append(ln)
+        out[int(m[1])] = lines
+    return out
+
+
+def esc(t):
+    return t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+
+def notes_shapes(lines=None):
+    """A slide-image placeholder and a body placeholder; `lines` fills the body."""
+    if lines is None:
+        body = '<a:p><a:endParaRPr lang="en-AU"/></a:p>'
+    else:
+        body = ''.join(f'<a:p><a:r><a:rPr lang="en-AU" dirty="0"/><a:t>{esc(t)}</a:t></a:r></a:p>'
+                       for t in lines) or '<a:p><a:endParaRPr lang="en-AU"/></a:p>'
+    return (
+        '<p:spTree>'
+        '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+        '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>'
+        '<a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>'
+        '<p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image"/>'
+        '<p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr>'
+        '<p:nvPr><p:ph type="sldImg"/></p:nvPr></p:nvSpPr>'
+        '<p:spPr><a:xfrm><a:off x="685800" y="1143000"/><a:ext cx="5486400" cy="3086100"/></a:xfrm>'
+        '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:sp>'
+        '<p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes"/>'
+        '<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        '<p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr>'
+        '<p:spPr><a:xfrm><a:off x="685800" y="4400550"/><a:ext cx="5486400" cy="3600450"/></a:xfrm>'
+        '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/>{body}</p:txBody></p:sp>'
+        '</p:spTree>')
+
+
+def build_pptx(images, out, notes=None):
+    """`notes` is one list of lines per slide (or None); it becomes the speaker notes."""
     n = len(images)
+    notes = notes or [None] * n
+    has_notes = any(notes)
     z = zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED)
 
     overrides = ''.join(
         f'<Override PartName="/ppt/slides/slide{i}.xml" ContentType='
         '"application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>'
         for i in range(1, n + 1))
+    if has_notes:
+        overrides += ('<Override PartName="/ppt/notesMasters/notesMaster1.xml" ContentType='
+                      '"application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml"/>'
+                      '<Override PartName="/ppt/theme/theme2.xml" ContentType='
+                      '"application/vnd.openxmlformats-officedocument.theme+xml"/>')
+        overrides += ''.join(
+            f'<Override PartName="/ppt/notesSlides/notesSlide{i}.xml" ContentType='
+            '"application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml"/>'
+            for i in range(1, n + 1) if notes[i - 1])
     z.writestr('[Content_Types].xml', XML +
                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
@@ -238,6 +304,7 @@ def build_pptx(images, out):
     z.writestr('ppt/presentation.xml', XML +
                f'<p:presentation {NS_P}>'
                '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>'
+               + (f'<p:notesMasterIdLst><p:notesMasterId r:id="rId{n + 3}"/></p:notesMasterIdLst>' if has_notes else '') +
                f'<p:sldIdLst>{sld_ids}</p:sldIdLst>'
                f'<p:sldSz cx="{SLIDE_W}" cy="{SLIDE_H}"/>'
                '<p:notesSz cx="6858000" cy="9144000"/>'
@@ -245,7 +312,8 @@ def build_pptx(images, out):
     z.writestr('ppt/_rels/presentation.xml.rels', rels(
         ('rId1', 'slideMaster', 'slideMasters/slideMaster1.xml'),
         *[(f'rId{i + 1}', 'slide', f'slides/slide{i}.xml') for i in range(1, n + 1)],
-        (f'rId{n + 2}', 'theme', 'theme/theme1.xml')))
+        (f'rId{n + 2}', 'theme', 'theme/theme1.xml'),
+        *([(f'rId{n + 3}', 'notesMaster', 'notesMasters/notesMaster1.xml')] if has_notes else [])))
 
     z.writestr('ppt/slideMasters/slideMaster1.xml', XML +
                f'<p:sldMaster {NS_P}><p:cSld>{EMPTY_TREE}</p:cSld>'
@@ -267,6 +335,16 @@ def build_pptx(images, out):
 
     z.writestr('ppt/theme/theme1.xml', theme_xml())
 
+    if has_notes:
+        z.writestr('ppt/theme/theme2.xml', theme_xml())
+        z.writestr('ppt/notesMasters/notesMaster1.xml', XML +
+                   f'<p:notesMaster {NS_P}><p:cSld>{notes_shapes()}</p:cSld>'
+                   '<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" '
+                   'accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" '
+                   'accent6="accent6" hlink="hlink" folHlink="folHlink"/></p:notesMaster>')
+        z.writestr('ppt/notesMasters/_rels/notesMaster1.xml.rels', rels(
+            ('rId1', 'theme', '../theme/theme2.xml')))
+
     for i, img in enumerate(images, 1):
         z.write(img, f'ppt/media/image{i}.png')
         z.writestr(f'ppt/slides/slide{i}.xml', XML +
@@ -285,7 +363,15 @@ def build_pptx(images, out):
                    '<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>')
         z.writestr(f'ppt/slides/_rels/slide{i}.xml.rels', rels(
             ('rId1', 'slideLayout', '../slideLayouts/slideLayout1.xml'),
-            ('rId2', 'image', f'../media/image{i}.png')))
+            ('rId2', 'image', f'../media/image{i}.png'),
+            *([('rId3', 'notesSlide', f'../notesSlides/notesSlide{i}.xml')] if notes[i - 1] else [])))
+        if notes[i - 1]:
+            z.writestr(f'ppt/notesSlides/notesSlide{i}.xml', XML +
+                       f'<p:notes {NS_P}><p:cSld>{notes_shapes(notes[i - 1])}</p:cSld>'
+                       '<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>')
+            z.writestr(f'ppt/notesSlides/_rels/notesSlide{i}.xml.rels', rels(
+                ('rId1', 'notesMaster', '../notesMasters/notesMaster1.xml'),
+                ('rId2', 'slide', f'../slides/slide{i}.xml')))
 
     z.close()
     return out
@@ -340,9 +426,12 @@ def main():
         images = rasterise(pdf, tmp, args.dpi)
         if len(images) != len(slides):
             print(f'! pdf has {len(images)} pages for {len(slides)} slides')
-        pptx = build_pptx(images, root / f'{args.name}.pptx')
+        by_num = read_notes(root)
+        notes = [by_num.get(int(re.search(r'(\d+)', p.stem)[1])) for p in slides]
+        pptx = build_pptx(images, root / f'{args.name}.pptx', notes)
     print(f'{pptx.name:<12} {pptx.stat().st_size // 1024} KB  '
-          f'({len(images)} pages at {args.dpi} dpi)')
+          f'({len(images)} pages at {args.dpi} dpi, '
+          f'{sum(1 for x in notes if x)} with speaker notes)')
 
 
 if __name__ == '__main__':

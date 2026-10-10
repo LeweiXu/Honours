@@ -2,100 +2,123 @@
 
 - **Duration:** 15 minutes, plus 5 minutes of questions.
 - **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
-- **Length:** slides 1 to 18 come to about 1,730 words, which is about 12 minutes at 150 words a minute.
+- **Length:** slides 1 to 18 come to about 2,126 words, or 14.2 minutes at 150 words a minute, before pauses and slide changes.
 - Written to be spoken. Short forms are spelled out. Model, benchmark and conference names are left as they are.
 
 ## Slide 1: Title
 
-- Hello everyone, my name is Lewei, and my thesis looks at long document understanding.
+- Hello everyone, my name is Lewei, and I’ve been working on document understanding for my honours project this year.
 
 ## Slide 2: Table of contents
 
-- First, I’ll briefly introduce the problem and some background.
-- Then I’ll cover the two papers that make up my thesis.
-- The first is a survey of the field, and the second is an empirical study of where these systems fail and how we can improve them.
+- First, I’ll go through some background.
+- Then I’ll cover the main contributions and findings of the two papers we completed this year.
+- The first is a survey of document understanding. The second is an empirical study of how document understanding systems can fail and how we can address those failures.
 
 ## Slide 3: Multi-page visually rich documents
 
-- A visually rich document carries meaning through text, visual elements like charts and figures, and how they are laid out on the page.
-- In a multi-page document, meaning also runs across pages.
-- For example, a sentence might refer to a figure several pages away.
+- First, what do we mean by a visually rich document?
+- Documents can carry meaning through text, visual elements like charts and figures, and how they are laid out on a page.
+- Here we have an academic paper, scanned forms and technical manuals. Each combines multiple sources of information in different ways.
+- A multi-page document simply has two or more pages. Its meaning can also connect across those pages.
+- For example, a paragraph in an academic paper might refer to a figure several pages away.
+- To understand that reference, we need to connect the paragraph to the figure when we process the document.
+- This brings us to document understanding over long documents.
 
-## Slide 4: What is document understanding?
+## Slide 4: What is long document understanding?
 
-- Document understanding includes tasks like information extraction and recovering document structure. For this talk, we’ll focus on answering natural-language questions about a document.
-- To answer accurately, a system needs to find the relevant evidence and connect it, sometimes across multiple pages. The example here requires information from two different tables.
-- With hundreds of pages, or a whole collection of documents, reading everything at full detail becomes expensive and may exceed what the model can process at once.
-- The challenge is to find and combine the evidence we need without losing important details or being distracted by irrelevant content.
+- So, what is long document understanding?
+- It includes tasks like information extraction and structure-aware parsing, among many others.
+- But for this seminar, you can think of it as answering a natural-language question about a long, multi-page document.
+- This is difficult for two main reasons.
+- First, there is the sheer volume of information. We might be dealing with hundreds of pages, or even a whole collection of documents.
+- Reading everything in full is expensive, and the input may not even fit in a single context window.
+- Even when everything fits, current long-context language models can still struggle to use all that information to answer accurately.
+- Second, the evidence required to answer a question can be sparse, scattered across several pages or across different documents in a collection.
+- The system has to locate the right pieces of evidence and then connect them to answer the question.
+- With that in mind, let’s move on to our survey of the different approaches to document understanding.
 
 ## Slide 5: Table of contents, survey
 
-- So, moving on to the first part: our survey, which has been accepted at the EMNLP main conference.
+- This is our survey of the field, which we completed during the first semester.
+- The paper has been accepted at the EMNLP main conference this year, a top-tier conference in natural language processing.
 
 ## Slide 6: Survey, research gap and contributions
 
-- Multi-page document-understanding systems developed along parallel lines, with different terminology and little comparison between them.
-- Our survey organises the field through an evidence-management perspective: how systems preserve, find and use relevant evidence across a long document.
-- Through this perspective, we group the systems we surveyed into four architectural families, which I’ll explain next.
+- The main gap we wanted to address was that many different approaches to long document understanding had developed along parallel lines.
+- They used different terminology, and there was very little comparison between those approaches.
+- We use an evidence-management perspective to organise them: how systems preserve, find and use evidence across a document.
+- This gives us a taxonomy of four architectural families.
+- I’ll focus on those families today. There are other contributions in the survey, but going through all of them would take too long.
 
 ## Slide 7: Multi-page architectural overview
 
-- We organise these systems into four architectural families.
+- The first family is page-to-document encoding models, one of the earlier approaches to long document understanding.
+- Each page is encoded separately into a compact representation. Those representations are connected through a cross-page mechanism, such as attention, and passed to a decoder to generate the final answer.
+- The limitation is that pages can contain very different amounts of information. Giving each page the same fixed representation budget can lose fine-grained detail during encoding.
 
-- First, page-to-document encoding models encode each page separately, exchange information across pages, and pass the representations to a decoder to answer the question.
-- But processing more pages costs more, and compressing each page into a small representation can lose fine detail.
+- The second family adapts a pretrained multimodal large language model to read the document directly within its context window.
+- This lets the model read richer page content directly, rather than only the compact summaries used by the first family.
+- But performance can drop as documents get longer, and some documents cannot fit at all.
+- Even when they fit, evidence scattered throughout a long context can be difficult for the model to locate and connect.
 
-- The second family takes a different approach: it adapts a pretrained multimodal language model to read the document directly and answer within its context.
-- But longer documents still cause performance to drop, and some cannot fit in the context window at all.
+- This motivates retrieval-augmented pipelines. Instead of fitting the whole document into the model, we first retrieve relevant evidence and pass that smaller set to the answering model.
+- These approaches follow a fixed workflow. Evidence missed during retrieval cannot be recovered during the answering stage.
 
-- To handle documents beyond that limit, retrieval-augmented pipelines first select relevant evidence, then give that smaller set to a model to answer, following a fixed workflow.
-- The problem is that evidence missed during retrieval cannot be recovered by the answering stage.
-
-- Adaptive-trajectory pipelines address this by letting a language model decide what to inspect next based on what it has already found, so it can gather more evidence before answering.
-- But this can take many model calls, making the time and cost harder to bound.
+- Finally, adaptive-trajectory pipelines follow an agentic approach. The language model decides what evidence to collect, how to collect it, and when it has enough to answer.
+- It can gather more evidence based on what it has already found, but repeated calls make the time and cost harder to bound.
+- We can see this kind of behaviour in language model assistants too.
 
 ## Slide 8: From research to products, language model assistants
 
-- This research is applied directly in public-facing products, and you have probably used it: you upload a document to an assistant and ask it questions.
-- Even earlier this year, these assistants worked like the second family. The full document text and the page images were fed to the model in one go.
-- More recently they have moved to retrieval-augmented and adaptive-trajectory mechanisms.
-- Here is an example. I gave Claude my thesis, which is almost one hundred pages, and asked it a difficult question.
-- You can see it plan, locate the relevant pages, and then render those pages as images, so it reads them visually as well as through text.
+- We can see these approaches in language model assistants, where you upload a document and ask questions about it.
+- Putting all the text and page images directly into the model’s context resembles the second family, but long documents can run into context limits.
+- Alternatively, an assistant can access the uploaded document through tools, retrieving or inspecting parts of it as needed.
+- This resembles retrieval-augmented and adaptive-trajectory pipelines, which gather evidence before answering and can return for more when needed.
+- Here, I gave Claude my thesis, which is almost one hundred pages, and asked a difficult question.
+- You can see it plan, locate relevant pages and render them as images, so it reads the evidence visually as well as through text.
 
 ## Slide 9: Surveyed systems at a glance
 
-- This is the main table of the survey. Every system we cover is here, grouped by family.
-- I have framed three things worth noticing.
-- One, the names. We call the first two families models, because they are trained end to end, using components built specifically for that architecture.
-- We call the last two families pipelines, because their components are often interchangeable, especially the backbone. You can see that in the backbone column, where many of them are tested with several different models.
-- Two, the modalities. The encoding models combine text, vision and layout. The models in the second family mostly use vision only.
-- Three, search. It only appears once retrieval is separated from answering, so only in the two pipeline families.
-- Now one representative system from each family.
+- This is the main table of the survey, with the systems grouped by architectural family.
+- There are two things I want to point out.
+- First, we call the first two families models. Generally, they are trained end to end, with components built for that architecture.
+- The last two families are pipelines. Their components are often interchangeable, especially the backbone language model.
+- These techniques can often be applied to different backbones. As language models become stronger, the pipelines can benefit from those improvements too.
+- Second, the modalities. Some systems use vision only, reading the document through page images.
+- Others combine those images with text and layout information. The text may be embedded in the document or extracted by a parser.
+- Layout information can describe where the text appears, using bounding boxes or coordinates on the page.
+- So these systems differ in whether they read images alone or combine text, layout and vision. This distinction will be important in the empirical study.
+- That brings us to the second paper.
 
 ## Slide 10: Table of contents, empirical study
 
-- The second part is the empirical study, which is under review at EACL.
+- This brings us to our second paper, an empirical attribution study, which is currently under review.
 
 ## Slide 11: Real-world constraints
 
-- The second paper starts from how document understanding is used in industry.
-- There you usually have one specific task, such as classifying or extracting information, over thousands or even millions of documents.
-- For example, a hospital extracting fields from scanned patient records, a mining company classifying and summarising technical and safety reports, a bank pulling figures out of annual reports, or a law firm finding clauses across contracts.
-- Privacy or data-residency requirements can mean that no third-party service is allowed at all.
-- Even without those concerns, the cost of a commercial service adds up at that volume.
-- But the more important point is this. Either way, you cannot upload documents one by one into an online tool.
-- So whether you call a commercial service or run a model locally, you have to build your own document understanding pipeline around a vision-language model, and it has to fit a compute budget.
-- That raises the question the paper answers: where do such pipelines fail? We formalise failure into three failure modes.
+- As we saw earlier, language model assistants are just one application of document understanding.
+- In industry, you might have one or a few specific tasks to perform over thousands or millions of documents.
+- For example, extracting fields from scanned patient records in healthcare, or classifying and summarising technical and safety reports in mining and resources.
+- One major concern is privacy. Data-residency or privacy requirements may prevent you from sending the documents to a third-party service.
+- Another is cost. Even without privacy concerns, processing that volume through a commercial API can be very expensive.
+- Uploading documents one by one to an assistant is not feasible at this scale. You may also need structured output that another system can process automatically.
+- If third-party processing is permitted, you might use a model through an API. Otherwise, you may need to run a vision-language model locally.
+- Either way, you still need to implement and deploy a document understanding system tailored to your task, documents and output requirements.
+- Access to a model through an API does not necessarily give you the document-processing workflow behind the provider’s consumer assistant.
+- You have to choose how to convert the documents, retrieve evidence, and use that evidence to get the best performance for your task.
+- For specialist document types, you might also need additional training. All these choices have to fit within a fixed compute budget.
+- These are the design and deployment choices that motivate our empirical study.
 
 ## Slide 12: Empirical study, research gaps and contributions
 
-- The survey leaves two gaps open.
-- First, papers make competing claims about design, each tested on a different pipeline and dataset. Some say vision alone is enough, others want text as well. Some say retrieve more pages, others fewer.
-- Second, nobody had studied empirically, from one end of the pipeline to the other, where document understanding systems actually fail.
-- Our study makes three contributions.
-- A unified view of failure, with three places it can happen that do not depend on the architecture.
-- Controlled experiments in a single pipeline, repeated across two document collections and two independently developed model families.
-- And practical guidance for building and deploying these systems under a compute budget, which is exactly the local setting I described earlier.
+- There are two research gaps behind this study.
+- First, papers make competing design claims, but test them on different pipelines and datasets. Some favour vision alone, others text and vision; some retrieve more pages, others fewer.
+- Second, we wanted an end-to-end empirical account of where failures occur across a document understanding pipeline.
+- Our first contribution is a unified view of failure, with three places an answer can go wrong, regardless of the architecture.
+- Second, we run controlled interventions in a single pipeline, changing one stage at a time.
+- We repeat experiments across different document collections and independently developed model families to check whether the findings transfer beyond one setting.
+- Third, we use these results to give concrete guidance for designing and deploying systems under a compute budget.
 
 ## Slide 13: Attribution framework
 

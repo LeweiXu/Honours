@@ -108,7 +108,9 @@ the window, so its edges are not where you expect; don't measure from it.
 - Sample document pages come from MMLongBench-Doc in `~/mpvrdu/.data/`. **Never write
   anything under `~/mpvrdu`**; render or copy what is needed into this repo.
 - `Seminar/notes.md` holds the brief and the speaking cues per slide. Keep its slide
-  numbers in step with the deck.
+  numbers in step with the deck. `build.py` copies the text under each
+  `## Slide N:` heading into that slide's speaker notes in `deck.pptx`, so a rebuild is
+  needed after editing the notes.
 
 `LitReview/`, `Thesis_Backup/`, `Thesis_Template/` and `Practice_Seminar/` are
 superseded and nothing reads from them.
