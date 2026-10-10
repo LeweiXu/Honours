@@ -2,7 +2,7 @@
 
 - **Duration:** 15 minutes, plus 5 minutes of questions.
 - **Audience:** Generalist computer science students, mostly fourth-year honours students, plus a few professors.
-- **Length:** slides 1 to 18 come to about 2,126 words, or 14.2 minutes at 150 words a minute, before pauses and slide changes.
+- **Length:** the main script (slides 1–18, skipping slide 14) is about 2,177 words, or 14.5 minutes at 150 words a minute, before pauses and slide changes.
 - Written to be spoken. Short forms are spelled out. Model, benchmark and conference names are left as they are.
 
 ## Slide 1: Title
@@ -13,83 +13,90 @@
 
 - First, I’ll go through some background.
 - Then I’ll cover the main contributions and findings of the two papers we completed this year.
-- The first is a survey of document understanding. The second is an empirical study of how document understanding systems can fail and how we can address those failures.
+- The first is a survey of document understanding.
+- The second is an empirical study of where document understanding systems fail. We use those findings to derive practical recommendations for designing and deploying these systems.
+- If we have time, I’ll also show a very simple method that uses the empirical findings to build a working document understanding system.
 
 ## Slide 3: Multi-page visually rich documents
 
 - First, what do we mean by a visually rich document?
-- Documents can carry meaning through text, visual elements like charts and figures, and how they are laid out on a page.
-- Here we have an academic paper, scanned forms and technical manuals. Each combines multiple sources of information in different ways.
-- A multi-page document simply has two or more pages. Its meaning can also connect across those pages.
-- For example, a paragraph in an academic paper might refer to a figure several pages away.
+- Documents carry meaning through text, visual elements like charts and figures, and how they are laid out on a page.
+- Here we have some examples: an academic paper, scanned forms and technical manuals. Each combines multiple sources of information in different ways.
+- A multi-page document simply has two or more pages, but its meaning can be spread across those pages and connected between them.
+- For example, a paragraph in this academic paper might refer to a figure several pages away.
 - To understand that reference, we need to connect the paragraph to the figure when we process the document.
 - This brings us to document understanding over long documents.
 
 ## Slide 4: What is long document understanding?
 
 - So, what is long document understanding?
-- It includes tasks like information extraction and structure-aware parsing, among many others.
+- Document understanding itself includes tasks like information extraction and structure-aware parsing.
 - But for this seminar, you can think of it as answering a natural-language question about a long, multi-page document.
 - This is difficult for two main reasons.
-- First, there is the sheer volume of information. We might be dealing with hundreds of pages, or even a whole collection of documents.
-- Reading everything in full is expensive, and the input may not even fit in a single context window.
-- Even when everything fits, current long-context language models can still struggle to use all that information to answer accurately.
-- Second, the evidence required to answer a question can be sparse, scattered across several pages or across different documents in a collection.
-- The system has to locate the right pieces of evidence and then connect them to answer the question.
+- First, the sheer volume of information involved. We might be dealing with documents hundreds of pages long, or even a whole collection of documents.
+- Reading everything in full is expensive. With a vision-language model as the backbone, the input might not even fit in a single context window.
+- Even when everything fits, current long-context models can struggle to use all that information effectively and answer accurately.
+- Second, the evidence required to answer a question or perform a task may be scattered across several pages, or across different documents in a collection.
+- The system has to locate the right pieces of information and then connect them to answer the question.
 - With that in mind, let’s move on to our survey of the different approaches to document understanding.
 
 ## Slide 5: Table of contents, survey
 
-- This is our survey of the field, which we completed during the first semester.
-- The paper has been accepted at the EMNLP main conference this year, a top-tier conference in natural language processing.
+- This is our survey of the field, which we completed earlier this year.
+- It has been accepted at the EMNLP main conference, a top-tier conference in natural language processing.
 
 ## Slide 6: Survey, research gap and contributions
 
-- The main gap we wanted to address was that many different approaches to long document understanding had developed along parallel lines.
-- They used different terminology, and there was very little comparison between those approaches.
-- We use an evidence-management perspective to organise them: how systems preserve, find and use evidence across a document.
-- This gives us a taxonomy of four architectural families.
-- I’ll focus on those families today. There are other contributions in the survey, but going through all of them would take too long.
+- The main gap we wanted to address was that approaches to long document understanding had developed largely along parallel lines.
+- They use different terminology, and individual papers often frame their contributions as addressing limitations of earlier approaches.
+- But there is little comparison across these different lines of work.
+- We use evidence management as a conceptual framework to organise the field. We ask how systems preserve, find and use evidence across a document.
+- This lets us define a taxonomy of four architectural families.
+- I’ll focus on those families today, rather than go through every contribution of the survey.
 
 ## Slide 7: Multi-page architectural overview
 
-- The first family is page-to-document encoding models, one of the earlier approaches to long document understanding.
+- The first family is page-to-document encoding models, an early approach that extends single-page architectures to the multi-page setting.
 - Each page is encoded separately into a compact representation. Those representations are connected through a cross-page mechanism, such as attention, and passed to a decoder to generate the final answer.
-- The limitation is that pages can contain very different amounts of information. Giving each page the same fixed representation budget can lose fine-grained detail during encoding.
+- These models are generally trained end to end.
+- The limitation is that pages contain different amounts of information. Giving each page a fixed representation budget can lose fine-grained detail during encoding.
 
-- The second family adapts a pretrained multimodal large language model to read the document directly within its context window.
-- This lets the model read richer page content directly, rather than only the compact summaries used by the first family.
-- But performance can drop as documents get longer, and some documents cannot fit at all.
-- Even when they fit, evidence scattered throughout a long context can be difficult for the model to locate and connect.
+- The second family adapts a pretrained multimodal large language model to process the document within its context window, rather than using a separate page-to-document architecture.
+- Adaptation can involve continued pretraining on document tasks or fine-tuning, including low-rank adaptation. Some systems also compress the representations to fit longer documents.
+- But, as we discussed earlier, performance can still degrade as documents get longer, and some documents cannot fit at all.
 
-- This motivates retrieval-augmented pipelines. Instead of fitting the whole document into the model, we first retrieve relevant evidence and pass that smaller set to the answering model.
-- These approaches follow a fixed workflow. Evidence missed during retrieval cannot be recovered during the answering stage.
+- This motivates retrieval-augmented pipelines, or RAG pipelines. Instead of fitting the whole document into the model, we retrieve relevant evidence and pass a smaller evidence set to a vision-language model.
+- The answering model is often frozen, meaning it is used without additional training for that pipeline.
+- Retrieval can be sophisticated, but the workflow is fixed in advance. Evidence missed during retrieval cannot be recovered by the answering stage.
 
 - Finally, adaptive-trajectory pipelines follow an agentic approach. The language model decides what evidence to collect, how to collect it, and when it has enough to answer.
-- It can gather more evidence based on what it has already found, but repeated calls make the time and cost harder to bound.
+- It can gather more evidence based on what it has already found, making repeated calls as it works towards an answer.
+- But those repeated calls can become expensive, and make the total time and compute cost harder to bound.
 - We can see this kind of behaviour in language model assistants too.
 
 ## Slide 8: From research to products, language model assistants
 
-- We can see these approaches in language model assistants, where you upload a document and ask questions about it.
-- Putting all the text and page images directly into the model’s context resembles the second family, but long documents can run into context limits.
-- Alternatively, an assistant can access the uploaded document through tools, retrieving or inspecting parts of it as needed.
-- This resembles retrieval-augmented and adaptive-trajectory pipelines, which gather evidence before answering and can return for more when needed.
-- Here, I gave Claude my thesis, which is almost one hundred pages, and asked a difficult question.
-- You can see it plan, locate relevant pages and render them as images, so it reads the evidence visually as well as through text.
+- We can see these approaches in the language model assistants we use too. You upload a document and ask questions about it.
+- If the assistant puts the text and page images straight into the model’s context, that resembles the second family we just saw.
+- But that approach runs into context limits. You may have encountered an upload or length limit when trying to give an assistant a large document.
+- We can also see assistants accessing documents through tools, which resembles the retrieval-augmented and adaptive-trajectory approaches.
+- Here’s an example from last week. I uploaded my thesis, which is close to a hundred pages, to Claude and asked it a difficult question.
+- In this example, it accesses the uploaded file through tool calls and renders specific pages as images to read them visually.
+- So it can inspect relevant parts of the document as it goes, rather than relying only on the whole document being supplied in one context.
+- In my informal testing, it handled the questions I tried well. That’s an illustration of the workflow, rather than a systematic evaluation.
 
 ## Slide 9: Surveyed systems at a glance
 
-- This is the main table of the survey, with the systems grouped by architectural family.
+- This is the main table of the survey, with the systems and papers we surveyed grouped by architectural family.
 - There are two things I want to point out.
-- First, we call the first two families models. Generally, they are trained end to end, with components built for that architecture.
-- The last two families are pipelines. Their components are often interchangeable, especially the backbone language model.
-- These techniques can often be applied to different backbones. As language models become stronger, the pipelines can benefit from those improvements too.
+- First, we call the first two families models. They are generally trained end to end, with components built for that architecture.
+- We call the last two families pipelines because their components are often interchangeable, especially the backbone language model.
+- That means the same techniques can often be applied to different backbones. As language models get stronger, these pipelines can benefit from those improvements too.
 - Second, the modalities. Some systems use vision only, reading the document through page images.
-- Others combine those images with text and layout information. The text may be embedded in the document or extracted by a parser.
-- Layout information can describe where the text appears, using bounding boxes or coordinates on the page.
-- So these systems differ in whether they read images alone or combine text, layout and vision. This distinction will be important in the empirical study.
-- That brings us to the second paper.
+- Others combine vision with text and layout information. The text may be embedded in the document or extracted by a parser.
+- Layout describes where the text appears, for example through bounding boxes or coordinates on the page.
+- So the distinction is between reading page images alone and combining text, layout and vision. This will be important in the next part of the seminar.
+- That brings us to our second paper.
 
 ## Slide 10: Table of contents, empirical study
 
@@ -112,39 +119,43 @@
 
 ## Slide 12: Empirical study, research gaps and contributions
 
-- There are two research gaps behind this study.
-- First, papers make competing design claims, but test them on different pipelines and datasets. Some favour vision alone, others text and vision; some retrieve more pages, others fewer.
-- Second, we wanted an end-to-end empirical account of where failures occur across a document understanding pipeline.
-- Our first contribution is a unified view of failure, with three places an answer can go wrong, regardless of the architecture.
-- Second, we run controlled interventions in a single pipeline, changing one stage at a time.
-- We repeat experiments across different document collections and independently developed model families to check whether the findings transfer beyond one setting.
-- Third, we use these results to give concrete guidance for designing and deploying systems under a compute budget.
+- The literature makes competing design claims. Some approaches favour vision alone, while others combine text and vision, each evaluated in a different setting.
+- We also found limited end-to-end empirical analysis of document understanding for these design and deployment decisions.
+- Our study provides a unified view of where document understanding systems can fail.
+- We run controlled interventions in a single pipeline, with checks across document collections and model families.
+- From those results, we derive concrete guidance for designing and deploying systems within a compute budget.
 
 ## Slide 13: Attribution framework
 
-- This is the framework. There are three places where an answer can go wrong.
-- Representation is how the document is converted into what the model reads. Was the information preserved?
-- Selection is which pages are put in front of the model. Did the information actually reach it?
-- Reasoning is what the model does with those pages. Did it use them correctly?
-- Each one has two mechanisms, which gives six in total. I will show results for each pair, and then a real example of each.
+- This is our attribution framework, with three places where document understanding can fail.
+- First, representation. We convert the document into text, rendered page images, or both, for retrieval and the answering model. Was the information preserved during that conversion?
+- Second, selection. We choose which evidence reaches the model, usually whole pages in these pipelines. Did the required information actually reach it?
+- Third, reasoning. Once the evidence is present in a usable representation, can the model use it correctly to produce an answer?
+- In agentic systems, these operations can repeat as the model inspects more of the document. For our experiments, we use a simple encode, retrieve and answer pipeline.
+- We change one stage while holding the other two fixed. Giving the model annotated evidence pages directly lets us bypass retrieval.
+- I’ll move straight to the main results, starting with representation.
 
-## Slide 14: Attribution by construction
+## Slide 14: Attribution by construction [skip during the main talk]
 
-- To separate the three, we use one deliberately simple pipeline with three stages: encode the pages, retrieve some of them, and answer in a single pass.
+Presenter note: Skip this slide to save time. The essential experimental setup is now included in the slide 13 notes. Keep this slide available for questions.
+
 - Each experiment changes one stage and holds the other two fixed.
-- We can also hand the model the annotated gold pages directly, which takes retrieval out of the picture.
-- The main benchmark is MMLongBench-Doc, with one hundred and thirty-five long documents. It is the only one we know of that marks, for every question, the evidence pages, the type of evidence, and whether the question can be answered at all.
-- We ran a lot of experiments this way. In the next three slides I will only discuss some of the more interesting and important points.
+- Annotated gold pages bypass retrieval.
+- The main benchmark is MMLongBench-Doc, with 135 documents and annotations for evidence pages, evidence type and answerability.
+- Two model families and a second document collection provide checks on transfer.
 
 ## Slide 15: Representation: when is visual reading worth its cost?
 
 - The first point is about representation, and the question is when visual reading is worth its cost.
-- Vision is expensive. Reading from images alone needs high resolution to work well, and every page image costs time. In our measurements, preparing the input took about twenty-six seconds per question with images, against under two seconds with text.
-- Text, on the other hand, works like a cache. The text embedded in the file, or the output of a structure-aware parser, converts the document once into a form that is fast to use at inference time.
-- On born-digital documents, text alone is already close: in the lower half of the table, adding images to parsed text gives under three points.
-- So how much of each you need depends heavily on the document type and the task. In the upper half, chart and figure questions are refused far more often from text, and gain more than twenty points from images, while text and table questions gain little. There is no one size fits all.
-- And parsers are improving. Newer neural parsers can express visual content directly as text, for example turning a chart into a table of its values. Our results do not show this yet, so I see it as a direction.
-- So choose the representation for the document type and the task.
+- Vision is expensive. In our measurements the same question takes about nine hundred input tokens whether we feed it as text or as page images, but reading it as images takes twenty-one times longer: about twenty-three seconds per question against one second. It also needs more memory: with images added to parsed text, eleven percent of questions ran out of memory on our cards, against one percent for text.
+- And yet most systems read everything visually. They are either vision only, or text plus image, applied to every page of every document.
+- What we show empirically is that the best choice depends on the document type and on the task. The top half of the table is scanned documents. There is no text layer, so embedded text answers almost nothing and the model mostly refuses. A parser recovers some of it, and the image is what gets you to fifty or sixty percent.
+- The bottom half is born-digital documents. There, text alone is already close, and adding the image gives about three points overall. By task, text and table questions gain little from the image, while figures gain the most.
+- The figure on the right is the second finding: the modalities are complementary. Parsed text alone answers thirty-eight percent, a low-resolution image alone also thirty-eight, and together forty-nine. That works because they fail on different questions. Only twenty-two percent are answered by both, and when we give the model both it keeps most of what either one answers alone.
+- So each hides the other's weakness. In the top panel, with text present, a low-resolution image is nearly as good as a high-resolution one without it. In the bottom panel, with the image present, the gap between the worst and the best parser shrinks from fourteen points to five.
+- Many systems already rely on this effect. What we add is the measurement, and the reason: the two channels lose different things. A parser drops charts and figures, low resolution drops small text and numbers.
+- For deployment, this means choose rather than default. If you know the document type or the task, fix the modality: images for scans, cached parser text for reports and tables. For mixed collections, choose per question, which is what tool-using agents are starting to do.
+- So there is no one size fits all. Choose modalities for the document and the task, and combine cheap ones before paying for resolution.
 
 ## Slide 16: Selection: how much evidence is enough?
 
@@ -159,10 +170,12 @@
 ## Slide 17: Reasoning: does the document support the question?
 
 - The third point is about reasoning.
-- A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all. With no instruction, the model answers fluently that it is a clip from Breaking Bad.
-- Prompts change this behaviour. If we explicitly allow the model to say not answerable, it correctly refuses far more unanswerable questions, from 45.5 percent to 74.6 percent.
-- But it also refuses more answerable ones, from 6.2 percent to 27.7 percent. So refining the prompt means balancing unsupported answers against unnecessary refusals.
-- There are further options, such as Reflexion and self-consistency, which spend more computation on reasoning.
+- A question can contain a premise the document does not support. Here the question asks which YouTube video the slides use, and the document mentions no video at all. With no instruction, the model answers fluently that it is a clip from Breaking Bad. Overall it refuses only forty-five percent of unanswerable questions.
+- Prompts move this trade-off, which is the left figure. If we explicitly allow the model to say not answerable, it refuses seventy-five percent of unanswerable questions, but it also refuses twenty-eight percent of answerable ones, up from six.
+- Asking it to reason step by step first, and then allowing abstention, wins the accuracy back, to fifty-one percent, and refuses even more of the unanswerable questions, eighty-six percent.
+- The right figure is what happens when we spend more computation on reasoning instead. Self-consistency samples forty reasoning paths and takes a majority vote. It adds about eight points on answerable questions, but it costs over ten minutes per question on our hardware. That run is still finishing, so the number is preliminary.
+- Reflexion lets the model evaluate its own answer and retry. It adds fourteen points on unanswerable questions and costs under a minute. But its self-check accepts ninety-four percent of its own answers, so the retries rarely fire, and they do not rescue the hard answerable questions.
+- So more computation helps, at a price, and neither method replaces checking the evidence.
 - Before asking whether the answer is correct, ask whether the evidence supports giving that answer.
 
 ## Slide 18: Conclusion
