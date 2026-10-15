@@ -1,5 +1,5 @@
 """The slide 3 figure (one 40-page guidebook, the two pages a question needs) as a PDF for
-the thesis, with the caption reading "International Student Guidebook 40 pages".
+the thesis, with the caption reading "International Student Guidebook 40 pages", the title in bold.
 
     python3 Seminar/make_thesis_multipage.py
 
@@ -16,13 +16,13 @@ PDF = HERE.parent / "Thesis" / "include" / "multipage_example.pdf"
 PNG = HERE / "figures" / "final" / "multipage_thesis.png"
 
 OLD_CAP = '<b>One document, 40 pages</b> international student guidebook'
-NEW_CAP = 'International Student Guidebook <b>40 pages</b>'
+NEW_CAP = '<b>International Student Guidebook</b> 40 pages'
 
 
 def render(name, w, h, body, css="", workdir=None):
     assert OLD_CAP in body and ".cap b{" in css
     body = body.replace(OLD_CAP, NEW_CAP)
-    css = css.replace(".cap b{", ".cap b{margin-left:6px; ").replace("margin-right:6px;", "")
+    css = css.replace(".cap b{", ".cap b{")
     work = Path(workdir)
     html = work / f"{name}.html"
     html.write_text(
