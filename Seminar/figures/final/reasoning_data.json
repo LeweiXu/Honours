@@ -1,0 +1,56 @@
+[
+  {
+    "label": "Plain",
+    "answer": 52.5383707201889,
+    "refusal": 6.482593037214886,
+    "unanswer": 47.540983606557376,
+    "n_answer": 847,
+    "n_refusal": 833,
+    "n_unanswer": 244
+  },
+  {
+    "label": "CoT",
+    "answer": 53.128689492325854,
+    "refusal": 6.602641056422569,
+    "unanswer": 61.47540983606557,
+    "n_answer": 847,
+    "n_refusal": 833,
+    "n_unanswer": 244
+  },
+  {
+    "label": "Abstain",
+    "answer": 41.44037780401417,
+    "refusal": 27.73109243697479,
+    "unanswer": 74.59016393442623,
+    "n_answer": 847,
+    "n_refusal": 833,
+    "n_unanswer": 244
+  },
+  {
+    "label": "CoT + abstain",
+    "answer": 53.01668806161746,
+    "refusal": 19.897304236200256,
+    "unanswer": 85.47008547008546,
+    "n_answer": 779,
+    "n_refusal": 779,
+    "n_unanswer": 234
+  },
+  {
+    "label": "Self-consistency",
+    "answer": 60.56670602125148,
+    "refusal": 5.687203791469194,
+    "unanswer": 54.50819672131148,
+    "n_answer": 847,
+    "n_refusal": 844,
+    "n_unanswer": 244
+  },
+  {
+    "label": "Reflexion",
+    "answer": 55.082742316784866,
+    "refusal": 6.462585034013605,
+    "unanswer": 61.47540983606557,
+    "n_answer": 846,
+    "n_refusal": 294,
+    "n_unanswer": 244
+  }
+]

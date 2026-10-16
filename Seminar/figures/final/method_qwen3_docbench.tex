@@ -1,0 +1,45 @@
+% Hand-maintained (not generated): each benchmark's official-protocol results in one
+% table, a row per system, in a Qwen2.5-VL-7B block and a Qwen3-VL-8B block. Method names
+% carry no citation; cite them where the baselines are introduced:
+%   URaG shi2026urag, CoR guo2026end, MDocAgent han2025mdocagent, M3DocRAG cho2024m3docrag,
+%   MoLoRAG wu2025molorag, DocSeeker yan2026docseeker, Doc-V* zheng2026doc,
+%   MM-Doc-R1 lin2026mm, DocAgent sun2025docagent, MARDoc chen2026mardoc,
+%   DocTrace xiang2026doctrace, SLEUTH liu2025resolving.
+% The DocBench column is overall accuracy only. Every other system's number there is from
+% MARDoc's Table 1 (GPT-4o as the evaluator); Ours is the DocBench section of
+% results/method/results_v7.md (`python -m seqread.docbench`), 762 of the 1,065 finished.
+% Ours on MMLongBench-Doc is iteration 7's official-protocol block in
+% results/method/results_v7.md. The LongDocURL numbers for Ours and for the gold-pages row
+% are from results/method/ldu_official.md (`python -m seqread.official_ldu`).
+\begin{table*}[ht]
+\centering
+\small
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{$\times$}
+\newcommand{\bbgroup}[1]{\multicolumn{12}{@{}l}{\textit{#1}} \\}
+\resizebox{\textwidth}{!}{%
+\setlength{\tabcolsep}{7pt}%
+\begin{tabular}{@{}lcc cccc cccc c@{}}
+\toprule
+& & & \multicolumn{4}{c}{\textbf{MMLongBench-Doc}} & \multicolumn{4}{c}{\textbf{LongDocURL}} & \textbf{DocBench} \\
+\cmidrule(lr){4-7}\cmidrule(lr){8-11}\cmidrule(l){12-12}
+\textbf{Method} & \textbf{OCR} & \textbf{Trained}
+& SIN & MUL & UNA & \textbf{ACC} & UND & REA & LOC & \textbf{ACC} & \textbf{ACC} \\
+\midrule
+\bbgroup{\textbf{Qwen3-VL-8B}}
+Whole document (via DocTrace) & \no & \no & 46.9 & 35.3 & 25.8 & 38.5 & -- & -- & -- & 45.1 & -- \\
+Whole document (via MARDoc) & \no & \no & -- & -- & -- & 41.9 & -- & -- & -- & -- & 64.6 \\
+M3DocRAG (via SLEUTH) & \no & \no & -- & -- & 48.6 & 45.9 & 60.1 & 52.4 & 45.5 & 54.6 & -- \\
+DocAgent (via MARDoc) & \yes & \no & -- & -- & -- & 46.6 & -- & -- & -- & -- & 67.1 \\
+MDocAgent (via SLEUTH) & \yes & \no & -- & -- & 49.7 & 47.8 & 57.5 & 51.5 & 44.7 & 53.1 & -- \\
+MoLoRAG (via SLEUTH) & \no & \no & -- & -- & 51.7 & 48.8 & 63.4 & 52.7 & 49.3 & 57.6 & -- \\
+MARDoc & \yes & \no$^{b}$ & -- & -- & -- & 52.7 & -- & -- & -- & -- & \textbf{72.3} \\
+SLEUTH & \no & \no & -- & -- & 67.4 & 52.8 & 65.7 & 53.0 & \textbf{53.6} & 60.0 & -- \\
+DocTrace & \yes & \yes & 53.2 & \textbf{41.1} & 70.5 & 52.9 & -- & -- & -- & 56.4 & -- \\
+\textbf{Ours} (4-bit) & \yes & \no & \textbf{60.5} & 39.2 & \textbf{76.9} & \textbf{56.5} & \textbf{67.2} & \textbf{66.3} & 47.9 & \textbf{61.3} & 71.6 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Accuracy (\%) under each benchmark's official protocol for systems on open 7--8B vision-language backbones: answer extraction, then a rule-based scorer, on MMLongBench-Doc and LongDocURL, and a binary LLM judgement against the reference answer on DocBench (GPT-4o in MARDoc's runs, Gemini 2.5 Flash in ours). MMLongBench-Doc is split by evidence pages (SIN: single page, MUL: multiple pages, UNA: unanswerable) and LongDocURL by task (UND: understanding, REA: reasoning, LOC: locating); DocBench, which annotates no evidence pages, is overall accuracy. Values are as each paper reports them; ``via'' marks a result reproduced by another study, and a dash a number the paper does not give. \textbf{OCR}: parser or OCR text is an input. \textbf{Trained}: task-specific fine-tuning or RL in the pipeline. $^{\dagger}$A text LLM runs alongside the VLM. $^{a}$Retriever only. $^{b}$Its document outline uses visual-element descriptions from Qwen3-VL-235B. Bold marks the best system per column, the gold-pages row aside.}
+\label{tab:method_results}
+\end{table*}

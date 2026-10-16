@@ -12,3 +12,5 @@ HANDOFF.md
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+CLAUDE.md
